@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<extension version="1.7" type="file" method="upgrade">
+  <name>ru-RU VirtueMart language package</name>
+  <version>2012-07-27 10:51</version>
+  <creationDate>2012-07-27 10:51</creationDate>
+  <author>The VirtueMart Development Team</author>
+  <email>max|at|virtuemart.net</email>
+  <authorUrl>http://www.virtuemart.net</authorUrl>
+  <copyright>Copyright (C) 2004-2012 Virtuemart Team. All rights reserved.</copyright>
+  <license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
+  <description>ru-RU VirtueMart language package</description>
+  <fileset>
+    <files target="administrator/language/ru-RU" folder="administrator/language/ru-RU">
+      <file>ru-RU.plg_vmpayment_standard.sys.ini</file>
+      <file>ru-RU.plg_vmpayment_standard.ini</file>
+      <file>ru-RU.com_virtuemart.menu.ini</file>
+      <file>ru-RU.plg_vmcustom_stockable.sys.ini</file>
+      <file>ru-RU.plg_vmpayment_paypal.sys.ini</file>
+      <file>ru-RU.plg_vmpayment_payzen.ini</file>
+      <file>ru-RU.plg_vmshipment_weight_countries.ini</file>
+      <file>ru-RU.plg_vmcustom_specification.ini</file>
+      <file>ru-RU.plg_vmpayment_paypal.ini</file>
+      <file>ru-RU.plg_vmshipment_weight_countries.sys.ini</file>
+      <file>ru-RU.com_virtuemart.sys.ini</file>
+      <file>ru-RU.plg_vmcustom_specification.sys.ini</file>
+      <file>ru-RU.com_virtuemart.ini</file>
+      <file>ru-RU.plg_vmcustom_textinput.ini</file>
+      <file>ru-RU.plg_vmcustom_stockable.ini</file>
+      <file>ru-RU.plg_vmpayment_authorizenet.sys.ini</file>
+      <file>ru-RU.plg_vmpayment_authorizenet.ini</file>
+      <file>ru-RU.plg_vmcustom_textinput.sys.ini</file>
+    </files>
+    <files target="language/ru-RU" folder="language/ru-RU">
+      <file>ru-RU.mod_virtuemart_manufacturer.ini</file>
+      <file>ru-RU.com_virtuemart.sef.ini</file>
+      <file>ru-RU.mod_virtuemart_cart.ini</file>
+      <file>ru-RU.mod_virtuemart_product.ini</file>
+      <file>ru-RU.mod_virtuemart_category.sys.ini</file>
+      <file>ru-RU.com_virtuemart.sys.ini</file>
+      <file>ru-RU.com_virtuemart.ini</file>
+      <file>ru-RU.mod_virtuemart_category.ini</file>
+      <file>ru-RU.mod_virtuemart_currencies.sys.ini</file>
+      <file>ru-RU.mod_virtuemart_manufacturer.sys.ini</file>
+      <file>ru-RU.mod_virtuemart_search.sys.ini</file>
+      <file>ru-RU.mod_virtuemart_currencies.ini</file>
+      <file>ru-RU.mod_virtuemart_search.ini</file>
+      <file>ru-RU.mod_virtuemart_cart.sys.ini</file>
+      <file>ru-RU.mod_virtuemart_product.sys.ini</file>
+    </files>
+  </fileset>
+  <updateservers>
+    <server type="extension" priority="1" name="ru-RU VirtueMart language package">http://gruz.org.ua/images/stories/files/virtuemart_languages/update_ru_ru.xml</server>
+  </updateservers>
+</extension>

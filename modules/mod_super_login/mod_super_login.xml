@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<extension type="module" version="1.7" method="upgrade">
+	<name>Super Login</name>
+	<author>Mustaq Sheikh</author>
+	<creationDate>November 2007</creationDate>
+	<copyright>Copyright (C) 2011 HerdBoy Web Design cc</copyright>
+	<license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
+	<authorEmail>no-reply@herdboy.com</authorEmail>
+	<authorUrl>http://www.herdboy.com</authorUrl>
+	<version>2.5.0</version>
+	<description>Super Login module for Joomla 1.7 and Joomla 2.5 developed and maintained by the team at www.herdboy.com. Super Login was forked from the Joomla 1.5 YOOlogin module with the kind blessings of www.yootheme.com</description>
+	<files folder="site">
+		<filename module="mod_super_login">mod_super_login.php</filename>
+		<filename module="mod_super_login">mod_super_login.css.php</filename>
+		<filename module="mod_super_login">mod_super_login.xml</filename>
+		<filename module="mod_super_login">helper.php</filename>
+		<filename module="mod_super_login">changelog.php</filename>
+		<filename module="mod_super_login">index.html</filename>
+		<filename module="mod_super_login">tmpl/default.php</filename>
+		<filename module="mod_super_login">tmpl/index.html</filename>
+		<filename module="mod_super_login">tmpl/niftydefault.php</filename>
+		<filename module="mod_super_login">tmpl/niftyquick.php</filename>
+		<filename module="mod_super_login">tmpl/quick.php</filename>
+		<filename module="mod_super_login">tmpl/mega.php</filename>
+		<filename module="mod_super_login">styles/default/black/images/index.html</filename>
+		<filename module="mod_super_login">styles/default/black/images/password_bg.png</filename>
+		<filename module="mod_super_login">styles/default/black/images/username_bg.png</filename>
+		<filename module="mod_super_login">styles/default/black/index.html</filename>
+		<filename module="mod_super_login">styles/default/black/style.css</filename>
+		<filename module="mod_super_login">styles/default/ie6hacks.css</filename>
+		<filename module="mod_super_login">styles/default/images/index.html</filename>
+		<filename module="mod_super_login">styles/default/images/button_bg.png</filename>
+		<filename module="mod_super_login">styles/default/images/password_bg.png</filename>
+		<filename module="mod_super_login">styles/default/images/username_bg.png</filename>
+		<filename module="mod_super_login">styles/default/index.html</filename>
+		<filename module="mod_super_login">styles/default/style.css</filename>
+		<filename module="mod_super_login">styles/index.html</filename>
+		<filename module="mod_super_login">styles/niftydefault/black/images/button_bg.png</filename>
+		<filename module="mod_super_login">styles/niftydefault/black/images/index.html</filename>
+		<filename module="mod_super_login">styles/niftydefault/black/images/password_bg.png</filename>
+		<filename module="mod_super_login">styles/niftydefault/black/images/username_bg.png</filename>
+		<filename module="mod_super_login">styles/niftydefault/black/index.html</filename>
+		<filename module="mod_super_login">styles/niftydefault/black/style.css</filename>
+		<filename module="mod_super_login">styles/niftydefault/ie6hacks.css</filename>
+		<filename module="mod_super_login">styles/niftydefault/images/button_bg.png</filename>
+		<filename module="mod_super_login">styles/niftydefault/images/index.html</filename>
+		<filename module="mod_super_login">styles/niftydefault/images/password_bg.png</filename>
+		<filename module="mod_super_login">styles/niftydefault/images/username_bg.png</filename>
+		<filename module="mod_super_login">styles/niftydefault/index.html</filename>
+		<filename module="mod_super_login">styles/niftydefault/style.css</filename>
+		<filename module="mod_super_login">styles/niftyquick/black/images/button_bg.png</filename>
+		<filename module="mod_super_login">styles/niftyquick/black/images/index.html</filename>
+		<filename module="mod_super_login">styles/niftyquick/black/images/lost_password_bg.png</filename>
+		<filename module="mod_super_login">styles/niftyquick/black/images/lost_username_bg.png</filename>
+		<filename module="mod_super_login">styles/niftyquick/black/images/password_bg.png</filename>
+		<filename module="mod_super_login">styles/niftyquick/black/images/registration_bg.png</filename>
+		<filename module="mod_super_login">styles/niftyquick/black/images/username_bg.png</filename>
+		<filename module="mod_super_login">styles/niftyquick/black/index.html</filename>
+		<filename module="mod_super_login">styles/niftyquick/black/style.css</filename>
+		<filename module="mod_super_login">styles/niftyquick/ie6hacks.css</filename>
+		<filename module="mod_super_login">styles/niftyquick/images/login_button_bg.png</filename>
+		<filename module="mod_super_login">styles/niftyquick/images/logout_button_bg.png</filename>
+		<filename module="mod_super_login">styles/niftyquick/images/index.html</filename>
+		<filename module="mod_super_login">styles/niftyquick/images/lost_password_bg.png</filename>
+		<filename module="mod_super_login">styles/niftyquick/images/lost_username_bg.png</filename>
+		<filename module="mod_super_login">styles/niftyquick/images/password_bg.png</filename>
+		<filename module="mod_super_login">styles/niftyquick/images/registration_bg.png</filename>
+		<filename module="mod_super_login">styles/niftyquick/images/username_bg.png</filename>
+		<filename module="mod_super_login">styles/niftyquick/index.html</filename>
+		<filename module="mod_super_login">styles/niftyquick/style.css</filename>
+		<filename module="mod_super_login">styles/mega/black/images/button_bg.png</filename>
+		<filename module="mod_super_login">styles/mega/black/images/index.html</filename>
+		<filename module="mod_super_login">styles/mega/black/images/lost_password_bg.png</filename>
+		<filename module="mod_super_login">styles/mega/black/images/lost_username_bg.png</filename>
+		<filename module="mod_super_login">styles/mega/black/images/password_bg.png</filename>
+		<filename module="mod_super_login">styles/mega/black/images/registration_bg.png</filename>
+		<filename module="mod_super_login">styles/mega/black/images/username_bg.png</filename>
+		<filename module="mod_super_login">styles/mega/black/index.html</filename>
+		<filename module="mod_super_login">styles/mega/black/style.css</filename>
+		<filename module="mod_super_login">styles/mega/ie6hacks.css</filename>
+		<filename module="mod_super_login">styles/mega/images/login_button_bg.png</filename>
+		<filename module="mod_super_login">styles/mega/images/logout_button_bg.png</filename>
+		<filename module="mod_super_login">styles/mega/images/index.html</filename>
+		<filename module="mod_super_login">styles/mega/images/lost_password_bg.png</filename>
+		<filename module="mod_super_login">styles/mega/images/lost_username_bg.png</filename>
+		<filename module="mod_super_login">styles/mega/images/password_bg.png</filename>
+		<filename module="mod_super_login">styles/mega/images/registration_bg.png</filename>
+		<filename module="mod_super_login">styles/mega/images/username_bg.png</filename>
+		<filename module="mod_super_login">styles/mega/index.html</filename>
+		<filename module="mod_super_login">styles/mega/style.css</filename>
+		<filename module="mod_super_login">styles/quick/black/images/index.html</filename>
+		<filename module="mod_super_login">styles/quick/black/images/password_bg.png</filename>
+		<filename module="mod_super_login">styles/quick/black/images/username_bg.png</filename>
+		<filename module="mod_super_login">styles/quick/black/index.html</filename>
+		<filename module="mod_super_login">styles/quick/black/style.css</filename>
+		<filename module="mod_super_login">styles/quick/ie6hacks.css</filename>
+		<filename module="mod_super_login">styles/quick/images/index.html</filename>
+		<filename module="mod_super_login">styles/quick/images/login_button_bg.png</filename>
+		<filename module="mod_super_login">styles/quick/images/logout_button_bg.png</filename>
+		<filename module="mod_super_login">styles/quick/images/lost_password_bg.png</filename>
+		<filename module="mod_super_login">styles/quick/images/lost_username_bg.png</filename>
+		<filename module="mod_super_login">styles/quick/images/password_bg.png</filename>
+		<filename module="mod_super_login">styles/quick/images/registration_bg.png</filename>
+		<filename module="mod_super_login">styles/quick/images/username_bg.png</filename>
+		<filename module="mod_super_login">styles/quick/index.html</filename>
+		<filename module="mod_super_login">styles/quick/style.css</filename>
+		<filename module="mod_super_login">styles/style.css</filename>
+	</files>
+	<languages folder="languages">
+		<language tag="en-GB">en-GB/en-GB.mod_super_login.ini</language>
+		<language tag="en-GB">en-GB/en-GB.mod_super_login.sys.ini</language>
+		<language tag="es-ES">es-ES/es-ES.mod_super_login.ini</language>
+		<language tag="es-ES">es-ES/es-ES.mod_super_login.sys.ini</language>
+	</languages>
+	<config>
+		<fields name="params">
+			<fieldset name="basic">
+				<field name="style" type="list" default="default" label="STYLE" description="STYLE_DESC">
+					<option value="default">JDefault</option>
+					<option value="quick">Quick</option>
+					<option value="niftydefault">Nifty Default</option>
+					<option value="niftyquick">Nifty Quick</option>
+					<option value="mega">Mega</option>
+				</field>
+				<field name="direct" type="list" default="default" label="REG_HANDLER" description="REG_HANDLER_DESC">
+					<option value="default">JDefault</option>
+					<option value="jomsocial">JomSocial</option>
+					<option value="kunena">Kunena</option>
+					<option value="sandbox">Sandbox</option>
+				</field>
+			</fieldset>
+			<fieldset name="advanced">
+				<field name="pretext" type="textarea" cols="30" rows="5" default="" label="PRE_TEXT" description="PRE_TEXT_DESC"/>
+				<field name="posttext" type="textarea" cols="30" rows="5" label="POST_TEXT" description="POST_TEXT_DESC"/>
+				<field name="login" type="menuitem" default="" disable="separator" label="LOGIN REDIRECTION" description="LOGIN_REDIRECTION_DESC">
+					<option value="">JDEFAULT</option>
+				</field>
+				<field name="logout" type="menuitem" default="" disable="separator" label="LOGOUT REDIRECTION" description="LOGOUT_REDIRECTION_DESC">
+					<option value="">JDEFAULT</option>
+				</field>
+				<field name="greeting" type="radio" default="1" label="GREETING" description="GREETING_DESC">
+					<option value="0">JNo</option>
+					<option value="1">JYes</option>
+				</field>
+				<field name="text_mode" type="list" default="input" label="USERNAME_PASS_IN" description="USERNAME_PASS_IN_DESC">
+					<option value="label">LABEL</option>
+					<option value="input">INPUT</option>
+				</field>
+				<field name="login_button" type="list" default="icon" label="LOGIN_BUTTON_AS" description="LOGIN_BUTTON_AS_DESC">
+					<option value="text">TEXT</option>
+					<option value="icon">ICON</option>
+				</field>
+				<field name="logout_button" type="list" default="text" label="LOGOUT_BUTTON_AS" description="LOGOUT_BUTTON_AS_DESC">
+					<option value="text">TEXT</option>
+					<option value="icon">ICON</option>
+				</field>
+				<field name="auto_remember" type="list" default="1" label="REMEMBER_ME_AUTO" description="REMEMBER_ME_AUTO_DESC">
+					<option value="0">JNo</option>
+					<option value="1">JYes</option>
+				</field>
+				<field name="lost_password" type="list" default="1" label="LOST_PASS_LINK" description="LOST_PASS_LINK_DESC">
+					<option value="0">JHide</option>
+					<option value="1">JShow</option>
+				</field>
+				<field name="lost_username" type="list" default="1" label="LOST_USERNAME_LINK" description="LOST_USERNAME_LINK_DESC">
+					<option value="0">JHide</option>
+					<option value="1">JShow</option>
+				</field>
+				<field name="registration" type="list" default="1" label="REG_LINK" description="REG_LINK_DESC">
+					<option value="0">JHide</option>
+					<option value="1">JShow</option>
+				</field>
+				<field name="moduleclass_sfx" type="text" default="" label="MODULE_CLASS_SUFFIX" description="MODULE_CLASS_SUFFIX_DESC"/>
+			</fieldset>
+		</fields>
+	</config>
+</extension>

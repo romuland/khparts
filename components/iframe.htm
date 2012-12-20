@@ -1,0 +1,35 @@
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+
+<script type="text/javascript">
+	var intervalID;
+	var TimeOutID;//
+
+	var menyFlag=false;
+	function oncontex(txs){
+		menyFlag=true;
+		txs.style.zIndex=1;
+	}
+	clickCount = 1;
+	function Moysedown(txs){
+		clickCount++;
+	  clearTimeout(TimeOutID);
+	  TimeOutID=setTimeout(function() {if(!menyFlag){txs.style.zIndex=-1}menyFlag=false;},300); 
+	  setTimeout(function() {txs.style.zIndex=1},1300); 
+	}
+
+	</script>
+</head>
+
+<body>
+<p id="title-text">Каталог с номерами и описания запчастей для Kia</p>
+<div id="catalog-frame-wrapper">
+<div id="catalog-wrapper"><img ilo-full-src="http://romuland.loc/images/transparent.png" class="hideoutlink" src="images/transparent.png" oncontextmenu="oncontex(this);return false;" onMouseDown="Moysedown(this)"" /> <iframe id="catalog-iframe" width="1270" height="7050" src="http://catalogs.m-grand.ru/kia" onload=""></iframe></div>
+</div>
+    <div id="hide1">This shit must be hiding</div>
+</body></html>
+
+
+
+
+
