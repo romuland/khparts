@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <p>
     <script type="text/javascript">// <![CDATA[
         function doUpload(form, resultField){
@@ -147,4 +148,155 @@
     <div>
         <progress class="pBar" min="0" max="100" value="0">0% complete</progress></div>
 </div>
+=======
+<p>
+    <script type="text/javascript">// <![CDATA[
+        function doUpload(form, resultField){
+            // проверяем поддерживает ли браузер FormData
+            if(!window.FormData) {document.getElementById(resultField).innerHTML = "Браузер не поддерживает необходимый класс FormData. Воспользуйтесь старой версией загрузчика"; return true;}
+            else {
+                var data = new FormData(form);
+                xhr = new XMLHttpRequest();
+                document.getElementById(resultField).innerHTML = '';
+                xhr.open('POST', form.action);
+                
+                xhr.onreadystatechange = function(){
+                    if (xhr.readyState == 4) {
+                        if (xhr.status == 200) {
+                            document.getElementById(resultField).innerHTML = xhr.responseText;
+                        } else {
+                            document.getElementById(resultField).innerHTML = "Ошибка";
+                        }
+                    }
+                };
+                xhr.send(data);
+                return false;
+            }
+        }
+        
+        
+        function doOperation(obj, operationName, resultField){
+            jQuery("#" + resultField).empty();
+            jQuery.ajax({  
+                url: "/components/com_import/delete_all.php",  
+                type: "GET",
+                data: "operation=" + obj.name,
+                dataType: "html",
+                cache: false,  
+                beforeSend: function(){
+                    jQuery("#" + resultField).html(operationName + ' начинаетя, пожалуйста подождите...<br />');  
+                },
+                success: function(html){  
+                    jQuery("#" + resultField).html(html);  
+                }  
+            });    
+        }
+        jQuery(document).ready(function(){  
+            jQuery('#importform').click(function(){  
+                
+            });  
+        });
+        function setDefault(){
+            document.getElementById('currow').value = 1;
+            document.getElementById('rowcount').value = 1;
+            document.getElementById('filename').value = '';
+        }
+        function doImport(form){
+            // проверяем поддерживает ли браузер FormData
+            
+            if(!window.FormData) {document.getElementById('impresult').innerHTML = "Браузер не поддерживает необходимый класс FormData."; return true;}
+            else {
+                var data = new FormData(form),
+                    xhr = new XMLHttpRequest(),
+                    
+                    progressBar = document.querySelector('progress');
+                file = document.getElementById('uploadedfile');  
+                if (document.getElementById('currow').value == "1")
+                {
+                    document.getElementById('impresult').innerHTML = 'Импорт начинается, пожалуйста подождите...';
+                    
+                }
+                document.getElementById('uploadsection').style.display = 'block';
+                xhr.open('POST', "/components/com_import/import.php");
+                
+                xhr.onload = function (e) {
+                    //  document.getElementById('impresult').innerHTML = e.currentTarget.responseText;
+                }
+                    
+                    xhr.onreadystatechange = function(){
+                        if (xhr.readyState == 4) {
+                            if (xhr.status == 200) {
+                                alert(xhr.responseText);
+                                var response = JSON.parse(xhr.responseText);
+                                if (response.log != "")
+                                    document.getElementById('impresult').innerHTML = document.getElementById('impresult').innerHTML + "<br />" + response.log;
+                                document.getElementById('currow').value = response.currow;
+                                document.getElementById('rowcount').value = response.rowcount;
+                                document.getElementById('filename').value = response.filename;
+                                var temp = response.currow /response.rowcount;
+                                progressBar.value = temp * 100;                                
+                                if(response.state=="process"){
+                                    doImport(form);
+                                }
+                            } else {
+                                document.getElementById('impresult').innerHTML = "Ошибка";
+                            }
+                        }
+                    };
+                
+                xhr.send(data);
+                return false;
+            }
+        }
+        // ]]></script>
+</p>
+<div style="font-size: 14px;">ОПЕРАЦИИ:</div>
+<div style="font-size: 14px;">1. Обновить опт:<strong> Выберите файл в формате *.xls для загрузки</strong></div>
+<form name="importopt" method="post" enctype="multipart/form-data" action="/components/com_import/importopt.php" style="font-size: 14px;" class="import" onsubmit="return doUpload(this,'optresult')">
+    <p>Местонахождение файла: <input name="uploadedfile" class="file" type="file" /></p>
+    <p><input name="buttonopt" value="Загрузить файл" class="button" type="submit" /></p>
+    <div id="optresult">в текущей сессии не было загрузок</div>
+    <div>&nbsp;</div>
+</form>
+<div style="font-size: 14px;">2. Обновить структуру прайса:<strong> Выберите файл в формате *.csv для загрузки</strong></div>
+<form name="importcatlinks" method="post" enctype="multipart/form-data" action="/components/com_import/import_categories_links.php" style="font-size: 14px;" class="import" onsubmit="return doUpload(this,'catlinksresult')">
+    <p>Местонахождение файла: <input name="uploadedfilecatlinks" class="file" type="file" /></p>
+    <p><input name="button_categories" value="Загрузить файл" class="button" type="submit" /></p>
+    <div id="catlinksresult">в текущей сессии не было загрузок</div>
+    <div>&nbsp;</div>
+</form><form name="deleteform" enctype="multipart/form-data" style="font-size: 14px;" class="import" action="">
+<div style="font-size: 14px; color: red;">Внимание! Следующие операции приведут к изменению базы данных! Рекомендуется сделать резервную копию базы данных перед любым запуском операций!</div>
+<br />
+<div style="font-size: 14px;">3. Очистка Базы данных: происходит ПОЛНОЕ удаление всех данных из прайс-листа:</div>
+<input name="buttondelete" value="Удалить данные" class="button" onclick="doOperation(this,'Удаление','delresult')" type="button" />
+<div>Статус последней операции удаления:</div>
+<div id="delresult">в текущей сессии не было удалений
+    <div>&nbsp;</div>
+</div>
+</form><form name="importform" action="" enctype="multipart/form-data" style="font-size: 14px;" class="import" method="post" onsubmit="return doImport(this)">4. Обновление прайса<br />Местонахождение файла: <input name="uploadedfile" id="uploadedfile" class="file" type="file" />
+<p>Выберите склад запчастей:&nbsp;&nbsp; <input name="wh" value="основной" checked="checked" type="radio" />основной &nbsp;&nbsp; <input name="wh" value="дополнительный" type="radio" />дополнительный</p>
+<p>Управление загрузкой:</p>
+<table>
+    <tbody>
+        <tr>
+            <td style="padding: 5px;">Начать загрузку со строки <em>(по умолчанию строка 1 заголовок таблицы)</em></td>
+            <td style="padding: 5px;"><input name="startrow" value="2" type="input" /></td>
+        </tr>
+        <tr>
+            <td style="padding: 5px;">Загрузить строк <em>(0 или пустое значение для всех строк)</em></td>
+            <td style="padding: 5px;"><input name="maxrow" value="" type="input" /></td>
+        </tr>
+        <tr>
+            <td style="padding: 5px;"><input name="onlyadd" value="yes" type="checkbox" />Всегда добавлять (при проставленном флаге строки в случае совпадения будут добавляться)</td>
+        </tr>
+    </tbody>
+</table>
+<p><input name="buttonimport" value="Загрузить файл" class="button" onclick="setDefault()" type="submit" /></p>
+<div>Статус последней загрузки:</div>
+<div id="impresult">в текущей сессии не было загрузок</div>
+<div id="uploadsection" style="display: none;">Файл загружен: <input id="filename" name="filename" value="" type="text" /><br />Обработано: <input id="currow" name="currow" value="1" type="text" /> из <input id="rowcount" name="rowcount" value="1" type="text" />
+    <div>
+        <progress class="pBar" min="0" max="100" value="0">0% complete</progress></div>
+</div>
+>>>>>>> 1e1b309bbf9e27aa09f1eef63d7bfeed85150451
 </form>

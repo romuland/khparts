@@ -73,7 +73,11 @@ class plgSystemAddFullajax extends JPlugin
 			$revert = array(
 					'%21'=>'!', '%2A'=>'*', '%27'=>"'", '%28'=>'(', '%29'=>')',
 					'%2F' => '/', '%2C' => ',', '%3F' => '?', '%3D' => '=', '%26' => '&', '%3A' => ':'
+<<<<<<< HEAD
 				);
+=======
+				);
+>>>>>>> 1e1b309bbf9e27aa09f1eef63d7bfeed85150451
 			$url = strtr(rawurlencode($url), $revert);
 			header('Ax-Location: ' . $url);
 
@@ -118,9 +122,15 @@ class plgSystemAddFullajax extends JPlugin
 		){
 			//need refresh page if request was from fullajax
 			//for prevent display full site inside block
+<<<<<<< HEAD
 			if ($this->nedAjaxRespons) {
 				$this->sendReload();
 				return;
+=======
+			if ($this->nedAjaxRespons) {
+				$this->sendReload();
+				return;
+>>>>>>> 1e1b309bbf9e27aa09f1eef63d7bfeed85150451
 			}
 			$this->nedAjaxRespons = false;
 
@@ -146,10 +156,17 @@ class plgSystemAddFullajax extends JPlugin
 			if($this->params->get('checkmenuit', 1)) {
 				$menu_active_tree = $menu_active ? array_reverse($menu_active->tree) : array();
 				//check if alias exist
+<<<<<<< HEAD
 				foreach ($menu->getItems('type', 'alias') as $item){
 					if ($item->params->get('aliasoptions') == $menu_active->id){
 						$menu_active_tree[] = $item->id;
 					}
+=======
+				foreach ($menu->getItems('type', 'alias') as $item){
+					if ($item->params->get('aliasoptions') == $menu_active->id){
+						$menu_active_tree[] = $item->id;
+					}
+>>>>>>> 1e1b309bbf9e27aa09f1eef63d7bfeed85150451
 				}
 				$menu_active_tree = json_encode($menu_active_tree);
 				$doc->addScriptDeclaration('var fullAjaxMItems = ' . $menu_active_tree . ';');
@@ -167,9 +184,15 @@ class plgSystemAddFullajax extends JPlugin
 	 * connect FullAJAX scripts,
 	 * and add wrappers for the positions that need update if position update == auto
 	 */
+<<<<<<< HEAD
 	 public function onBeforeRender() {
 		$app = JFactory::getApplication();
 		$doc = JFactory::getDocument();
+=======
+	 public function onBeforeRender() {
+		$app = JFactory::getApplication();
+		$doc = JFactory::getDocument();
+>>>>>>> 1e1b309bbf9e27aa09f1eef63d7bfeed85150451
 		$positionupd = $this->params->get('positionupd', 3);
 
 		//add own JS if allowed
@@ -178,6 +201,7 @@ class plgSystemAddFullajax extends JPlugin
 				$doc->addScript( JURI::root(true).'/plugins/system/addfullajax/js/fullajax.js' );
 			} else {
 				$doc->addScript( JURI::root(true).'/plugins/system/addfullajax/js/fullajax_uncompressed.js' );
+<<<<<<< HEAD
 			}
 
 			$doc->addScriptDeclaration("/*--- AddFullAJAX ---*/\n" . $this->getJsData());
@@ -190,22 +214,49 @@ class plgSystemAddFullajax extends JPlugin
 					$markers[] = $this->params->get('contid', 'forajax');
 					$this->addModel2Blocks($markers);
 				}
+=======
+			}
+
+			$doc->addScriptDeclaration("/*--- AddFullAJAX ---*/\n" . $this->getJsData());
+
+			if($positionupd == 1){
+				//add fullajax Model2Blocks configuration for update block
+				$markers = $this->parsePositionParams();
+				if (!empty($markers)) {
+					$markers = array_unique(array_values($markers));
+					$markers[] = $this->params->get('contid', 'forajax');
+					$this->addModel2Blocks($markers);
+				}
+>>>>>>> 1e1b309bbf9e27aa09f1eef63d7bfeed85150451
 			}
 		}
 
 		//if  update module == automatic
 		if ($app->isSite() && $positionupd == 3) {
+<<<<<<< HEAD
 
 			//get template info
 			$tags = !$this->is_j3 ? $doc->get('_template_tags') : $this->getValue($doc, '_template_tags');
 			$tmpl = !$this->is_j3 ? $doc->get('_template') : $this->getValue($doc, '_template');
 
+=======
+
+			//get template info
+			$tags = !$this->is_j3 ? $doc->get('_template_tags') : $this->getValue($doc, '_template_tags');
+			$tmpl = !$this->is_j3 ? $doc->get('_template') : $this->getValue($doc, '_template');
+
+>>>>>>> 1e1b309bbf9e27aa09f1eef63d7bfeed85150451
 			//allowed positions
 			$positions = (array) $this->params->get('allowed_positions', array() );
 			$positions[] = ''; //'' - empty for 'message' and 'component'
 
+<<<<<<< HEAD
 			$patterns = array();
 			$replacer = array();
+=======
+			$patterns = array();
+			$replacer = array();
+>>>>>>> 1e1b309bbf9e27aa09f1eef63d7bfeed85150451
 			$markers = array();
 			$tmpl_new = '';
 
@@ -214,11 +265,19 @@ class plgSystemAddFullajax extends JPlugin
 				//colect positions that need update
 				//and add Model2Blocks markers
 				foreach ($tags as $jdoc => $data){
+<<<<<<< HEAD
 					if ($data['type'] != 'head' && in_array($data['name'], $positions)) {
 						//add markers. Use 'name' for positions, 'type' - for message and component
 						$name = $data['name'] ? $data['name'] : $data['type'];
 						$tmp .= '<!-- :ax:flax-'. $name .':begin: //-->'.$jdoc.'<!-- :ax:flax-' . $name . ':end: //-->';
 					}
+=======
+					if ($data['type'] != 'head' && in_array($data['name'], $positions)) {
+						//add markers. Use 'name' for positions, 'type' - for message and component
+						$name = $data['name'] ? $data['name'] : $data['type'];
+						$tmp .= '<!-- :ax:flax-'. $name .':begin: //-->'.$jdoc.'<!-- :ax:flax-' . $name . ':end: //-->';
+					}
+>>>>>>> 1e1b309bbf9e27aa09f1eef63d7bfeed85150451
 				}
 				$tmp .= '</body>';
 
@@ -231,6 +290,7 @@ class plgSystemAddFullajax extends JPlugin
 				$tmpl_new = substr_replace($tmpl, $tmp, $body_start, $body_end - $body_start);
 			}
 			elseif($this->axJsAllowed) {
+<<<<<<< HEAD
 				//add wrappers for a position update using FullAJAX Model2Blocks
 				foreach ($tags as $jdoc => $data){
 					if ($data['type'] != 'head'  && in_array($data['name'], $positions) ){
@@ -250,6 +310,27 @@ class plgSystemAddFullajax extends JPlugin
 			}
 		}
 
+=======
+				//add wrappers for a position update using FullAJAX Model2Blocks
+				foreach ($tags as $jdoc => $data){
+					if ($data['type'] != 'head'  && in_array($data['name'], $positions) ){
+						//add markers(id`s) . Use 'name' for positions, 'type' - for message and component
+						$name = $data['name'] ? $data['name'] : $data['type'];
+						$patterns[] = $jdoc;
+						$replacer[] = '<div id="flax-'. $name .'" class="flax-wrapper">'.$jdoc.'</div>';
+						$markers[] = 'flax-'. $name;
+					}
+				}
+				$this->addModel2Blocks(array_unique($markers));
+				$tmpl_new = str_replace($patterns, $replacer, $tmpl);
+			}
+
+			if ($tmpl_new) {
+				!$this->is_j3 ? $doc->set('_template', $tmpl_new) : $this->setValue($doc, '_template', $tmpl_new);
+			}
+		}
+
+>>>>>>> 1e1b309bbf9e27aa09f1eef63d7bfeed85150451
 	}
 
 	/**
@@ -402,12 +483,20 @@ FLAX.Html.onall( \'beforerequest\', function(o){
 					}
 				}
 			} else {
+<<<<<<< HEAD
 				$searchOldActiv[] = 'ul .active, ul .current';
+=======
+				$searchOldActiv[] = 'ul .active, ul .current';
+>>>>>>> 1e1b309bbf9e27aa09f1eef63d7bfeed85150451
 				$searchNewAcriv[] = 'ul li.item-\'+it';
 			}
 
 			$cnfg_data .= "
+<<<<<<< HEAD
 var fullAjaxMItems = [];
+=======
+var fullAjaxMItems = [];
+>>>>>>> 1e1b309bbf9e27aa09f1eef63d7bfeed85150451
 FLAX.Html.onall('load', function(){
  $$('" . implode(',', $searchOldActiv) . "').removeClass('active').removeClass('current');
  fullAjaxMItems.each(function(it,i){
@@ -415,7 +504,11 @@ FLAX.Html.onall('load', function(){
   if(e.length){var c = i == 0 ? 'current active' : 'active'; e.addClass(c);".
   			(($this->params->get('checkmenuit_active_for_a', 0)) ? "e.getElement('a').addClass(c);" : '')
   ."}
+<<<<<<< HEAD
  });
+=======
+ });
+>>>>>>> 1e1b309bbf9e27aa09f1eef63d7bfeed85150451
 });";
 		}
 
@@ -442,6 +535,7 @@ end: function(id){
 		}
 
 		//for debuging
+<<<<<<< HEAD
 		if($this->params->get('debug_ajax', 0) == 1){
 			$cnfg_data .= "\nFLAX.Default.DEBUG_AJAX=1;";
 		}
@@ -453,15 +547,35 @@ end: function(id){
 		}
 		if($this->params->get('debug_style', 0) == 1){
 			$cnfg_data .= "\nFLAX.Default.DEBUG_STYLE=1;";
+=======
+		if($this->params->get('debug_ajax', 0) == 1){
+			$cnfg_data .= "\nFLAX.Default.DEBUG_AJAX=1;";
+		}
+		if($this->params->get('debug_script', 0) == 1){
+			$cnfg_data .= "\nFLAX.Default.DEBUG_SCRIPT=1;";
+		}
+		if($this->params->get('debug_link', 0) == 1){
+			$cnfg_data .= "\nFLAX.Default.DEBUG_LINK=1;";
+		}
+		if($this->params->get('debug_style', 0) == 1){
+			$cnfg_data .= "\nFLAX.Default.DEBUG_STYLE=1;";
+>>>>>>> 1e1b309bbf9e27aa09f1eef63d7bfeed85150451
 		}
 		return $cnfg_data;
 
 	}
 
+<<<<<<< HEAD
 	/**
 	 * Generate and add JavaScript for FullAJAX Model2Blocks
 	 * @param array $markers - array with block ids
 	 */
+=======
+	/**
+	 * Generate and add JavaScript for FullAJAX Model2Blocks
+	 * @param array $markers - array with block ids
+	 */
+>>>>>>> 1e1b309bbf9e27aa09f1eef63d7bfeed85150451
 	protected function addModel2Blocks($markers) {
 		$markers = array_unique($markers);
 
@@ -589,10 +703,17 @@ end: function(id){
 	 *  send command to client for refresh page
 	 */
 	protected function sendReload(){
+<<<<<<< HEAD
 		$url = JFactory::getURI()->toString(); // get link
 		JResponse::setHeader('Ax-Action', 'reload'); // send command to reload
 		JResponse::sendHeaders();
 		echo '<div><p>Wait a moment! Reloading ...</p><p>Or click <a ax:wrap="0" href="'.$url.'">here</a>...</p></div>';
+=======
+		$url = JFactory::getURI()->toString(); // get link
+		JResponse::setHeader('Ax-Action', 'reload'); // send command to reload
+		JResponse::sendHeaders();
+		echo '<div><p>Wait a moment! Reloading ...</p><p>Or click <a ax:wrap="0" href="'.$url.'">here</a>...</p></div>';
+>>>>>>> 1e1b309bbf9e27aa09f1eef63d7bfeed85150451
 		JFactory::getApplication()->close();
 	}
 
