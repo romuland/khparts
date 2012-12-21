@@ -409,4 +409,3 @@ echo $this->product->event->afterDisplayContent;
 echo $this->loadTemplate('reviews');
 ?>
 </div>
-</div>
