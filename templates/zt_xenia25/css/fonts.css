@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 @font-face{ 
 	font-family: 'arhangelsk'; 
 	src: 	url('fonts/arhangelsk.eot'); 
@@ -30,37 +29,4 @@
          url('fonts/furore.svg#furoreregular') format('svg');
     font-weight: normal;
     font-style: normal;
-=======
-@font-face{ 
-	font-family: 'arhangelsk'; 
-	src: 	url('fonts/arhangelsk.eot'); 
-	src: 	url('fonts/arhangelsk.eot?#iefix') format('embedded-opentype'), 
-			url('fonts/arhangelsk.woff') format('woff'), 
-			url('fonts/arhangelsk.ttf') format('truetype'), 
-			url('fonts/arhangelsk.svg#webfont') format('svg'); 
-    font-weight: normal;
-    font-style: normal;			
-}
-
-@font-face {
-    font-family: 'orbitron';
-    src: url('fonts/orbitron.eot');
-    src: url('fonts/orbitron.eot?#iefix') format('embedded-opentype'),
-         url('fonts/orbitron.woff') format('woff'),
-         url('fonts/orbitron.ttf') format('truetype'),
-         url('fonts/orbitron.svg#orbitronregular') format('svg');
-    font-weight: normal;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'furore';
-    src: url('fonts/furore.eot');
-    src: url('fonts/furore.eot?#iefix') format('embedded-opentype'),
-         url('fonts/furore.woff') format('woff'),
-         url('fonts/furore.ttf') format('truetype'),
-         url('fonts/furore.svg#furoreregular') format('svg');
-    font-weight: normal;
-    font-style: normal;
->>>>>>> 1e1b309bbf9e27aa09f1eef63d7bfeed85150451
 }
