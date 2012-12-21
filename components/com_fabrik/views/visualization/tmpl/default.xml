@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<metadata>
+	<layout title="Visualization">
+		<message>
+			<![CDATA[Visualization]]>
+		</message>
+	</layout>
+	<fields name="request">
+		<fieldset addfieldpath="/administrator/components/com_fabrik/models/fields" name="request">
+			<field default="0" description="" label="Select Instance" name="id" type="visaulizationlist"/>
+		</fieldset>
+	</fields>
+	<fields addfieldpath="/administrator/components/com_fabrik/models/fields" name="params">
+		<fieldset label="COM_FABRIK_OPTIONS" name="params">
+			
+		</fieldset>
+	</fields>
+</metadata>

@@ -1,0 +1,33 @@
+/* (C) 2007 YOOtheme.com */
+/**
+ * @version SVN: $Id: builder.php 469 2011-07-29 19:03:30Z mustaqs $
+ * @package    superlogin
+ * @subpackage C:
+ * @author     Mustaq Sheikh {@link http://www.herdboy.com}
+ * @author     Created on 07-Sep-2011
+ * @license    GNU/GPL
+ */
+
+/* login */
+.yootools-black span.default span.super-login span.login span.username {
+	background: url(styles/default/black/images/username_bg.png) 0 0 no-repeat;
+}
+
+.yootools-black span.default span.super-login span.login span.password {
+	background: url(styles/default/black/images/password_bg.png) 0 0 no-repeat;
+}
+
+.yootools-black span.default span.super-login span.login span.username:hover {
+	background: url(styles/default/black/images/username_bg.png) 0 -20px no-repeat;
+}
+
+.yootools-black span.default span.super-login span.login span.password:hover {
+	background: url(styles/default/black/images/password_bg.png) 0 -20px no-repeat;
+}
+
+.yootools-black span.default span.super-login span.login span.username input:hover,
+.yootools-black span.default span.super-login span.login span.password input:hover,
+.yootools-black span.default span.super-login span.login span.username input:focus,
+.yootools-black span.default span.super-login span.login span.password input:focus {
+	color: #ffffaa;
+}

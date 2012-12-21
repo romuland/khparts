@@ -1,0 +1,16 @@
+/* (C) 2007 YOOtheme.com */
+/**
+ * @version SVN: $Id: builder.php 469 2011-07-29 19:03:30Z mustaqs $
+ * @package    superlogin
+ * @subpackage C:
+ * @author     Mustaq Sheikh {@link http://www.herdboy.com}
+ * @author     Created on 07-Sep-2011
+ * @license    GNU/GPL
+ */
+
+span.default span.super-login span.login span.username input,
+span.default span.super-login span.login span.password input,
+span.default span.super-login span.login span.login-button-icon button,
+span.default span.super-login span.logout span.logout-button-icon button {
+	position: relative;
+}

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension version="1.6" type="plugin" group="system" method="upgrade">
+	<name>System - Modal messages</name>
+	<author>Dmitry Chernov</author>
+	<creationDate>11 January 2012</creationDate>
+	<copyright>GNU/GPLv2</copyright>
+	<license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
+	<authorEmail>provitiligo@gmail.com</authorEmail>
+	<authorUrl>www.provitiligo.com</authorUrl>
+	<version>1.4</version>
+	<description>Displays system messages inside a modal box.</description>
+	<files>
+		<filename plugin="modalmessages">modalmessages.php</filename>
+		<filename plugin="modalmessages">css/style.css</filename>
+		<filename plugin="modalmessages">js/jquery-1.7.1.min.js</filename>
+		<folder>images</folder>
+	</files>
+	<languages>
+		<language tag="en-GB" client="site">language/en-GB.plg_system_modalmessages.ini</language>
+		<language tag="en-GB">language/en-GB.plg_system_modalmessages.sys.ini</language>
+		<language tag="ru-RU" client="site">language/ru-RU.plg_system_modalmessages.ini</language>
+		<language tag="ru-RU">language/ru-RU.plg_system_modalmessages.sys.ini</language>
+		<language tag="it-IT" client="site">language/it-IT.plg_system_modalmessages.ini</language>
+		<language tag="it-IT">language/it-IT.plg_system_modalmessages.sys.ini</language>
+		<language tag="pl-PL" client="site">language/pl-PL.plg_system_modalmessages.ini</language>
+		<language tag="pl-PL">language/pl-PL.plg_system_modalmessages.sys.ini</language>
+	</languages>
+	<config>
+		<fields name="params">
+	 		<fieldset name="basic">
+				<field name="loadjquery" type="list" default="no" label="PLG_SYSTEM_MODALMESSAGES_LOAD_JQUERY" description="PLG_SYSTEM_MODALMESSAGES_LOAD_JQUERY_DESC">
+					<option value="yes">JYES</option>
+					<option value="no">JNO</option>
+				</field>
+				<field name="dimback" type="list" default="no" label="PLG_SYSTEM_MODALMESSAGES_DIM_BACK" description="PLG_SYSTEM_MODALMESSAGES_DIM_BACK_DESC">
+					<option value="yes">JYES</option>
+					<option value="no">JNO</option>
+				</field>
+	 		</fieldset>
+		</fields>
+	</config>
+	<updateservers>
+		<server name="System - Modal messages" type="extension">http://www.provitiligo.com/files/extensions/plg_system_modalmessages-update.xml</server>
+	</updateservers>
+</extension>

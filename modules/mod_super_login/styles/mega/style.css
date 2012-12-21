@@ -1,0 +1,192 @@
+/** * @version SVN: $Id: builder.php 469 2011-07-29 19:03:30Z mustaqs $ * @package    superlogin * @subpackage C: * @author     Mustaq Sheikh {
+	@link http://www.herdboy.com
+}
+* @author     Created on 07-Sep-2011 * @license    GNU/GPL */
+/* login */
+span.mega span.super-login span.login {
+	position: relative;
+	width: 340px;
+}
+span.mega span.super-login span.login span.username, span.mega span.super-login span.login span.password, span.mega span.super-login span.login span.login-button, span.mega span.super-login span.login span.lostpassword, span.mega span.super-login span.login span.lostusername, span.mega span.super-login span.login span.registration, span.mega span.super-login span.logout span.greeting, span.mega span.super-login span.logout span.logout-button-icon, span.mega span.super-login span.login span.login-button-icon, span.mega span.super-login span.logout span.logout-button {
+	margin-right: 5px;
+	float: left;
+	overflow: hidden;
+}
+span.mega span.super-login span.login span.username, span.mega span.super-login span.login span.password {
+	width: 74px;
+	height: 16px;
+	padding: 6px 5px 5px 25px;
+	float: left;
+	overflow: hidden;
+	margin-top: 2px;
+}
+span.mega span.super-login span.login span.username {
+	background: url(styles/mega/images/username_bg.png) 0 0 no-repeat;
+/* ie6png: crop */
+}
+span.mega span.super-login span.login span.password {
+	background: url(styles/mega/images/password_bg.png) 0 0 no-repeat;
+/* ie6png: crop */
+}
+span.mega span.super-login span.login span.username:hover {
+	background: url(styles/mega/images/username_bg.png) 0 -32px no-repeat;
+}
+span.mega span.super-login span.login span.password:hover {
+	background: url(styles/mega/images/password_bg.png) 0 -32px no-repeat;
+}
+span.mega span.super-login span.login span.username input, span.mega span.super-login span.login span.password input {
+	padding: 0px;
+	width: 100%;
+	background: none;
+	border: none;
+	outline: none;
+	float: left;
+	color: #646464;
+	font-size: 15px;
+}
+span.mega span.super-login span.login span.username input:hover, span.mega span.super-login span.login span.password input:hover, span.mega span.super-login span.login span.username input:focus, span.mega span.super-login span.login span.password input:focus {
+	color: #000000;
+}
+span.mega span.super-login span.login span.login-button {
+	margin-top: 2px;
+	margin-bottom: 2px;
+	display: block;
+	width: 50px;
+	height: 20px;
+	background: url(styles/mega/images/button_bg.png) 0 0 no-repeat;
+/* ie6png: crop */
+}
+span.mega span.super-login span.login span.login-button:hover {
+	background: url(styles/mega/images/button_bg.png) 0 -20px no-repeat;
+}
+/*span.mega span.super-login span.login span.login-button button {
+	display: block;
+	padding: 0px 0px 0px 0px;
+	width: 100%;
+	height: 20px;
+	border: none;
+	background: none;
+	cursor: pointer;
+	overflow: hidden;
+	font-size: 11px;
+	line-height: 20px;
+	color: #646464;
+	text-transform: lowercase;
+}
+*/
+span.mega span.super-login span.login span.login-button button:hover {
+	color: #000000;
+}
+span.mega span.super-login span.login span.lostpassword, span.mega span.super-login span.login span.lostusername, span.mega span.super-login span.login span.registration {
+	margin-top: 0px;
+	margin-bottom: 5px;
+}
+span.mega span.super-login span.login span.lostpassword {
+	width: 25px;
+	background: url(styles/mega/images/lost_password_bg.png) 0 0px no-repeat;
+/* ie6png: crop */
+	margin-top: 6px;
+}
+span.mega span.super-login span.login span.lostusername {
+	width: 25px;
+	background: url(styles/mega/images/lost_username_bg.png) 0 0px no-repeat;
+/* ie6png: crop */
+	margin-top: 6px;
+}
+span.mega span.super-login span.login span.registration {
+	width: 31px;
+	background: url(styles/mega/images/registration_bg.png) 0 0px no-repeat;
+/* ie6png: crop */
+	margin-top: 6px;
+}
+span.mega span.super-login span.login span.lostpassword a, span.mega span.super-login span.login span.lostusername a, span.mega span.super-login span.login span.registration a {
+	display: block;
+	width: 100%;
+	height: 32px;
+}
+/* logout */
+span.mega span.super-login span.logout {
+	height: 24px;
+}
+span.mega span.super-login span.logout span.greeting {
+	line-height: 24px;
+}
+span.mega span.super-login span.logout span.logout-button {
+	margin-top: 2px;
+	width: 50px;
+	height: 32px;
+	background: url(styles/mega/images/button_bg.png) 0 0 no-repeat;
+/* ie6png: crop */
+}
+span.mega span.super-login span.logout span.logout-button:hover {
+	background: url(styles/mega/images/button_bg.png) 0 -20px no-repeat;
+}
+span.mega span.super-login span.logout span.logout-button button {
+	display: block;
+	padding: 0px 0px 0px 0px;
+	width: 100%;
+	height: 22px;
+	border: none;
+	background: none;
+	cursor: pointer;
+	overflow: hidden;
+	font-size: 11px;
+	line-height: 20px;
+	color: #646464;
+	text-transform: lowercase;
+}
+span.mega span.super-login span.logout span.logout-button button:hover {
+	color: #000000;
+}
+span.mega span.super-login span.login span.login-button-icon {
+	background: url(styles/mega/images/login_button_bg.png) no-repeat scroll 0 2px transparent;
+	height: 22px;
+	width: 21px;
+	margin-top: 4px;
+}
+span.mega span.super-login span.login span.login-button-icon:hover {
+	background: url(styles/mega/images/login_button_bg.png) 0 -20px no-repeat;
+	height: 22px;
+	width: 21px;
+}
+span.mega span.super-login span.login span.login-button-icon button {
+	display: block;
+	padding: 0px 0px 0px 0px;
+	width: 100%;
+	height: 20px;
+	border: none;
+	background: none;
+	cursor: pointer;
+	overflow: hidden;
+}
+span.mega span.super-login span.logout span.logout-button-icon {
+	margin: auto;
+	width: 50px;
+	height: 20px;
+	background: url(styles/mega/images/logout_button_bg.png) 0 0 no-repeat; /* ie6png:crop */
+}
+span.mega span.super-login span.logout span.logout-button-icon:hover {
+	background: url(styles/mega/images/logout_button_bg.png) 0 -20px no-repeat;
+}
+span.mega span.super-login span.logout span.logout-button-icon button {
+    background: none repeat scroll 0 0 transparent;
+    border: medium none;
+    color: #646464;
+    cursor: pointer;
+    display: block;
+    font-size: 11px;
+    height: 20px;
+    overflow: hidden;
+    padding: 0;
+    text-transform: lowercase;
+    width: 100%;
+}
+}
+span.mega span.super-login span.logout span.logout-button-icon button:hover {
+	color: #000000;
+}
+span.mega span.super-login span.logout span.logout-button-text button {
+	margin: auto;
+	display: block;
+	cursor: pointer;
+}

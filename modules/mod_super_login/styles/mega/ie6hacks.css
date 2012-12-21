@@ -1,0 +1,17 @@
+/**
+ * @version SVN: $Id: builder.php 469 2011-07-29 19:03:30Z mustaqs $
+ * @package    superlogin
+ * @subpackage C:
+ * @author     Mustaq Sheikh {@link http://www.herdboy.com}
+ * @author     Created on 07-Sep-2011
+ * @license    GNU/GPL
+ */
+span.mega span.super-login span.login span.username input,
+span.mega span.super-login span.login span.password input,
+span.mega span.super-login span.login span.login-button button,
+span.mega span.super-login span.login span.lostpassword a,
+span.mega span.super-login span.login span.lostusername a,
+span.mega span.super-login span.login span.registration a,
+span.mega span.super-login span.logout span.logout-button button {
+	position: relative;
+}

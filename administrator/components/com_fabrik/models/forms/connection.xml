@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<form>
+	<fieldset addfieldpath="/administrator/components/com_banners/models/fields" name="details">
+				
+		<field class="readonly" default="0" description="JGLOBAL_FIELD_ID_DESC" label="JGLOBAL_FIELD_ID_LABEL" name="id" readonly="true" required="true" type="text"/>
+		
+		<field description="COM_FABRIK_FIELD_DESCRIPTION_DESC" label="COM_FABRIK_FIELD_DESCRIPTION_LABEL" name="description" required="true" size="40" type="text"/>
+
+		<field description="COM_FABRIK_FIELD_HOST_DESC" label="COM_FABRIK_FIELD_HOST_LABEL" name="host" required="true" size="30" type="text"/>
+			
+		<field description="COM_FABRIK_FIELD_DATABASE_DESC" label="COM_FABRIK_FIELD_DATABASE_LABEL" name="database" required="true" size="30" type="text"/>
+			
+		<field description="COM_FABRIK_FIELD_USER_DESC" label="COM_FABRIK_FIELD_USER_LABEL" name="user" required="true" size="30" type="text"/>
+			
+		<field description="COM_FABRIK_FIELD_PASSWORD_DESC" label="COM_FABRIK_FIELD_PASSWORD_LABEL" name="password" size="30" type="password"/>
+			
+		<field description="COM_FABRIK_FIELD_PASSWORDCONF_DESC" label="COM_FABRIK_FIELD_PASSWORDCONF_LABEL" name="passwordConf" size="30" type="password"/>
+			
+		<field default="0" description="JFIELD_PUBLISHED_DESC" label="JSTATUS" name="published" type="radio">
+				<option value="0">JNO</option>
+				<option value="1">JYES</option>
+		 </field>
+		 
+	</fieldset>
+</form>
