@@ -1,100 +1,45 @@
 <?php 
-	include_once($_SERVER['DOCUMENT_ROOT'].DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'lib_db.php');
+	include($_SERVER['DOCUMENT_ROOT'].DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'lib_db.php');
 	
-	/*ГОВНОКОД*/
 	show_links();
 	
 	function show_links(){
-		$NEW_VALUE_FORM = 'catlinksnew';
-		if(isset($_GET['result'])) $result_field = $_GET['result'];
-		else $result_field = "tablelinks";
-		
 		$options = array();
 		$options["border"] = "1";
-		$options["cellpadding"] = "3";
-		$options["bgcolor"] = "#CCCCCC";
 
+		$grid = new JGrid($options);
+		$grid->addRow($options = array());
+	
 		$colNum = 'TitleNum';
+		$grid->addColumn($colNum);
+		$grid->setRowCell($colNum, 'ID');
 	
 		$colName = 'TitleName';
+		$grid->addColumn($colName);
+		$grid->setRowCell($colName, 'Наименование');
 
 		$colParent = 'TitleParent';
+		$grid->addColumn($colParent);
+		$grid->setRowCell($colParent, 'Родитель');
 	
 		$colSyn = 'TitleSynonym';
+		$grid->addColumn($colSyn);
+		$grid->setRowCell($colSyn, 'Синоним');
 		
 		$colDel = 'Delete';
-
+		$grid->addColumn($colDel);
+		$grid->setRowCell($colDel, 'Удалить');
 		
 	//	$name = 'TitleDesc';
 	//	$grid->addColumn($name);
 	//	$grid->setRowCell($name, 'Описание');
 
-
 		$db = new Dbprocess();
 		$db->connectToDb();
 		$table_prefix = $db->getTablePrefix();
-		
-		$grid = new JGrid($options);
-		$grid->addRow($options = array());
-
-		$grid->addColumn($colNum);
-		$grid->setRowCell($colNum, 'ID');
-	
-		$grid->addColumn($colName);
-		$grid->setRowCell($colName, 'Наименование');
-
-		$grid->addColumn($colParent);
-		$grid->setRowCell($colParent, 'Родитель');
-	
-		$grid->addColumn($colSyn);
-		$grid->setRowCell($colSyn, 'Синоним');
-		
-		$grid->addColumn($colDel);
-		$grid->setRowCell($colDel, 'Добавить');
-		
-		$grid->addRow($options = array());
-		$max_result = $db->select($table_prefix."virtuemart_category_links", "category_links_ID", "", 'max');
-		//include_once("fb.php");
-		//fb($max_result, "max_result");
-		$html.=$max_result['html'];
-		$max = $max_result['value'] + 1;
-		$grid->setRowCell($colNum, "<input name='category_links_ID' id='category_links_ID' value='".$max."' type='input' />");
-		$grid->setRowCell($colName, "<input name='category_name' value='' type='input' />");
-
-		$grid->setRowCell($colParent, "<input name='parent_name' value='' type='input' />");
-		$grid->setRowCell($colSyn, "<input name='synonym_name' value='' type='input' />");
-
-		$grid->setRowCell($colDel, '<a onclick="return onClickAjax_input(\''.$NEW_VALUE_FORM.'\', \''.$table_prefix."virtuemart_category_links".'\',\''."/components/com_import/make_input_request.php".'\', \''.$result_field.'\')"" href="">добавить</a>');	
-
-		echo "<form name='".$NEW_VALUE_FORM."' id='".$NEW_VALUE_FORM."'>";
-		echo "<h4>Введите новое значение:</h4>";
-		echo $grid->toString();
-		
-		echo "</form>";
-		$options = array();
-		$options["border"] = "1";
-		$options["cellpadding"] = "7";
-		$grid = new JGrid($options);
-		$grid->addRow($options = array());
-		$grid->addColumn($colNum);
-		$grid->setRowCell($colNum, 'ID');
-	
-		$grid->addColumn($colName);
-		$grid->setRowCell($colName, 'Наименование');
-
-		$grid->addColumn($colParent);
-		$grid->setRowCell($colParent, 'Родитель');
-	
-		$grid->addColumn($colSyn);
-		$grid->setRowCell($colSyn, 'Синоним');
-		
-		$grid->addColumn($colDel);
-		$grid->setRowCell($colDel, 'Удалить');		
 		$where = "parent_name IS NULL";
 		$result = $db->select($table_prefix."virtuemart_category_links", "*", "$where", 'std', "'category_name'");
 
-
-		
 		$i = 1;
 		if ($result['rows'] > 0) {
 			foreach($result["value"] as $row){
@@ -116,15 +61,18 @@
 						$grid->setRowCell($colName, $row_childs["category_name"]);	
 						$grid->setRowCell($colParent, $row_childs["parent_name"]);
 						$grid->setRowCell($colSyn, $row_childs["synonym_name"]);
-						$query = "category_links_ID = ".$row_childs["category_links_ID"];
-						$grid->setRowCell($colDel, '<a onclick="return onClickAjax('."'".$query."'".', '."'"."/components/com_import/delete_links.php"."'".', '."'".$result_field."'".')"" href="">удалить</a>');	
+						$query = "DELETE FROM".""."WHERE category_links_ID = ".$row_childs["category_links_ID"];
+						$grid->setRowCell($colDel, '<a onclick="return onClickAjax('."'".$query."'".', '."'"."delete_link.php"."'".', '."'".$_GET['result']."'".')"" href="">удалить</a>');	
 				
 					}
 				}
 				$i++;
 			}
 		}
-		echo "<h4>Текущая таблица:</h4>";								
+					
+
+		
+				
 		echo $grid->toString();
 	}
 class JGrid

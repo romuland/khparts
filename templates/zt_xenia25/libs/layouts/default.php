@@ -112,64 +112,54 @@ include_once (dirname(__FILE__).DS.'header.php');
         <div id="ajax-content">
         <jdoc:include type="modules" name="content" />
         
-		<?php  if($this->countModules('slideshow')) : ?>							
-		<div id="zt-slideshow" class="clearfix <?php echo $ztTools->getParamsValue($prefix, 'image', 'zt-slideshow');?>">
-			<div class="zt-slideshow-wrapper">
-				<div id="zt-slideshow-inner">
-					<jdoc:include type="modules" name="slideshow" />
+			<?php  if($this->countModules('slideshow')) : ?>							
+			<div id="zt-slideshow" class="clearfix <?php echo $ztTools->getParamsValue($prefix, 'image', 'zt-slideshow');?>">
+				<div class="zt-slideshow-wrapper">
+					<div id="zt-slideshow-inner">
+						<jdoc:include type="modules" name="slideshow" />
+					</div>
 				</div>
 			</div>
-		</div>
-		<?php endif; ?>
+			<?php endif; ?>
         
-		<!-- #Main -->
-		<div id="zt-mainframe" class="clearfix <?php echo $ztTools->getPageClassSuffix(); ?>">
-			<div class="zt-wrapper">
-					<div id="zt-container<?php echo $zt_width; ?>" class="clearfix zt-layout<?php echo $ztTools->getParam('zt_layout'); ?>">
-							<div id="zt-content">
-								<?php if($this->countModules('breadcrumb')) : ?>
-									<!-- Breadcrumb -->
-									<div id="zt-breadcrumbs" class="clearfix">
-										<jdoc:include type="modules" name="breadcrumb" />
-									</div>
-									<!-- #Breadcrumb -->
-								<?php  endif ; ?>
+			<div id="zt-main">
+				<div id="zt-content">
+				<?php if($this->countModules('breadcrumb')) : ?>
+				<!-- Breadcrumb -->
+					<div id="zt-breadcrumbs" class="clearfix">
+						<jdoc:include type="modules" name="breadcrumb" />
+					</div>
+				<!-- #Breadcrumb -->
+				<?php  endif ; ?>
                                     
-								<?php if($this->countModules('horizontal-search')) : ?>
-									<!-- horizontal-search -->
-									<div id="horizontal-search" class="clearfix">
-										<div id="horizontal-search-inner">
-											<jdoc:include type="modules" name="horizontal-search" />
-										</div>
-									</div>
-									<!-- #horizontal-search -->
-								<?php endif ; ?>
-                                                         
-								<div id="zt-component" class="clearfix">
-									<div id="zt-component-inner">
-										<jdoc:include type="message" />
-										<jdoc:include type="component" />
-									</div>
-								</div>
-							</div>
-
-							<?php if($this->countModules('right')) : ?>
-							<div id="zt-right">
-								<div id="zt-right-inner" class="side-module">
-									<jdoc:include type="modules" name="right" style="ztxhtml" />
-									<div class="clearfix"></div>
-								</div>
-                          		<?php if($this->countModules('right-login')) : ?>
-								<div id="zt-right-login">
-									<jdoc:include type="modules" name="right-login" style="ztxhtml" />
-								</div>
-                                <?php endif; ?>  
-							</div>
-							<?php endif; ?>
+				<?php if($this->countModules('horizontal-search')) : ?>
+				<!-- horizontal-search -->
+					<div id="horizontal-search" class="clearfix">
+						<div id="horizontal-search-inner">
+							<jdoc:include type="modules" name="horizontal-search" />
 						</div>
 					</div>
-                    </div>
-               </div>
+				<!-- #horizontal-search -->
+				<?php endif ; ?>
+                                                         
+					<div id="zt-component" class="clearfix">
+						<div id="zt-component-inner">
+							<jdoc:include type="message" />
+						<jdoc:include type="component" />
+					</div>
+				</div>
+			</div>
+
+			<?php if($this->countModules('right')) : ?>
+				<div id="zt-right">
+					<div id="zt-right-inner" class="side-module">
+						<jdoc:include type="modules" name="right" style="ztxhtml" />
+						<div class="clearfix"></div>
+					</div>
+				</div>
+			<?php endif; ?>
+		</div>
+        </div>
 		</div>
 		<!-- #End Main -->
 
@@ -298,4 +288,3 @@ include_once (dirname(__FILE__).DS.'header.php');
 ?>
 	
 </body>
-</html>

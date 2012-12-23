@@ -85,5 +85,4 @@ function getHTTPStatus($code)
   );
  return $status[$code];
 }
-
 ?>

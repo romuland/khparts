@@ -123,6 +123,11 @@ function showPopup(popup){
 	var wrapper = jQuery(popupWrapper, document);
 	if(popup.id == "callback") {
 		mainElement = jQuery("#cb-dlg", wrapper);
+		/*очищаем форму*/
+		jQuery('#cb-in-name').val("");
+		jQuery('#cb-antispam').val("");
+		jQuery('#cb-in-phone').val("");
+		changeRadio('cb-in-time', "time", jQuery("#cb-in-time input:radio[name=time]").first());	
 		showButton_CB();
 	}
 	else if(popup.id == "question") {
@@ -157,7 +162,6 @@ function closePopup(){
 
 function stopBubble(event){
     event = event || window.event // кросс-браузерно
-    
     if (event.stopPropagation) {
         // Вариант стандарта W3C:
         event.stopPropagation()
