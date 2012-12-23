@@ -1,0 +1,107 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1251" />
+<title>Документ без названия</title>
+<style type="text/css" src="/templates/zt_xenia25/css/template.css"></style>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+	<script>
+		$(function() {
+			$(".tabs li1").click(function(e) {
+			  e.preventDefault();
+			  $(".tabs li1").removeClass("active");
+			  $(this).addClass("active");
+			});
+		});
+		
+		function showTab(){
+			alert($('#tabs').index(this));
+			$(".tab-content .show").removeClass("show");
+			$(".tabs-content .tab-content").eq(tabNum).addClass("show");
+			
+		}
+$(function() {
+
+  $('ul#tabs').delegate('li:not(.current)', 'click', function() {
+    $(this).addClass('current').siblings().removeClass('current')
+      .parents('div.section').find('div.tab-content').eq($(this).index()).fadeIn(150).siblings('div.tab-content').hide();
+  })
+
+})
+
+
+	</script>
+<style type="text/css">
+#zt-mainframe{
+	/*background: url(../images/kia.jpg) repeat 0 0;*/
+	background:url(templates/zt_xenia25/images/bg.jpg) repeat 0 0;
+}
+.korpus div, .korpus input[type="radio"] { display: none; }
+
+.korpus label {
+  background: #fff;
+  padding: 5px;
+  border: 1px solid #e1e1e1;
+  line-height: 28px;
+  cursor: pointer; }
+.korpus input[type="radio"], .i{
+	display:none;
+}
+.korpus input[type="radio"]:checked + label {border-bottom: 1px solid #fff;}
+
+.korpus input[type="radio"]:nth-of-type(1):checked ~ div:nth-of-type(1),
+.korpus input[type="radio"]:nth-of-type(2):checked ~ div:nth-of-type(2),
+.korpus input[type="radio"]:nth-of-type(3):checked ~ div:nth-of-type(3) {
+  display: block;
+  padding: 5px;
+  background: #fff;
+  border: 1px solid #e1e1e1;
+  border-top: #fff;}
+  
+  
+  #tabs{
+	list-style:none;
+	overflow:hidden;
+  }
+  #tabs li{
+	  float:left;
+	   border: 2px solid #00FFFF;
+  }
+  .tab-content{
+	  display:none;
+  }
+  .show{
+	  display:block;
+  }
+</style>
+
+</head>
+
+<body id="zt-mainframe">
+<div class="korpus">
+  <input type="radio" name="odin" checked="checked" id="vkl1"/><label for="vkl1">CSS</label><input type="radio" name="odin" id="vkl2"/><label for="vkl2">HTML</label><input type="radio" name="odin" id="vkl3"/><label for="vkl3">Дополнительно</label>
+  <div class="i">первая вкладка</div>
+  <div class="i">вторая вкладка</div>
+  <div class="i">третья вкладка</div>
+</div>
+<div class="section">
+	<ul id="tabs">
+    	<li class="current">Number 1</li>
+       	<li>Number 2</li>
+    	<li>Number 3</li>        
+    </ul>
+    <div class="tabs-content">
+<div class="tab-content show">
+Default Content 1
+</div>
+<div class="tab-content">
+content 2
+</div>
+<div class="tab-content">
+Content 3
+</div>
+</div>
+
+</div><!-- .section -->
+</body>
+</html>
