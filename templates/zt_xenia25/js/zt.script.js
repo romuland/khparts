@@ -125,13 +125,17 @@ function showPopup(popup){
 		mainElement = jQuery("#cb-dlg", wrapper);
 		/*очищаем форму*/
 		jQuery('#cb-in-name').val("");
-		jQuery('#cb-antispam').val("");
 		jQuery('#cb-in-phone').val("");
 		changeRadio('cb-in-time', "time", jQuery("#cb-in-time input:radio[name=time]").first());	
+		jQuery('#cb-antispam').val("");
 		showButton_CB();
 	}
 	else if(popup.id == "question") {
 		mainElement = jQuery("#q-dlg", wrapper);
+		jQuery('#q-in-name').val("");
+		jQuery('#q-in-email').val("");
+		jQuery('#q-in-message').val("");
+		jQuery('#q-antispam').val("");
 		showButton_Q();
 	}
 	if(!popupPositionCalcalated) calculatePostitionPopup(mainElement);

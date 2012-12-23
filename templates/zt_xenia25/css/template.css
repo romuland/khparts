@@ -243,28 +243,11 @@ margin:0px 0;
 #zt-right-inner{
 	padding:15px 0 0 10px;
 }
-#zt-container,
-#zt-container-left,
-#zt-container-right,
-#zt-container-full {
-  width: 100%;
-  position: relative;
-  overflow: hidden;
-}
-#zt-container-right #zt-content {
-  width: 74%;
-}
 #zt-wrapper #zt-content {
   width: 74%;
 }
-#zt-container-right #zt-right{
-  width:26%;
-}
 #zt-wrapper #zt-right{
   width:26%;
-}
-#zt-container-full #zt-content {
-  width: 100%;
 }
 
 #zt-component {
@@ -468,7 +451,7 @@ div.registration, div.login, div.reset, div.remind, #adminForm, div.import, #cb-
   background-image:url(../images/bg-footer.png);
   background-repeat:no-repeat;
   background-position:50% 0;
-  padding:2px 0;
+  padding:0;
 }
 #top-left{
 	width:340px;
@@ -815,4 +798,16 @@ font-size:12px;
 	margin:0;
 	color:#003399;
 	font-size:10px;
+}
+.zt-header-list{
+	list-style-type:square;
+	list-style-position:inside;
+	padding-left:3px;
+	margin:0;
+	font-size:12px;
+	line-height:14px;
+}
+.zt-header-list li{
+	background-image:none;	
+	padding:0 5px 0 15px;
 }
