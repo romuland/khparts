@@ -122,7 +122,7 @@ include_once (dirname(__FILE__).DS.'header.php');
 			</div>
 			<?php endif; ?>
         
-			<div id="zt-main">
+			<div id="zt-main" class="zt-width<?php echo $zt_width;?>">
 				<div id="zt-content">
 				<?php if($this->countModules('breadcrumb')) : ?>
 				<!-- Breadcrumb -->
