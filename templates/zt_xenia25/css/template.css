@@ -225,9 +225,8 @@ min-height: 100%;
 margin:0px 0;
 
 }
-
 #zt-content {
-  width: 75%;
+ width: 75%;
   float: left;
   /*margin: 0 -80% 0 20%;*/
 }

@@ -149,7 +149,6 @@ include_once (dirname(__FILE__).DS.'header.php');
 					</div>
 				</div>
 			</div>
-
 			<?php if($this->countModules('right')) : ?>
 				<div id="zt-right">
 					<div id="zt-right-inner" class="side-module">
