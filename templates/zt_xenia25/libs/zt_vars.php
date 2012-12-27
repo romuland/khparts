@@ -102,10 +102,7 @@ $showTools = $this->params->get('showtools',1);
 $modLeft = $this->countModules('left');
 $modRight = $this->countModules('right');
 
-$modCol4 = $this->countModules('col4');
-$modCol5 = $this->countModules('col5');
-
-if($modCol4 || $modCol5 || $modRight) {
+if($modRight) {
 	$zt_width_right = true;
 } else {
 	$zt_width_right = false;

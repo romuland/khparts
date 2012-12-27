@@ -6,14 +6,14 @@ defined( '_JEXEC' ) or die( 'Restricted access' );
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?php echo $this->language; ?>" lang="<?php echo $this->language; ?>">
 <head>
-<jdoc:include type="head" />
-<script src=""></script>
-<?php JHTML::_('behavior.mootools'); ?>
-<?php
+	<jdoc:include type="head" />
+	<script src=""></script>
+	<?php JHTML::_('behavior.mootools'); ?>
+	<?php
 		$document = JFactory::getDocument();
 
 	//	require_once($ztTools->templateurl().'compress_timestamp.php');         //загрузить timestamp сохранённый в файле, чтобы обмануть кэширование. Устанавливает $compress_stamp=unix_timestamp                       
-	$compress_stamp=1353395767;               
+		$compress_stamp=1353395767;               
 		//if (stripos($_SERVER['HTTP_ACCEPT_ENCODING'],'GZIP')!==false)   
         //	$gz='gz';
 		//else
@@ -60,9 +60,7 @@ defined( '_JEXEC' ) or die( 'Restricted access' );
 	<link rel="stylesheet" href="<?php echo $ztTools->templateurl(); ?>css/ie7.css" type="text/css" />
 	<![endif]-->
 
-<?php
-include_once (dirname(__FILE__).DS.'header.php');
-?>
+	<?php include_once (dirname(__FILE__).DS.'header.php'); ?>
 
 </head>
 <body id="bd" class="fs<?php echo $ztTools->getParam('zt_font'); ?> <?php echo $ztrtl; ?> <?php echo $ztTools->getPageClassSuffix(); ?> clearfix <?php echo $ztTools->getParamsValue($prefix, 'image', 'bd');?>">
@@ -70,9 +68,8 @@ include_once (dirname(__FILE__).DS.'header.php');
 <div id="zt-wrapper" >
 	<div id="zt-wrapper-inner">
     	<!--Top-->
-        	<div id="top" class="clearfix pattern9">
-			<div class="zt-wrapper">
-				<div id="top-inner">
+        <div id="top" class="clearfix pattern9">
+			<div id="top-inner">
                 <table>
                 	<tr>
                     	<td id="top-left">
@@ -82,35 +79,30 @@ include_once (dirname(__FILE__).DS.'header.php');
                         	<div><jdoc:include type="modules" name="top-right-side" /></div>
                         </td>     
 	                 </tr>       
-                     </table>
-				</div>
+                 </table>
 			</div>
 		</div>	
        
-    		<div id="zt-header" class="clearfix">
+    	<div id="zt-header" class="clearfix">
 		<!--#begin Header-->
-			<div class="zt-wrapper">
-				<div id="zt-header-inner">
+			<div id="zt-header-inner">
+				<div id="zt-logo">
+					<h1 class="zt-logo"><a class="png" href="<?php echo $ztTools->baseurl() ; ?>" title="<?php echo $ztTools->sitename(); ?>">
+						<span><?php echo $ztTools->sitename() ; ?></span></a>
+					</h1>
+				</div>
 
-					<div id="zt-logo">
-						<h1 class="zt-logo"><a class="png" href="<?php echo $ztTools->baseurl() ; ?>" title="<?php echo $ztTools->sitename(); ?>">
-							<span><?php echo $ztTools->sitename() ; ?></span></a>
-						</h1>
+				<div id="zt-mainmenu">
+					<div id="zt-mainmenu-inner">
+						<?php $menu->show(); ?>
 					</div>
-
-					<div id="zt-mainmenu">
-						<div id="zt-mainmenu-inner">
-							<?php $menu->show(); ?>
-						</div>
-					</div>
-
-				</div>	
+				</div>
 			</div>	
 		</div>	
         
 		<!--#end Header-->
         <div id="ajax-content">
-        <jdoc:include type="modules" name="content" />
+        	<jdoc:include type="modules" name="content" />
         
 			<?php  if($this->countModules('slideshow')) : ?>							
 			<div id="zt-slideshow" class="clearfix <?php echo $ztTools->getParamsValue($prefix, 'image', 'zt-slideshow');?>">
@@ -166,7 +158,6 @@ include_once (dirname(__FILE__).DS.'header.php');
         <noscript><div><img src="//mc.yandex.ru/watch/17029624" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
 		<div><img src="//mc.yandex.ru/watch/17029624"; style="position:absolute; left:-9999px;" alt="" /></div>
 		<div id="zt-footer" class="clearfix pattern9">
-			<div class="zt-wrapper">
 				<div id="zt-footer-inner">	
 					<div id="zt-copyright">
 						
@@ -195,7 +186,6 @@ include_once (dirname(__FILE__).DS.'header.php');
                     
 
 				</div>
-			</div>
 		</div>		
 		<!-- #footer -->
 

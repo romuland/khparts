@@ -23,10 +23,9 @@ body:before {
 	width:0;
 	margin-top:-32767px;/
 }
-
 body#bd {
-  font-family: Verdana, Geneva, sans-serif;
-background: url(../images/bg.jpg) repeat 0 0;
+	font-family: Verdana, Geneva, sans-serif;
+	background: url(../images/bg.jpg) repeat 0 0;
 }
  h1, h2, h3{
 	  font-family: 'furore',Verdana;
@@ -56,20 +55,20 @@ body.fs6 {font-size: 15px; line-height: 21px;}
 
 /* Clearfix */
 .clearfix {
-  clear: both;
+	clear: both;
 }
 #zt-wrapper {
-  margin: 0 auto;
-  padding: 0;
-  width: 100%;
-height: 100%;
+	margin: 0 auto;
+	padding: 0;
+	width: 100%;
+	height: 100%;
 }
 #zt-wrapper-none {
-  margin: 0 auto;
-  padding: 0;
-  width: 100%;
-  height: 100%;
-min-height:100%;
+	margin: 0 auto;
+	padding: 0;
+	width: 100%;
+	height: 100%;
+	min-height:100%;
     height: auto !important;
     height: 100%;
     margin: 0 0 -100px 0; /* отрицательный нижний отступ на высоту футера */
@@ -80,15 +79,7 @@ min-height:100%;
   overflow: hidden;
   margin:0 auto;
 }
-.zt-wrapper {
-  width: 960px;
-  margin: 0 auto;
-}
  
-.zt-wrapper-inner {
-  padding: 0 10px;
-}
-
 #zt-header {
   width:100%;
   background:url(../images/header.png) 0 0 repeat-x;
@@ -97,7 +88,8 @@ min-height:100%;
   border-bottom:1px solid #d1d1d1;
 }
 #zt-header-inner {
-  width: 100%;
+  width: 960px;
+  margin: 0 auto;
   overflow: hidden;
 }
 #zt-main {
@@ -177,8 +169,6 @@ min-height:100%;
 /**#Header**/
 
 /**Topmenu**/
-#zt-topmenu ul.menu {
-}
 #zt-topmenu ul.menu li {
   display: inline;
 }
@@ -218,18 +208,6 @@ min-height:100%;
 .zt-slideshow-wrapper{ width:1010px; height:320px; margin:0 auto; background:url(../images/bg-slideshow.png) 50% 100% no-repeat; }
 /**#Slideshow**/
 
-/**Spotlight**/
-.zt-user {
-  float: left;
-}
-.zt-box-right {
-  float: right;
-}
-.zt-box-inside {
-  padding: 0 10px;
-}
-/**Spotlight**/
-
 #zt-mainframe {
     padding-bottom:90px;
 min-height: 100%;
@@ -264,7 +242,8 @@ margin:0px 0;
 }
 
 #zt-footer-inner{
-  margin: 0 10px;
+  width: 960px;
+	margin: 0 auto;
   overflow: hidden;
   background-image:url(../images/bg-footer.png);
   background-repeat:no-repeat;
@@ -442,6 +421,8 @@ div.registration, div.login, div.reset, div.remind, #adminForm, div.import, #cb-
   background-repeat:no-repeat;
   background-position:50% 0;
   padding:0;
+  width: 960px;
+  margin: 0 auto;
 }
 #top-left{
 	width:340px;

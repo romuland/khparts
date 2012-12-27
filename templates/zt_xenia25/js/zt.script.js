@@ -32,19 +32,24 @@ window.addEvent ('scroll', function() {
 	}
 });
 
+  
 jQuery(document).ready(function(){
-	/*
-		jQuery('#ajax-content').css('display', 'none').fadeIn(100);
+	
+	/*jQuery('#ajax-content').css('display', 'none').fadeIn(100);
 	jQuery('a').click(function(event){
-		event.preventDefault();
-		linkLocation = this.href;
-		jQuery('#ajax-content').load(this.href+' #ajax-content', function(){
+		
+	event.preventDefault();
+	linkLocation = this.href;
+	jQuery(document).load(this.href, function(){
+		window.history.pushState(null, null, linkLocation);//отслеживает и вставляет в адресную строку новую ссылку
+	});*/
+		/*
+		jQuery('#ajax-content').load(this.href+' #ajax-content  > *', function(){
 			window.history.pushState(null, null, linkLocation);//отслеживает и вставляет в адресную строку новую ссылку
-			jQuery.getScript("http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js");
 			});
 		
 //		jQuery('#ajax-content').fadeOut(1000, redirectPage);
-	});*/
+	});
 /*
 var content_td=jQuery('.table_load').html();
 
@@ -75,8 +80,8 @@ window.addEventListener("popstate", function(e){//берет ссылку из �
              jQuery('.table_load').load(href_next_back+" .table_load", function(){
                                          jQuery('.table_load').replaceWith(jQuery('.table_load').html());
                                         window.history.pushState(null, null, href_a);
-                                                                            });
-                                        });*/
+                                                                            });*/
+	/*});*/
 										
 	document.documentElement.scrollTop > 100 ? jQuery('#backtotop').show():jQuery("#backtotop").hide();
 	
