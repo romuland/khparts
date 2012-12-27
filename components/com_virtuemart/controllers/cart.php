@@ -15,7 +15,7 @@
  * to the GNU General Public License, and as distributed it includes or
  * is derivative of works licensed under the GNU General Public License or
  * other free or open source software licenses.
- * @version $Id: cart.php 6001 2012-05-04 15:11:06Z Milbo $
+ * @version $Id: cart.php 6502 2012-10-04 13:19:26Z Milbo $
  */
 // Check to ensure this file is included in Joomla!
 defined('_JEXEC') or die('Restricted access');
@@ -100,7 +100,7 @@ class VirtueMartControllerCart extends JController {
 		//maybe we should use $mainframe->close(); or jexit();instead of die;
 		/* Load the cart helper */
 		//require_once(JPATH_VM_SITE.DS.'helpers'.DS.'cart.php');
-		$this->json = null;
+		$this->json = new stdClass();
 		$cart = VirtueMartCart::getCart(false);
 		if ($cart) {
 			// Get a continue link */
@@ -183,29 +183,30 @@ class VirtueMartControllerCart extends JController {
 
 	/**
 	 * Store the coupon code in the cart
-	 * @author Oscar van Eijk
+	 * @author Max Milbers
 	 */
 	public function setcoupon() {
-		$mainframe = JFactory::getApplication();
+
 		/* Get the coupon_code of the cart */
 		$coupon_code = JRequest::getVar('coupon_code', ''); //TODO VAR OR INT OR WORD?
 		if ($coupon_code) {
 
 			$cart = VirtueMartCart::getCart();
 			if ($cart) {
+				$app = JFactory::getApplication();
 				$msg = $cart->setCouponCode($coupon_code);
-				if (!empty($msg)) {
-					$mainframe->enqueueMessage($msg, 'error');
-				}
-				//				$cart->setDataValidation(); //Not needed already done in the getCart function
+
+				//$cart->setDataValidation(); //Not needed already done in the getCart function
 				if ($cart->getInCheckOut()) {
-					$mainframe = JFactory::getApplication();
-					$mainframe->redirect(JRoute::_('index.php?option=com_virtuemart&view=cart&task=checkout'));
+					$app = JFactory::getApplication();
+					$app->redirect(JRoute::_('index.php?option=com_virtuemart&view=cart&task=checkout'),$msg);
+				} else {
+					$app->redirect(JRoute::_('index.php?option=com_virtuemart&view=cart'),$msg);
 				}
 			}
 		}
 		parent::display();
-		// 	self::Cart();
+
 	}
 
 	/**
@@ -249,12 +250,13 @@ class VirtueMartControllerCart extends JController {
 					break;
 				} else if ($_retVal === false ) {
 					$mainframe = JFactory::getApplication();
-					$mainframe->redirect(JRoute::_('index.php?option=com_virtuemart&view=cart&task=editshipment',$this->useXHTML,$this->useSSL), $_retVal);
+					$mainframe->redirect(JRoute::_('index.php?option=com_virtuemart&view=cart&task=edit_shipment',$this->useXHTML,$this->useSSL), $_retVal);
 					break;
 				}
 			}
 
 			if ($cart->getInCheckOut()) {
+
 				$mainframe = JFactory::getApplication();
 				$mainframe->redirect(JRoute::_('index.php?option=com_virtuemart&view=cart&task=checkout') );
 			}
@@ -400,6 +402,11 @@ class VirtueMartControllerCart extends JController {
 	}
 
 	function cancel() {
+
+		$cart = VirtueMartCart::getCart();
+		if ($cart) {
+			$cart->setOutOfCheckout();
+		}
 		$mainframe = JFactory::getApplication();
 		$mainframe->redirect(JRoute::_('index.php?option=com_virtuemart&view=cart'), 'Cancelled');
 	}

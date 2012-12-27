@@ -1,12 +1,9 @@
 <?php
 defined('_JEXEC') or 	die( 'Direct Access to ' . basename( __FILE__ ) . ' is not allowed.' ) ;
 /**
- * @version $Id: standard.php,v 1.4 2005/05/27 19:33:57 ei
- *
- * a special type of 'cash on delivey':
- * its fee depend on total sum
+
  * @author Max Milbers
- * @version $Id: standard.php 3681 2011-07-08 12:27:36Z alatak $
+ * @version $Id:$
  * @package VirtueMart
  * @subpackage payment
  * @copyright Copyright (C) 2004-2008 soeren - All rights reserved.
@@ -50,7 +47,15 @@ class plgVmCustomTextinput extends vmCustomPlugin {
 			<fieldset>
 				<legend>'. JText::_('VMCUSTOM_TEXTINPUT') .'</legend>
 				<table class="admintable">
-					'.VmHTML::row('input','VMCUSTOM_TEXTINPUT_SIZE','custom_param['.$row.'][custom_size]',$field->custom_size).'
+					'.VmHTML::row('input','VMCUSTOM_TEXTINPUT_SIZE','custom_param['.$row.'][custom_size]',$field->custom_size).
+					'<tr>
+			<td class="key">'.
+				JText::_('VMCUSTOM_TEXTINPUT_PRICE_BY_LETTER_OR_INPUT').
+			'</td>
+			<td>';
+			$html .= ($field->custom_price_by_letter==1)?JText::_('VMCUSTOM_TEXTINPUT_PRICE_BY_LETTER'):JText::_('VMCUSTOM_TEXTINPUT_PRICE_BY_INPUT');
+			$html .='</td>
+		</tr>
 				</table>
 			</fieldset>';
 		$retValue .= $html;
@@ -158,14 +163,18 @@ class plgVmCustomTextinput extends vmCustomPlugin {
 		if (!empty($productCustomsPrice->custom_price)) {
 			//TODO adding % and more We should use here $this->interpreteMathOp
 			// eg. to calculate the price * comment text length
-			if ($productCustomsPrice->custom_price_by_letter ==1) {
-				if (!empty($customVariant['comment'])) {
+
+			if (!empty($customVariant['comment'])) {
+				if ($productCustomsPrice->custom_price_by_letter ==1) {
 					$charcount = strlen ($customVariant['comment']);
-					$productCustomsPrice->custom_price = $charcount * $productCustomsPrice->custom_price ;
 				} else {
-					$productCustomsPrice->custom_price = 0.0;
+					$charcount = 1.0;
 				}
+				$productCustomsPrice->custom_price = $charcount * $productCustomsPrice->custom_price ;
+			} else {
+				$productCustomsPrice->custom_price = 0.0;
 			}
+
 		}
 		return true;
 	}

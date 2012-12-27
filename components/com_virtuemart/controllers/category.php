@@ -13,7 +13,7 @@
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
 * other free or open source software licenses.
-* @version $Id: category.php 5333 2012-01-28 23:57:11Z Milbo $
+* @version $Id: category.php 6383 2012-08-27 16:53:06Z alatak $
 */
 
 // Check to ensure this file is included in Joomla!
@@ -49,7 +49,7 @@ class VirtueMartControllerCategory extends JController {
 	* @author George
 	* @access public
 	*/
-	public function display() {
+	public function display($cachable = false, $urlparams = false)  {
 
 		if (JRequest::getvar('search')) {
 			$view = $this->getView('category', 'html');
@@ -58,6 +58,9 @@ class VirtueMartControllerCategory extends JController {
 			// Display it all
 			$safeurlparams = array('virtuemart_category_id'=>'INT','virtuemart_manufacturer_id'=>'INT','virtuemart_currency_id'=>'INT','return'=>'BASE64','lang'=>'CMD','orderby'=>'CMD','limitstart'=>'CMD','order'=>'CMD','limit'=>'CMD');
 			parent::display(true, $safeurlparams);
+		}
+		if($categoryId = JRequest::getInt('virtuemart_category_id',0)){
+			shopFunctionsF::setLastVisitedCategoryId($categoryId);
 		}
 	}
 }

@@ -13,7 +13,7 @@
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
 * other free or open source software licenses.
-* @version $Id: view.html.php 6071 2012-06-06 15:33:04Z Milbo $
+* @version $Id: view.html.php 6386 2012-08-29 11:29:26Z alatak $
 */
 
 // Check to ensure this file is included in Joomla!
@@ -118,17 +118,19 @@ class VirtuemartViewUserfields extends VmView {
 			if (($n = count($userFieldValues)) < 1) {
 				$lists['userfield_values'] =
 					 '<tr>'
-					.'<td><input type="text" value="" name="vNames[0]" /></td>'
 					.'<td><input type="text" value="" name="vValues[0]" /></td>'
+					.'<td><input type="text" size="50" value="" name="vNames[0]" /></td>'
 					.'</tr>';
 				$i = 1;
 			} else {
 				$lists['userfield_values'] = '';
+				$lang =JFactory::getLanguage();
 				for ($i = 0; $i < $n; $i++) {
+					$translate= $lang->hasKey($userFieldValues[$i]->fieldtitle) ? " (".JText::_($userFieldValues[$i]->fieldtitle).")" : "";
 					$lists['userfield_values'] .=
 						 '<tr>'
-						.'<td><input type="text" value="'.$userFieldValues[$i]->fieldtitle.'" name="vNames['.$i.']" readonly="readonly"  class="readonly"/></td>'
-						.'<td><input type="text" value="'.$userFieldValues[$i]->fieldvalue.'" name="vValues['.$i.']" /></td>'
+						 .'<td><input type="text" value="'.$userFieldValues[$i]->fieldvalue.'" name="vValues['.$i.']" /></td>'
+						.'<td><input type="text" size="50" value="'.$userFieldValues[$i]->fieldtitle.'" name="vNames['.$i.']"   />'.$translate.'</td>'
 						.'</tr>';
 				}
 			}
@@ -172,7 +174,7 @@ class VirtuemartViewUserfields extends VmView {
 			JToolBarHelper::divider();
 			JToolBarHelper::deleteList();
 
-			$this->addStandardDefaultViewLists($model);
+			$this->addStandardDefaultViewLists($model,'ordering','ASC');
 
 			$userfieldsList = $model->getUserfieldsList();
 			$this->assignRef('userfieldsList', $userfieldsList);
@@ -211,7 +213,12 @@ class VirtuemartViewUserfields extends VmView {
 		if (JVM_VERSION>1) {
 			$img = 'admin/' . $img;
 		}
-		$retImgSrc =  JHTML::_('image.administrator', $img, '/images/', null, null, $alt);
+		  if ($untoggleable) {
+			$attribs='style="opacity: 0.6;"';
+		} else {
+			$attribs='';
+		}
+		$retImgSrc =  JHTML::_('image.administrator', $img, '/images/', null, null, $alt, $attribs);
 
 		if ($untoggleable) {
 			return ($retImgSrc);
@@ -244,13 +251,11 @@ class VirtuemartViewUserfields extends VmView {
 			,array('type' => 'textarea'         , 'text' => JText::_('COM_VIRTUEMART_FIELDS_TEXTAREA'))
 			,array('type' => 'radio'            , 'text' => JText::_('COM_VIRTUEMART_FIELDS_RADIOBUTTON'))
 			,array('type' => 'webaddress'       , 'text' => JText::_('COM_VIRTUEMART_FIELDS_WEBADDRESS'))
-			,array('type' => 'delimiter', 'text' => JText::_('COM_VIRTUEMART_FIELDS_DELIMITER'))
+			,array('type' => 'delimiter'        , 'text' => JText::_('COM_VIRTUEMART_FIELDS_DELIMITER'))
 
 		);
+		$this->renderInstalledUserfieldPlugins($types);
 
-		JPluginHelper::importPlugin('vmuserfield');
-		$dispatcher = JDispatcher::getInstance();
-		$ret = $dispatcher->trigger('plgVmOnUserfieldSelection',array(&$types));
 
 // 		vmdebug('my $dispatcher ',$dispatcher);
 // 		if($data['userverifyfailed']==1){
@@ -307,11 +312,39 @@ class VirtuemartViewUserfields extends VmView {
 		$this->loadHelper('parameterparser');
 		$parameters = new vmParameters($params,  $this->plugin->element , 'plugin' ,'vmuserfield');
 		$lang = JFactory::getLanguage();
-		$filename = 'plg_vmcustom_' .  $this->plugin->element;
+		$filename = 'plg_vmuserfield_' .  $this->plugin->element;
 		$lang->load($filename, JPATH_ADMINISTRATOR);
 		return $parameters->render();
 
 
+	}
+
+	function renderInstalledUserfieldPlugins(&$plugins){
+
+		if ( JVM_VERSION===1) {
+			$table = '#__plugins';
+			$ext_id = 'id';
+			$enable = 'published';
+		} else {
+			$table = '#__extensions';
+			$ext_id = 'extension_id';
+			$enable = 'enabled';
+		}
+
+		$db = JFactory::getDBO();
+ 		$q = 'SELECT * FROM `'.$table.'` WHERE `folder` = "vmuserfield" AND `'.$enable.'`="1" ';
+		$db->setQuery($q);
+		$userfieldplugins = $db->loadAssocList($ext_id);
+		if(empty($userfieldplugins)){
+			return;
+		}
+
+		foreach($userfieldplugins as $userfieldplugin){
+		  // $plugins[] = array('type' => $userfieldplugin[$ext_id], 'text' => $userfieldplugin['name']);
+            $plugins[] = array('type' => 'plugin'.$userfieldplugin['element'], 'text' => $userfieldplugin['name']);
+		}
+
+		return;
 	}
 }
 

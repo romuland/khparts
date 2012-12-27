@@ -67,14 +67,9 @@ abstract class vmPlugin extends JPlugin {
 
 		$this->_psType = substr ($this->_type, 2);
 
-		$lang = JFactory::getLanguage ();
 		$filename = 'plg_' . $this->_type . '_' . $this->_name;
 
-		if (VmConfig::get ('enableEnglish', 1)) {
-			$lang->load ($filename, JPATH_ADMINISTRATOR, 'en-GB', TRUE);
-			$lang->load ($filename, JPATH_ADMINISTRATOR, $lang->getDefault (), TRUE);
-		}
-		$lang->load ($filename, JPATH_ADMINISTRATOR, $lang->getUsed (), TRUE);
+		VmConfig::loadJLang($filename);
 
 		if (!class_exists ('JParameter')) {
 			require(JPATH_VM_LIBRARIES . DS . 'joomla' . DS . 'html' . DS . 'parameter.php');
@@ -158,11 +153,14 @@ abstract class vmPlugin extends JPlugin {
 	/**
 	 * Checks if this plugin should be active by the trigger
 	 *
+	 * We should avoid this function, is expensive
+	 *
 	 * @author Max Milbers
 	 * @author Valérie Isaksen
+	 *
 	 * @param int/array $id the registered plugin id(s) of the joomla table
 	 */
-	protected function selectedThisByMethodId ($id = 'type') {
+	function selectedThisByMethodId ($id = 'type') {
 
 		//if($psType!=$this->_psType) return false;
 
@@ -274,11 +272,18 @@ abstract class vmPlugin extends JPlugin {
 	 * @author Valérie Isaksen
 	 * @author Max Milbers
 	 */
-	protected function onStoreInstallPluginTable ($psType) {
+	protected function onStoreInstallPluginTable ($psType,$name=FALSE) {
 
+		if(!empty($name) and $name!=$this->_name){
+			return false;
+		}
+		//Todo the psType should be name of the plugin.
 		if ($psType == $this->_psType) {
 			$query = $this->getVmPluginCreateTableSQL ();
-			if ($query !== 0) {
+			if(empty($query)){
+				return false;
+			} else {
+			//if ($query !== 0) {
 				// 				vmdebug('onStoreInstallPluginTable '.$query);
 				$db = JFactory::getDBO ();
 				$db->setQuery ($query);
@@ -313,15 +318,22 @@ abstract class vmPlugin extends JPlugin {
 	 * @param $tableComment
 	 * @return string
 	 */
-	protected function createTableSQL ($tableComment) {
-		$SQLfields = $this->getTableSQLFields ();
-		$loggablefields = $this->getTableSQLLoggablefields ();
+	protected function createTableSQL ($tableComment,$tablesFields=0) {
+
 		$query = "CREATE TABLE IF NOT EXISTS `" . $this->_tablename . "` (";
-		foreach ($SQLfields as $fieldname => $fieldtype) {
-			$query .= '`' . $fieldname . '` ' . $fieldtype . " , ";
-		}
-		foreach ($loggablefields as $fieldname => $fieldtype) {
-			$query .= '`' . $fieldname . '` ' . $fieldtype . ", ";
+		if(!empty($tablesFields)){
+			foreach ($tablesFields as $fieldname => $fieldtype) {
+				$query .= '`' . $fieldname . '` ' . $fieldtype . " , ";
+			}
+		} else {
+			$SQLfields = $this->getTableSQLFields ();
+			$loggablefields = $this->getTableSQLLoggablefields ();
+			foreach ($SQLfields as $fieldname => $fieldtype) {
+				$query .= '`' . $fieldname . '` ' . $fieldtype . " , ";
+			}
+			foreach ($loggablefields as $fieldname => $fieldtype) {
+				$query .= '`' . $fieldname . '` ' . $fieldtype . ", ";
+			}
 		}
 
 		$query .= "	      PRIMARY KEY (`id`)
@@ -390,9 +402,9 @@ abstract class vmPlugin extends JPlugin {
 	 * @param $int
 	 * @return mixed
 	 */
-	protected function getVmPluginMethod ($int) {
+	protected function getVmPluginMethod ($int, $cache = true) {
 
-		if ($this->_vmpCtable === 0) {
+		if ($this->_vmpCtable === 0 || !$cache) {
 			$db = JFactory::getDBO ();
 
 			if (!class_exists ($this->_configTableClassName)) {
@@ -426,8 +438,9 @@ abstract class vmPlugin extends JPlugin {
 		if ($this->_vmpItable === 0) {
 			$this->_vmpItable = $this->createPluginTableObject ($this->_tablename, $this->tableFields, $primaryKey, $this->_tableId, $this->_loggable);
 		}
-		//vmdebug('storePluginInternalData',$value);
+
 		$this->_vmpItable->bindChecknStore ($values, $preload);
+		//vmdebug('storePluginInternalData',$values,$this->_vmpItable);
 		$errors = $this->_vmpItable->getErrors ();
 		if (!empty($errors)) {
 			foreach ($errors as $error) {
@@ -483,7 +496,6 @@ abstract class vmPlugin extends JPlugin {
 		}
 
 		if (!$this->_tableChecked) {
-			vmdebug ('createPluginTableObject executing onStoreInstallPluginTable');
 			$this->onStoreInstallPluginTable ($this->_psType);
 			$this->_tableChecked = TRUE;
 		}

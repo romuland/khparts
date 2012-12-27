@@ -2,7 +2,7 @@
 if( !defined( '_JEXEC' ) ) die( 'Direct Access to '.basename(__FILE__).' is not allowed.' );
 /**
 *
-* @version $Id: permissions.php 6053 2012-06-05 12:36:21Z Milbo $
+* @version $Id: permissions.php 6490 2012-10-02 13:15:10Z Milbo $
 * @package VirtueMart
 * @subpackage classes
 * @author Sören
@@ -35,12 +35,11 @@ class Permissions extends JObject{
 
 	var $_db;
 
-	private $_perms;
+	private $_perms = 'shopper';
 
 	var $_is_registered_customer;
 
 	private $_vendorId = false;
-
 
 	static $_instance;
 
@@ -48,7 +47,7 @@ class Permissions extends JObject{
 
 		$this->_db = JFactory::getDBO();
  		$this->getUserGroups();
- 		$this->doAuthentication();
+ 		$this->_perms = $this->doAuthentication();
 
 	}
 
@@ -70,7 +69,7 @@ class Permissions extends JObject{
 			$this->_db->setQuery($q);
 			$this->_user_groups = $this->_db->loadObjectList('group_name');
 		}
-//		echo 'Die Usergroups: <pre>'.print_r($this->_user_groups).'</pre>';
+
 		return $this->_user_groups;
 	}
 
@@ -88,10 +87,13 @@ class Permissions extends JObject{
 		}
 
 		// only re-run authentication if we have a different user
+		//vmdebug('getPermissions',$this->_virtuemart_user_id,$userId);
 		if ($userId != $this->_virtuemart_user_id) {
-			$this->doAuthentication($userId);
+			$perms = $this->doAuthentication($userId);
+		} else {
+			$perms = $this->_perms;
 		}
-		return $this->_perms;
+		return $perms;
 	}
 
 	/**
@@ -143,12 +145,10 @@ class Permissions extends JObject{
 	* @return array Authentication information
 	*/
 	function doAuthentication ($user_id=null) {
+
 		$this->_db = JFactory::getDBO();
 		$session = JFactory::getSession();
 		$user = JFactory::getUser($user_id);
-
-		// Check token
-		//JRequest::checkToken() or jexit( 'Invalid Token doAuthentication' );
 
 		if (VmConfig::get('vm_price_access_level') != '') {
 			// Is the user allowed to see the prices?
@@ -163,59 +163,56 @@ class Permissions extends JObject{
 			$q = 'SELECT `perms` FROM #__virtuemart_vmusers
 					WHERE virtuemart_user_id="'.(int)$this->_virtuemart_user_id.'"';
 			$this->_db->setQuery($q);
-			$this->_perms = $this->_db->loadResult();
+			$perm = $this->_db->loadResult();
 
 			//We must prevent that Administrators or Managers are 'just' shoppers
 			//TODO rewrite it working correctly with jooomla ACL
 			if(JVM_VERSION === 2 ){
 				if($user->authorise('core.admin')){
-					$this->_perms  = 'admin';
+					$perm  = 'admin';
 				}
 			} else {
 				if(strpos($user->usertype,'Administrator')!== false){
-					$this->_perms  = "admin";
+					$perm  = 'admin';
 				}
 			}
 
-			if(empty($this->_perms)){
+			if(empty($perm)){
 
 				if(JVM_VERSION === 2 ){
 					if($user->groups){
 						if($user->authorise('core.admin')){
-							$this->_perms  = 'admin';
-
+							$perm  = 'admin';
 						} else if($user->authorise('core.manage')){
-							$this->_perms  = 'storeadmin';
+							$perm  = 'storeadmin';
 						} else {
-							$this->_perms  = 'shopper';
+							$perm  = 'shopper';
 						}
 					} else {
-						$this->_perms  = 'shopper';
+						$perm  = 'shopper';
 					}
 
 				} else {
 					if(strpos($user->usertype,'Administrator')!== false){
-						$this->_perms  = "admin";
+						$perm  = 'admin';
 					} else if(strpos($user->usertype,'Manager')!== false){
-						$this->_perms  = "storeadmin";
+						$perm  = 'storeadmin';
 					} else {
-						$this->_perms  = "shopper";
+						$perm  = 'shopper';
 					}
-
 				}
+
 			}
 
-// 			vmdebug('$user->authorise perms '.$this->_perms);
-
-			//}
 			$this->_is_registered_customer = true;
 		} else {
 
 			$this->_virtuemart_user_id = 0;
-			$this->_perms  = "shopper";
+			$perm  = 'shopper';
 			$this->_is_registered_customer = false;
 		}
 
+		return $perm;
 	}
 
 	/**
@@ -241,7 +238,6 @@ class Permissions extends JObject{
 					}
 				}
 			}
-// 		vmdebug('return false for ',$perms,$this->_perms);
 		return false;
 	}
 

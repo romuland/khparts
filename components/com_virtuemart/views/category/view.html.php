@@ -13,7 +13,7 @@
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
 * other free or open source software licenses.
-* @version $Id: view.html.php 6053 2012-06-05 12:36:21Z Milbo $
+* @version $Id: view.html.php 6504 2012-10-05 09:40:59Z alatak $
 */
 
 // Check to ensure this file is included in Joomla!
@@ -90,10 +90,45 @@ class VirtuemartViewCategory extends VmView {
 
 		$categoryModel->addImages($category->children,1);
 
+		if (VmConfig::get('enable_content_plugin', 0)) {
+			// add content plugin //
+			$dispatcher = JDispatcher::getInstance();
+			JPluginHelper::importPlugin('content');
+			$category->text = $category->category_description;
+			if(!class_exists('JParameter')) require(JPATH_LIBRARIES.DS.'joomla'.DS.'html'.DS.'parameter.php');
+
+			$params = new JParameter('');
+
+			if(JVM_VERSION === 2 ) {
+				$results = $dispatcher->trigger('onContentPrepare', array('com_virtuemart.category', &$category, &$params, 0));
+				// More events for 3rd party content plugins
+				// This do not disturb actual plugins, because we don't modify $product->text
+				$res = $dispatcher->trigger('onContentAfterTitle', array('com_virtuemart.category', &$category, &$params, 0));
+				$category->event->afterDisplayTitle = trim(implode("\n", $res));
+
+				$res = $dispatcher->trigger('onContentBeforeDisplay', array('com_virtuemart.category', &$category, &$params, 0));
+				$category->event->beforeDisplayContent = trim(implode("\n", $res));
+
+				$res = $dispatcher->trigger('onContentAfterDisplay', array('com_virtuemart.category', &$category, &$params, 0));
+				$category->event->afterDisplayContent = trim(implode("\n", $res));
+			} else {
+				$results = $dispatcher->trigger('onPrepareContent', array(& $category, & $params, 0));
+			}
+			$category->category_description = $category->text;
+		}
+
+
 	   $this->assignRef('category', $category);
 
 		// Set Canonic link
-		$document->addHeadLink( JRoute::_('index.php?option=com_virtuemart&view=category&virtuemart_category_id='.$categoryId) , 'canonical', 'rel', '' );
+		if (!empty($tpl)) {
+			$format = $tpl;
+		} else {
+			$format = JRequest::getWord('format', 'html');
+		}
+		if ($format == 'html') {
+			$document->addHeadLink( JRoute::_('index.php?option=com_virtuemart&view=category&virtuemart_category_id='.$categoryId) , 'canonical', 'rel', '' );
+		}
 
 	    // Set the titles
 		if ($category->customtitle) {
@@ -123,7 +158,7 @@ class VirtuemartViewCategory extends VmView {
 		}
 
 		// set search and keyword
-		if ($keyword = vmRequest::uword('keyword', '', ' ')) {
+		if ($keyword = vmRequest::uword('keyword', '0', ' ,-,+')) {
 			$pathway->addItem($keyword);
 			$title .=' ('.$keyword.')';
 		}
@@ -137,17 +172,19 @@ class VirtuemartViewCategory extends VmView {
 	    // Load the products in the given category
 	    $products = $productModel->getProductsInCategory($categoryId);
 	    $productModel->addImages($products,1);
-	    $this->assignRef('products', $products);
 
+	    $this->assignRef('products', $products);
 		foreach($products as $product){
-			$product->stock = $productModel->getStockIndicator($product);
-		}
+              $product->stock = $productModel->getStockIndicator($product);
+         }
+
 
 		$ratingModel = VmModel::getModel('ratings');
 		$showRating = $ratingModel->showRating();
 		$this->assignRef('showRating', $showRating);
 
-		if (JRequest::getInt('virtuemart_manufacturer_id' ) and !empty($products[0])) $title .=' '.$products[0]->mf_name ;
+		$virtuemart_manufacturer_id = JRequest::getInt('virtuemart_manufacturer_id',0 );
+		if ($virtuemart_manufacturer_id and !empty($products[0])) $title .=' '.$products[0]->mf_name ;
 		$document->setTitle( $title );
 		// Override Category name when viewing manufacturers products !IMPORTANT AFTER page title.
 		if (JRequest::getInt('virtuemart_manufacturer_id' ) and !empty($products[0])) $category->category_name =$products[0]->mf_name ;
@@ -195,6 +232,7 @@ class VirtuemartViewCategory extends VmView {
 		$this->assignRef('paginationAction', $paginationAction);
 
 	    shopFunctionsF::setLastVisitedCategoryId($categoryId);
+		shopFunctionsF::setLastVisitedManuId($virtuemart_manufacturer_id);
 
 	    if(empty($category->category_template)){
 	    	$category->category_template = VmConfig::get('categorytemplate');
@@ -232,9 +270,10 @@ class VirtuemartViewCategory extends VmView {
 		$dispatcher = JDispatcher::getInstance();
 		$plgDisplay = $dispatcher->trigger('plgVmSelectSearchableCustom',array( &$this->options,&$this->searchCustomValues,$this->custom_parent_id ) );
 
-		$this->options = array_merge(array($emptyOption), $this->options);
+
 
 		if(!empty($this->options)){
+			$this->options = array_merge(array($emptyOption), $this->options);
 			// render List of available groups
 			$this->searchCustomList = JText::_('COM_VIRTUEMART_SET_PRODUCT_TYPE').' '.JHTML::_('select.genericlist',$this->options, 'custom_parent_id', 'class="inputbox"', 'virtuemart_custom_id', 'custom_title', $this->custom_parent_id);
 		} else {

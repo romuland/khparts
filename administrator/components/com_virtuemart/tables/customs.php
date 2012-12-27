@@ -90,32 +90,12 @@ class TableCustoms extends VmTable {
 		$this->setOrderable('ordering',false);
 	}
 
-
-	/**
-	 *
-	 * @author  Patrick Kohl
-	 * @return boolean True .
-	 */
-	// function check(){
-
-		// if( $this->virtuemart_custom_id > 0  && $this->virtuemart_custom_id==$this->custom_parent_id ) {
-			// vmError(JText::_('COM_VIRTUEMART_CUSTOM_CANNOT_PARENT'));
-			// return false ;
-		// }
-
-		// return parent::check();
-	// }
-
 	/*
 	* field from 3 table have to be checked at delete
 	* #__vm_custom_field,#__virtuemart_customs,#__virtuemart_product_customfields
 	*/
 	function delete( $id=null , $where = 0 ){
 
-// 		$this->_db->setQuery('DELETE X,F,C FROM `#__virtuemart_customs` AS C
-// 			LEFT JOIN `#__virtuemart_customfields` AS F ON F.`virtuemart_custom_id` = C.`virtuemart_custom_id`
-// 			LEFT JOIN  `#__virtuemart_product_customfields` AS X ON  X.`virtuemart_customfield_id` = F.`virtuemart_customfield_id`
-// 			WHERE C.`virtuemart_custom_id`=' . $id);
 		$this->_db->setQuery('DELETE X,C FROM `#__virtuemart_customs` AS C
 			LEFT JOIN  `#__virtuemart_product_customfields` AS X ON  X.`virtuemart_custom_id` = C.`virtuemart_custom_id`
 			WHERE C.`virtuemart_custom_id`=' . $id);

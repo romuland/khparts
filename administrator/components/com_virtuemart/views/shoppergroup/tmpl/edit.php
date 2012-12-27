@@ -13,10 +13,29 @@
  * to the GNU General Public License, and as distributed it includes or
  * is derivative of works licensed under the GNU General Public License or
  * other free or open source software licenses.
- * @version $Id: edit.php 6031 2012-05-16 13:11:13Z alatak $
+ * @version $Id: edit.php 6386 2012-08-29 11:29:26Z alatak $
  */
 // Check to ensure this file is included in Joomla!
 defined('_JEXEC') or die('Restricted access');
+		$js = '
+	jQuery(document).ready(function( $ ) {
+			if ( $("#custom_price_display").is(\':checked\') ) {
+				$("#show_hide_prices").show();
+			} else {
+				$("#show_hide_prices").hide();
+			}
+		 $("#custom_price_display").click(function() {
+			if ( $("#custom_price_display").is(\':checked\') ) {
+				$("#show_hide_prices").show();
+			} else {
+				$("#show_hide_prices").hide();
+			}
+		});
+	});
+	';
+
+$document = JFactory::getDocument();
+$document->addScriptDeclaration($js);
 AdminUIHelper::startAdminArea();
 AdminUIHelper::imitateTabs('start', 'COM_VIRTUEMART_SHOPPERGROUP_NAME');
 ?>
@@ -74,9 +93,13 @@ AdminUIHelper::imitateTabs('start', 'COM_VIRTUEMART_SHOPPERGROUP_NAME');
 <?php echo JText::_('COM_VIRTUEMART_SHOPPERGROUP_ENABLE_PRICE_DISPLAY'); ?>
 		    </td>
 		    <td>
-<?php echo VmHTML::checkbox('custom_price_display', $this->shoppergroup->custom_price_display) ?>
+<?php
+			     $attributes='';
+			    echo VmHTML::checkbox('custom_price_display', $this->shoppergroup->custom_price_display,1,0,$attributes) ?>
 		    </td>
 		</tr>
+		</table>
+		<table class="admintable" id="show_hide_prices">
 		<tr>
 		    <td>
 			<span class="hasTip" title="<?php echo JText::_('COM_VIRTUEMART_ADMIN_CFG_SHOW_PRICES_EXPLAIN'); ?>">
@@ -86,8 +109,7 @@ AdminUIHelper::imitateTabs('start', 'COM_VIRTUEMART_SHOPPERGROUP_NAME');
 <?php echo VmHTML::checkbox('show_prices', $this->shoppergroup->price_display->get('show_prices')); ?>
 		    </td>
 		</tr>
-	    </table>
-		<table class="admintable">
+
 		    <tr>
 			<th></th>
 			<th><?php echo JText::_('COM_VIRTUEMART_ADMIN_CFG_PRICES_LABEL'); ?></th>

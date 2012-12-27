@@ -13,7 +13,7 @@
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
 * other free or open source software licenses.
-* @version $Id: userfield_values.php 6067 2012-06-06 13:47:16Z Milbo $
+* @version $Id: userfield_values.php 6361 2012-08-21 16:05:40Z alatak $
 */
 
 // Check to ensure this file is included in Joomla!
@@ -64,14 +64,14 @@ class TableUserfield_values extends VmTable {
 	 */
 	function check()
 	{
-		if (preg_match('/[^a-z0-9\._\-]/i', $this->fieldtitle) > 0) {
+		if (preg_match('/[^a-z0-9\._\-]/i', $this->fieldvalue) > 0) {
 			vmError(JText::_('COM_VIRTUEMART_TITLE_IN_FIELDVALUES_CONTAINS_INVALID_CHARACTERS'));
 			return false;
 		}
 
 		$db = JFactory::getDBO();
 		$q = 'SELECT `virtuemart_userfield_value_id` FROM `#__virtuemart_userfield_values` '
-			. 'WHERE `fieldtitle`="' . $this->fieldtitle . '" '
+			. 'WHERE `fieldvalue`="' . $this->fieldvalue . '" '
 			. 'AND   `virtuemart_userfield_id`=' . $this->virtuemart_userfield_id;
 		$db->setQuery($q);
 		$_id = $db->loadResult();

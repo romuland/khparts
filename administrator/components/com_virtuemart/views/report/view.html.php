@@ -3,7 +3,7 @@ if( !defined( '_JEXEC' ) ) die('Restricted access');
 
 /**
 *
-* @version $Id: view.html.php 5967 2012-04-29 23:17:14Z electrocity $
+* @version $Id: view.html.php 6489 2012-10-01 23:17:36Z Milbo $
 * @package VirtueMart
 * @subpackage Report
 * @copyright Copyright (C) VirtueMart Team - All rights reserved.
@@ -54,19 +54,21 @@ class VirtuemartViewReport extends VmView {
 
 		$this->addStandardDefaultViewLists($model);
 		$revenueBasic = $model->getRevenue();
-// 		vmdebug('VirtuemartViewReport revenue',$revenueBasic);
-		if($revenueBasic){
-			$totalReport['revenueTotal']= $totalReport['number_of_ordersTotal'] = $totalReport['itemsSoldTotal'] = 0 ;
-			foreach($revenueBasic as &$j){
 
-				$totalReport['revenueTotal'] += $j['order_subtotal'];
+		if($revenueBasic){
+			$totalReport['revenueTotal_brutto']= $totalReport['revenueTotal_netto']= $totalReport['number_of_ordersTotal'] = $totalReport['itemsSoldTotal'] = 0 ;
+			foreach($revenueBasic as &$j){
+				vmdebug('VirtuemartViewReport revenue',$j);
+				$totalReport['revenueTotal_netto'] += $j['order_subtotal_netto'];
+				$totalReport['revenueTotal_brutto'] += $j['order_subtotal_brutto'];
 				$totalReport['number_of_ordersTotal'] += $j['count_order_id'];
-				$j['order_subtotal'] = $myCurrencyDisplay->priceDisplay($j['order_subtotal']);
-				$j['product_quantity'] = $model->getItemsByRevenue($j);
+				$j['order_subtotal_netto'] = $myCurrencyDisplay->priceDisplay($j['order_subtotal_netto']);
+				$j['order_subtotal_brutto'] = $myCurrencyDisplay->priceDisplay($j['order_subtotal_brutto']);
+				//$j['product_quantity'] = $model->getItemsByRevenue($j);
 				$totalReport['itemsSoldTotal'] +=$j['product_quantity'];
 			}
-			$totalReport['revenueTotal'] = $myCurrencyDisplay->priceDisplay($totalReport['revenueTotal']);
-
+			$totalReport['revenueTotal_netto'] = $myCurrencyDisplay->priceDisplay($totalReport['revenueTotal_netto']);
+			$totalReport['revenueTotal_brutto'] = $myCurrencyDisplay->priceDisplay($totalReport['revenueTotal_brutto']);
 			// if ( 'product_quantity'==JRequest::getWord('filter_order')) {
 				// foreach ($revenueBasic as $key => $row) {
 					// $created_on[] =$row['created_on'];

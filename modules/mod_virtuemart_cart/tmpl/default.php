@@ -24,7 +24,9 @@ if ($show_product_list) {
 	</div>
 	<div class="vm_cart_products">
 		<div class="container">
-		<?php foreach ($data->products as $product)
+
+		<?php
+			foreach ($data->products as $product)
 		{
 			if ($show_price) { ?>
 				  <div class="prices" style="float: right;"><?php echo  $product['prices'] ?></div>

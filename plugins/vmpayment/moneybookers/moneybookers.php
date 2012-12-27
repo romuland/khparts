@@ -2,7 +2,7 @@
 
 /*
 * @author Skrill Holdings Ltd.
-* @version $Id: moneybookers.php 6261 2012-07-12 08:26:33Z alatak $
+* @version $Id: moneybookers.php 6508 2012-10-08 06:57:29Z alatak $
 * @package VirtueMart
 * @subpackage payment
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -27,7 +27,9 @@ class plgVmpaymentMoneybookers extends vmPSPlugin {
 	function __construct (& $subject, $config) {
 
 		parent::__construct ($subject, $config);
-
+		// unique filelanguage for all moneybookers methods
+		$jlang = JFactory::getLanguage ();
+		$jlang->load ('plg_vmpayment_moneybookers', JPATH_ADMINISTRATOR, NULL, TRUE);
 		$this->_loggable = TRUE;
 		$this->_debug = TRUE;
 		$this->tableFields = array_keys ($this->getTableSQLFields ());
@@ -270,15 +272,19 @@ class plgVmpaymentMoneybookers extends vmPSPlugin {
 			                        'index.php?option=com_virtuemart&view=pluginresponse&task=pluginresponsereceived&on=' .
 			                        $order['details']['BT']->order_number .
 			                        '&pm=' .
-			                        $order['details']['BT']->virtuemart_paymentmethod_id),
+			                        $order['details']['BT']->virtuemart_paymentmethod_id .
+		                            '&Itemid=' . JRequest::getInt ('Itemid')
+		                        ),
 		                        'cancel_url'               => JROUTE::_ (JURI::root () .
 			                        'index.php?option=com_virtuemart&view=pluginresponse&task=pluginUserPaymentCancel&on=' .
 			                        $order['details']['BT']->order_number .
 			                        '&pm=' .
-			                        $order['details']['BT']->virtuemart_paymentmethod_id),
+			                        $order['details']['BT']->virtuemart_paymentmethod_id .
+		                            '&Itemid=' . JRequest::getInt ('Itemid')
+		                        ),
 		                        'status_url'               => JROUTE::_ (JURI::root () .
 			                        'index.php?option=com_virtuemart&view=pluginresponse&task=pluginnotification&tmpl=component'),
-
+		                        'platform'                 => '21477272',
 		                        'hide_login'               => $method->hide_login,
 		                        'prepare_only'             => 1,
 		                        'logo_url'                 => $method->logourl,
@@ -298,7 +304,7 @@ class plgVmpaymentMoneybookers extends vmPSPlugin {
 		                        'amount'                   => $totalInPaymentCurrency,
 		                        'currency'                 => $currency_code_3,
 		                        'detail1_description'
-		                                                   => JText::_ ('VMPAYMENT_MONEYBOOKERS_ORDER_NUMBER') . ': ',
+		                                                   => JText::_ ('VMPAYMENT_MONEYBOOKERS_ORDER_NUMBER') . ': ', //ihh hardcoded colon
 		                        'detail1_text'             => $order['details']['BT']->order_number);
 
 		// Prepare data that should be stored in the database
@@ -398,7 +404,7 @@ class plgVmpaymentMoneybookers extends vmPSPlugin {
 		}
 
 		$mb_data = JRequest::get ('post');
-		vmdebug ('MONEYBOOKERS plgVmOnPaymentResponseReceived', $mb_data);
+
 
 		// the payment itself should send the parameter needed.
 		$virtuemart_paymentmethod_id = JRequest::getInt ('pm', 0);
@@ -419,7 +425,7 @@ class plgVmpaymentMoneybookers extends vmPSPlugin {
 			// JError::raiseWarning(500, $db->getErrorMsg());
 			return '';
 		}
-
+		vmdebug ('MONEYBOOKERS plgVmOnPaymentResponseReceived', $mb_data);
 		$payment_name = $this->renderPluginName ($method);
 		$html = $this->_getPaymentResponseHtml ($paymentTable, $payment_name);
 
@@ -470,7 +476,7 @@ class plgVmpaymentMoneybookers extends vmPSPlugin {
 		$mb_data = JRequest::get ('post');
 
 		if (!isset($mb_data['transaction_id'])) {
-			$this->logInfo (__FUNCTION__ . ' transaction_id not set: ' . $mb_data['transaction_id'], 'message');
+			//$this->logInfo (__FUNCTION__ . ' transaction_id not set: ' . $mb_data['transaction_id'], 'message');
 			return;
 		}
 
@@ -755,7 +761,6 @@ class plgVmpaymentMoneybookers extends vmPSPlugin {
 	 * @param array $_formData Form data
 	 * @return mixed, True on success, false on failures (the rest of the save-process will be
 	 * skipped!), or null when this method is not activated.
-	 * @author Oscar van Eijk
 
 	public function plgVmOnUpdateOrderPayment(  $_formData) {
 	return null;
@@ -767,7 +772,6 @@ class plgVmpaymentMoneybookers extends vmPSPlugin {
 	 * @param array $_formData Form data
 	 * @return mixed, True on success, false on failures (the rest of the save-process will be
 	 * skipped!), or null when this method is not actived.
-	 * @author Oscar van Eijk
 
 	public function plgVmOnUpdateOrderLine(  $_formData) {
 	return null;
@@ -781,7 +785,6 @@ class plgVmpaymentMoneybookers extends vmPSPlugin {
 	 * @param integer $_orderId The order ID
 	 * @param integer $_lineId
 	 * @return mixed Null for method that aren't active, text (HTML) otherwise
-	 * @author Oscar van Eijk
 
 	public function plgVmOnEditOrderLineBE(  $_orderId, $_lineId) {
 	return null;
@@ -796,7 +799,6 @@ class plgVmpaymentMoneybookers extends vmPSPlugin {
 	 * @param integer $_orderId The order ID
 	 * @param integer $_lineId
 	 * @return mixed Null for method that aren't active, text (HTML) otherwise
-	 * @author Oscar van Eijk
 
 	public function plgVmOnShowOrderLineFE(  $_orderId, $_lineId) {
 	return null;

@@ -5,7 +5,7 @@ defined('_JEXEC') or  die( 'Direct Access to '.basename(__FILE__).' is not allow
 *
 * NOTE: THIS MODULE REQUIRES THE VIRTUEMART COMPONENT!
 /*
-* @version $Id: mod_virtuemart_currencies.php 5615 2012-03-06 11:14:34Z alatak $
+* @version $Id: mod_virtuemart_currencies.php 6555 2012-10-17 15:49:43Z alatak $
 * @package VirtueMart
 * @subpackage modules
 *
@@ -23,6 +23,11 @@ defined('_JEXEC') or  die( 'Direct Access to '.basename(__FILE__).' is not allow
  * Prices in the orders are saved in the shop currency; these fields are required
  * to show the prices to the user in a later stadium.
   */
+
+if (!class_exists( 'VmConfig' )) require(JPATH_ADMINISTRATOR . DS . 'components' . DS . 'com_virtuemart'.DS.'helpers'.DS.'config.php');
+
+VmConfig::loadConfig();
+VmConfig::loadJLang('mod_virtuemart_currencies', true);
 $mainframe = Jfactory::getApplication();
 $vendorId = JRequest::getInt('vendorid', 1);
 $text_before = $params->get( 'text_before', '');

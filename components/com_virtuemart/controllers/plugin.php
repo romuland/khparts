@@ -32,7 +32,7 @@ class VirtuemartControllerPlugin extends JController {
 	 *
 	 * @access    public
 	 */
-	function display () {
+	function display($cachable = false, $urlparams = false)  {
 
 		if (!$type = JRequest::getWord ('vmtype', NULL)) {
 			$type = JRequest::getWord ('type', 'vmcustom');

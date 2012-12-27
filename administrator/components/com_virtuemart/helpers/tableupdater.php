@@ -716,15 +716,23 @@ class GenericTableUpdater extends JModel{
 			}
 			if (!empty($query)) {
 				$this->_db->setQuery($query);
-				if(!$this->_db->query()){
-					$this->_app->enqueueMessage('alterTable '.$action.' '.$tablename.'.'.$fieldname.' :'.$this->_db->getErrorMsg() );
+				$err = $this->_db->getErrorMsg();
+				if(!$this->_db->query() or !empty($err) ){
+					vmError('alterTable '.$action.' '.$tablename.'.'.$fieldname.' : '.$err );
+				} else {
+					vmInfo('alterTable '.$action.' '.$tablename.'.'.$fieldname.' : '. $query);
 				}
+
 				$after = 'AFTER '.$fieldname;
 			}
 		}
 
 		if($dropped != 0 or $altered !=0 or $added!=0){
 			$this->_app->enqueueMessage('Table updated: Tablename '.$tablename.' dropped: '.$dropped.' altered: '.$altered.' added: '.$added);
+			$err = $this->_db->getErrorMsg();
+			if(!empty($err)){
+				vmError('Tableupdater updating table '.$tablename.' throws error '.$err);
+			}
 		}
 
 		return true;

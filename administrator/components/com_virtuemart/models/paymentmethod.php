@@ -13,13 +13,11 @@
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
 * other free or open source software licenses.
-* @version $Id: paymentmethod.php 6057 2012-06-06 00:44:52Z Milbo $
+* @version $Id: paymentmethod.php 6474 2012-09-19 18:22:26Z Milbo $
 */
 
 // Check to ensure this file is included in Joomla!
 defined('_JEXEC') or die('Restricted access');
-
-jimport( 'joomla.application.component.model');
 
 if(!class_exists('VmModel'))require(JPATH_VM_ADMINISTRATOR.DS.'helpers'.DS.'vmmodel.php');
 
@@ -160,22 +158,23 @@ class VirtueMartModelPaymentmethod extends VmModel{
 	  	   	if(!class_exists('VirtueMartModelVendor')) require(JPATH_VM_ADMINISTRATOR.DS.'models'.DS.'vendor.php');
 	   		$data['virtuemart_vendor_id'] = VirtueMartModelVendor::getLoggedVendor();
 	  	}
-		// missing string FIX, Bad way ?
-		if (JVM_VERSION===1) {
-			$tb = '#__plugins';
-			$ext_id = 'id';
-		} else {
-			$tb = '#__extensions';
-			$ext_id = 'extension_id';
-		}
-		$q = 'SELECT `element` FROM `' . $tb . '` WHERE `' . $ext_id . '` = "'.$data['payment_jplugin_id'].'"';
-		$this->_db->setQuery($q);
-		$data['payment_element'] = $this->_db->loadResult();
+
 
 		$table = $this->getTable('paymentmethods');
 
-
 		if(isset($data['payment_jplugin_id'])){
+
+			// missing string FIX, Bad way ?
+			if (JVM_VERSION===1) {
+				$tb = '#__plugins';
+				$ext_id = 'id';
+			} else {
+				$tb = '#__extensions';
+				$ext_id = 'extension_id';
+			}
+			$q = 'SELECT `element` FROM `' . $tb . '` WHERE `' . $ext_id . '` = "'.$data['payment_jplugin_id'].'"';
+			$this->_db->setQuery($q);
+			$data['payment_element'] = $this->_db->loadResult();
 
 			JPluginHelper::importPlugin('vmpayment');
 			$dispatcher = JDispatcher::getInstance();

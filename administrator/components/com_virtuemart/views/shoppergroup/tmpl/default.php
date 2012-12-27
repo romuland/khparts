@@ -13,7 +13,7 @@
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
 * other free or open source software licenses.
-* @version $Id: default.php 5628 2012-03-08 09:00:21Z alatak $
+* @version $Id: default.php 6370 2012-08-23 16:05:28Z Milbo $
 */
 
 // Check to ensure this file is included in Joomla!
@@ -102,13 +102,13 @@ AdminUIHelper::startAdminArea();
 	    <tfoot>
 		    <tr>
 		      <td colspan="10">
-			      <?php echo $this->pagination->getListFooter(); ?>
+			      <?php echo $this->sgrppagination->getListFooter(); ?>
 		      </td>
 		    </tr>
 	    </tfoot>
 	  </table>
   </div>
 
-	<?php echo $this->addStandardHiddenToForm(); ?>
+	<?php echo $this->addStandardHiddenToForm($this->_name,$this->task); ?>
 </form><?php
 AdminUIHelper::endAdminArea(); ?>

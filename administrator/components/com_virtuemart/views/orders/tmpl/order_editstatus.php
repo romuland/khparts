@@ -12,7 +12,7 @@
  * to the GNU General Public License, and as distributed it includes or
  * is derivative of works licensed under the GNU General Public License or
  * other free or open source software licenses.
- * @version $Id: order_editstatus.php 5193 2011-12-30 13:30:09Z alatak $
+ * @version $Id: order_editstatus.php 6468 2012-09-18 22:00:43Z Milbo $
  */
 ?>
 
@@ -48,7 +48,7 @@
 	<tr>
 		<td class="key"><?php echo JText::_('COM_VIRTUEMART_ORDER_UPDATE_LINESTATUS') ?></td>
 		<td><br />
-		<?php echo VmHTML::checkbox('update_lines', true); ?>
+		<?php echo VmHTML::checkbox('orders['.$this->orderID.'][update_lines]', true); ?>
 		</td>
 	</tr>
 	<tr>

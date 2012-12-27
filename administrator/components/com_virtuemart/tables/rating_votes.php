@@ -7,7 +7,7 @@
 * @subpackage
 * @author RolandD
 * @link http://www.virtuemart.net
-* @copyright Copyright (c) 2004 - 2010 VirtueMart Team. All rights reserved.
+* @copyright Copyright (c) 2004 - 2012 VirtueMart Team. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
 * VirtueMart is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -46,7 +46,6 @@ class TableRating_votes extends VmTable {
 	function __construct(&$db) {
 		parent::__construct('#__virtuemart_rating_votes', 'virtuemart_rating_vote_id', $db);
 		$this->setPrimaryKey('virtuemart_rating_vote_id');
-//		$this->setObligatoryKeys('vote');
 
 		$this->setLoggable();
 	}

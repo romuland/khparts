@@ -12,7 +12,7 @@
  * to the GNU General Public License, and as distributed it includes or
  * is derivative of works licensed under the GNU General Public License or
  * other free or open source software licenses.
- * @version $Id: default_checkout.php 6046 2012-05-24 12:43:43Z alatak $
+ * @version $Id: default_checkout.php 6351 2012-08-15 20:20:31Z Milbo $
  */
 defined('_JEXEC') or die('Restricted access');
 /*
@@ -34,7 +34,7 @@ defined('_JEXEC') or die('Restricted access');
 			</span>
 			</td>
 			<td>
-			<?php echo VmHTML::checkbox('addtocart_popup', $this->config->get('addtocart_popup',1)); ?>
+			<?php echo VmHTML::checkbox('addtocart_popup', VmConfig::get('addtocart_popup',1)); ?>
 			</td>
 		</tr>
 		<tr>
@@ -46,7 +46,7 @@ defined('_JEXEC') or die('Restricted access');
 			</span>
 			</td>
 			<td>
-			<?php echo VmHTML::checkbox('vmlang_js', $this->config->get('vmlang_js')); ?>
+			<?php echo VmHTML::checkbox('vmlang_js', VmConfig::get('vmlang_js')); ?>
 			</td>
 		</tr>
 		<tr>
@@ -58,7 +58,7 @@ defined('_JEXEC') or die('Restricted access');
 			</span>
 			</td>
 			<td>
-			<?php echo VmHTML::checkbox('automatic_shipment', $this->config->get('automatic_shipment')); ?>
+			<?php echo VmHTML::checkbox('automatic_shipment', VmConfig::get('automatic_shipment')); ?>
 			</td>
 		</tr>
 		<tr>
@@ -70,7 +70,7 @@ defined('_JEXEC') or die('Restricted access');
 			</span>
 			</td>
 			<td>
-			<?php echo VmHTML::checkbox('automatic_payment', $this->config->get('automatic_payment')); ?>
+			<?php echo VmHTML::checkbox('automatic_payment', VmConfig::get('automatic_payment')); ?>
 			</td>
 		</tr>
 		<tr>
@@ -82,7 +82,7 @@ defined('_JEXEC') or die('Restricted access');
 			</span>
 			</td>
 			<td>
-			<?php echo VmHTML::checkbox('agree_to_tos_onorder', $this->config->get('agree_to_tos_onorder')); ?>
+			<?php echo VmHTML::checkbox('agree_to_tos_onorder', VmConfig::get('agree_to_tos_onorder')); ?>
 			</td>
 		</tr>
 
@@ -94,7 +94,7 @@ defined('_JEXEC') or die('Restricted access');
 				</label> </span>
 			</td>
 			<td>
-			<?php echo VmHTML::checkbox('oncheckout_show_legal_info', $this->config->get('oncheckout_show_legal_info')); ?>
+			<?php echo VmHTML::checkbox('oncheckout_show_legal_info', VmConfig::get('oncheckout_show_legal_info')); ?>
 			</td>
 		</tr>
 		<tr>
@@ -105,7 +105,7 @@ defined('_JEXEC') or die('Restricted access');
 				</label> </span>
 			</td>
 			<td>
-			<?php echo VmHTML::checkbox('oncheckout_show_register', $this->config->get('oncheckout_show_register')); ?>
+			<?php echo VmHTML::checkbox('oncheckout_show_register', VmConfig::get('oncheckout_show_register')); ?>
 			</td>
 		</tr>
 		<tr>
@@ -116,7 +116,7 @@ defined('_JEXEC') or die('Restricted access');
 				</label> </span>
 			</td>
 			<td>
-			<?php echo VmHTML::checkbox('oncheckout_only_registered', $this->config->get('oncheckout_only_registered')); ?>
+			<?php echo VmHTML::checkbox('oncheckout_only_registered', VmConfig::get('oncheckout_only_registered')); ?>
 			</td>
 		</tr>
 		<tr>
@@ -127,7 +127,7 @@ defined('_JEXEC') or die('Restricted access');
 				</label> </span>
 			</td>
 			<td>
-			<?php echo VmHTML::checkbox('oncheckout_show_steps', $this->config->get('oncheckout_show_steps')); ?>
+			<?php echo VmHTML::checkbox('oncheckout_show_steps', VmConfig::get('oncheckout_show_steps')); ?>
 			</td>
 		</tr>
 		<tr>
@@ -138,7 +138,7 @@ defined('_JEXEC') or die('Restricted access');
 				</label> </span>
 			</td>
 			<td>
-			<?php echo VmHTML::checkbox('oncheckout_show_images', $this->config->get('oncheckout_show_images',0)); ?>
+			<?php echo VmHTML::checkbox('oncheckout_show_images', VmConfig::get('oncheckout_show_images',0)); ?>
 			</td>
 		</tr>
 
@@ -151,7 +151,8 @@ defined('_JEXEC') or die('Restricted access');
 			</td>
 			<td>
 					<?php
-					echo VmHTML::selectList('inv_os',$this->config->get('inv_os','C'),$this->orderStatusList);
+					echo $this->orderStatusModel->renderOrderStatusList(VmConfig::get('inv_os'),'inv_os[]');
+					//echo VmHTML::selectList('inv_os',VmConfig::get('inv_os','C'),$this->orderStatusList);
 					?>
 			</td>
 		</tr>

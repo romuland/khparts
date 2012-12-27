@@ -14,14 +14,11 @@
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
 * other free or open source software licenses.
-* @version $Id: usergroups.php 5683 2012-03-18 19:35:41Z Milbo $
+* @version $Id: usergroups.php 6350 2012-08-14 17:18:08Z Milbo $
 */
 
 // Check to ensure this file is included in Joomla!
 defined('_JEXEC') or die('Restricted access');
-
-// Load the model framework
-jimport( 'joomla.application.component.model');
 
 if(!class_exists('VmModel'))require(JPATH_VM_ADMINISTRATOR.DS.'helpers'.DS.'vmmodel.php');
 if(!class_exists('TableUsergroups'))require(JPATH_VM_ADMINISTRATOR.DS.'tables'.DS.'usergroups.php');

@@ -85,18 +85,7 @@ class TableShoppergroups extends VmTable
 					return false;
 				}
 			}
-
-
-
 		}
-/* commented by PATRICK This set always shoppergroup to 1 if you do a new shoppergroup
-		if(empty($this->virtuemart_shoppergroup_id)){
-			$q = 'SELECT `virtuemart_shoppergroup_id` FROM `#__virtuemart_shoppergroups` WHERE `default`="1" AND `virtuemart_vendor_id`="1" ';
-			$this->_db->setQuery($q);
-			$this->virtuemart_shoppergroup_id=$this->_db->loadResult();
-		}
-*/
-
 
 		return parent::check();
 

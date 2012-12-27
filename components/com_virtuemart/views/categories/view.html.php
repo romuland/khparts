@@ -62,6 +62,33 @@ class VirtuemartViewCategories extends VmView {
 		//$category->children = $categoryModel->getChildCategoryList($vendorId, $categoryId);
 		$categoryModel->addImages($category->children,1);
 
+		if (VmConfig::get('enable_content_plugin', 0)) {
+			// add content plugin //
+			$dispatcher = JDispatcher::getInstance();
+			JPluginHelper::importPlugin('content');
+			$category->text = $category->category_description;
+			if(!class_exists('JParameter')) require(JPATH_LIBRARIES.DS.'joomla'.DS.'html'.DS.'parameter.php');
+
+			$params = new JParameter('');
+
+			if(JVM_VERSION === 2 ) {
+				$results = $dispatcher->trigger('onContentPrepare', array('com_virtuemart.category', &$category, &$params, 0));
+				// More events for 3rd party content plugins
+				// This do not disturb actual plugins, because we don't modify $product->text
+				$res = $dispatcher->trigger('onContentAfterTitle', array('com_virtuemart.category', &$category, &$params, 0));
+				$category->event->afterDisplayTitle = trim(implode("\n", $res));
+
+				$res = $dispatcher->trigger('onContentBeforeDisplay', array('com_virtuemart.category', &$category, &$params, 0));
+				$category->event->beforeDisplayContent = trim(implode("\n", $res));
+
+				$res = $dispatcher->trigger('onContentAfterDisplay', array('com_virtuemart.category', &$category, &$params, 0));
+				$category->event->afterDisplayContent = trim(implode("\n", $res));
+			} else {
+				$results = $dispatcher->trigger('onPrepareContent', array(& $category, & $params, 0));
+			}
+			$category->category_description = $category->text;
+		}
+
 	   //Add the category name to the pathway
 // 		$pathway->addItem(strip_tags($category->category_name)); //Todo what should be shown up?
 		// Add the category name to the pathway

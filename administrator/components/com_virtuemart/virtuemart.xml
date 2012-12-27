@@ -5,14 +5,14 @@
 
 	<name>VIRTUEMART</name>
 
-	<creationDate>July 04 2012</creationDate>
+	<creationDate>December 21 2012</creationDate>
 	<author>The VirtueMart Development Team</author>
 	<authorEmail>max|at|virtuemart.net</authorEmail>
 	<authorUrl>http://www.virtuemart.net</authorUrl>
 	<copyright>Copyright (C) 2004-2012 Virtuemart Team. All rights reserved.</copyright>
 	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
-	<version status="MINOR">2.0.8c</version>
-
+	<version status="MAJOR">2.0.16</version>
+<description></description>
    <!-- Custom un/installer for 1.6 -->
    <scriptfile>install/script.virtuemart.php</scriptfile>
 	<!-- Custom installer for 1.5 -->
@@ -26,7 +26,7 @@
 		<filename>router.php</filename>
 		<filename>virtuemart.php</filename>
 		<filename>index.html</filename>
-
+        <filename>virtuemart_parser.php</filename>
 		<folder>assets</folder>
 		<folder>controllers</folder>
 		<folder>helpers</folder>
@@ -69,6 +69,8 @@
 			<language tag="en-GB">en-GB/en-GB.com_virtuemart.ini</language>
 			<language tag="en-GB">en-GB/en-GB.com_virtuemart.sys.ini</language>
 			<language tag="en-GB">en-GB/en-GB.com_virtuemart.menu.ini</language>
+            <language tag="en-GB">en-GB/en-GB.com_virtuemart_countries.ini</language>
+            <language tag="en-GB">en-GB/en-GB.com_virtuemart_media.ini</language>
 		</languages>
 	</administration>
 

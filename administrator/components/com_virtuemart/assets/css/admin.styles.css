@@ -277,6 +277,7 @@ div.threecols ul   {
 .element-hidden{display: none;}
 .datepicker {
     text-align: center;
+    width:130px;
 }
 a.fg-button, .always-left{
     float: left !important;
@@ -297,6 +298,6 @@ a.fg-button, .always-left{
 /*     padding-right: 2.1em; */
 }
 #searchMedia{margin:0;padding:0; }
-.stock-out{background-color:red !important;color : black}
-.stock-low{background-color:orange !important;color : black}
+.stock-out{background-color:#f9a7aa !important;color : black}
+.stock-low{background-color:#F7B77B !important;color : black}
 .stock-normal{background-color:#F0F9D0 !important;color : black}

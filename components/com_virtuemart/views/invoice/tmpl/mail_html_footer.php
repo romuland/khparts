@@ -25,8 +25,8 @@ if (empty($this->vendor)) {
 		$this->vendor = $vendorModel->getVendor();
 }
 
-
-$link = shopFunctionsF::getBaseUrl().JRoute::_ ( 'index.php?option=com_virtuemart',false,-1);
+//$link = shopFunctionsF::getRootRoutedUrl('index.php?option=com_virtuemart');
+$link = JURI::root().'index.php?option=com_virtuemart';
 
 echo '<br/><br/>';
 //$link='<b>'.JHTML::_('link', JURI::root().$link, $this->vendor->vendor_name).'</b> ';

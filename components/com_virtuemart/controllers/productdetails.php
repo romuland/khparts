@@ -13,7 +13,7 @@
  * to the GNU General Public License, and as distributed it includes or
  * is derivative of works licensed under the GNU General Public License or
  * other free or open source software licenses.
- * @version $Id: productdetails.php 6168 2012-06-26 22:47:48Z Milbo $
+ * @version $Id: productdetails.php 6425 2012-09-11 20:17:08Z Milbo $
  */
 
 // Check to ensure this file is included in Joomla!
@@ -37,7 +37,7 @@ class VirtueMartControllerProductdetails extends JController {
 		$this->registerTask ('askquestion', 'MailForm');
 	}
 
-	function display () {
+	function display($cachable = false, $urlparams = false)  {
 
 		$format = JRequest::getWord ('format', 'html');
 		if ($format == 'pdf') {
@@ -58,6 +58,11 @@ class VirtueMartControllerProductdetails extends JController {
 	 */
 	public function mailAskquestion () {
 
+		// Display it all
+		$view = $this->getView ('askquestion', 'html');
+		if(!VmConfig::get('ask_question',false)){
+			$view->display ();
+		}
 		JRequest::checkToken () or jexit ('Invalid Token');
 		if (!class_exists ('shopFunctionsF')) {
 			require(JPATH_VM_SITE . DS . 'helpers' . DS . 'shopfunctionsf.php');
@@ -124,8 +129,7 @@ class VirtueMartControllerProductdetails extends JController {
 		}
 		$mainframe->enqueueMessage (JText::_ ($string));
 
-		// Display it all
-		$view = $this->getView ('askquestion', 'html');
+
 		$view->setLayout ('mail_confirmed');
 		$view->display ();
 	}
@@ -138,7 +142,12 @@ class VirtueMartControllerProductdetails extends JController {
 	public function mailRecommend () {
 
 		JRequest::checkToken () or jexit ('Invalid Token');
+		// Display it all
+		$view = $this->getView ('recommend', 'html');
 
+		if(!VmConfig::get('show_emailfriend',false)){
+			$view->display ();
+		}
 		if (!class_exists ('shopFunctionsF')) {
 			require(JPATH_VM_SITE . DS . 'helpers' . DS . 'shopfunctionsf.php');
 		}
@@ -162,8 +171,10 @@ class VirtueMartControllerProductdetails extends JController {
 
 		$vars['vendorEmail'] = $user->email;
 		$vendorModel = VmModel::getModel ('vendor');
-		$vars['vendor'] = $vendorModel->getVendor ($vars['product']->virtuemart_vendor_id);
+		$vendor = $vendorModel->getVendor ($vars['product']->virtuemart_vendor_id);
 		$vendorModel->addImages ($vars['vendor']);
+		$vendor->vendorFields = $vendorModel->getVendorAddressFields();
+		$vars['vendor'] = $vendor;
 		$vars['vendorAddress']= shopFunctions::renderVendorAddress($vars['product']->virtuemart_vendor_id);
 
 		$vars['vendorEmail']=  $user->email;
@@ -181,8 +192,7 @@ class VirtueMartControllerProductdetails extends JController {
 		$mainframe->enqueueMessage (JText::_ ($string));
 
 // 		vmdebug('my email vars ',$vars,$TOMail);
-		// Display it all
-		$view = $this->getView ('recommend', 'html');
+
 
 		$view->setLayout ('mail_confirmed');
 		$view->display ();
@@ -200,7 +210,7 @@ class VirtueMartControllerProductdetails extends JController {
 			if (VmConfig::get ('recommend_unauth', 0) == '0') {
 				$user = JFactory::getUser ();
 				if (empty($user->id)) {
-					VmInfo (JText::_ ('YOU MUST LOGIN FIRST'));
+					VmInfo (JText::_ ('JGLOBAL_YOU_MUST_LOGIN_FIRST'));
 					return;
 				}
 			}
@@ -250,8 +260,13 @@ class VirtueMartControllerProductdetails extends JController {
 //		echo '<pre>'.print_r($post,1).'</pre>';
 		jimport ('joomla.utilities.arrayhelper');
 		$virtuemart_product_idArray = JRequest::getVar ('virtuemart_product_id', array()); //is sanitized then
-		JArrayHelper::toInteger ($virtuemart_product_idArray);
-		$virtuemart_product_id = $virtuemart_product_idArray[0];
+		if(is_array($virtuemart_product_idArray)){
+			JArrayHelper::toInteger ($virtuemart_product_idArray);
+			$virtuemart_product_id = $virtuemart_product_idArray[0];
+		} else {
+			$virtuemart_product_id = $virtuemart_product_idArray;
+		}
+
 		$customPrices = array();
 		$customVariants = JRequest::getVar ('customPrice', array()); //is sanitized then
 		//echo '<pre>'.print_r($customVariants,1).'</pre>';
@@ -266,8 +281,7 @@ class VirtueMartControllerProductdetails extends JController {
 				$customPrices[$selected] = $priceVariant;
 			}
 		}
-		//echo '<pre>'.print_r($customPrices,1).'</pre>';
-		jimport ('joomla.utilities.arrayhelper');
+
 		$quantityArray = JRequest::getVar ('quantity', array()); //is sanitized then
 		JArrayHelper::toInteger ($quantityArray);
 
@@ -278,6 +292,7 @@ class VirtueMartControllerProductdetails extends JController {
 
 		$product_model = VmModel::getModel ('product');
 
+		//VmConfig::$echoDebug = TRUE;
 		$prices = $product_model->getPrice ($virtuemart_product_id, $customPrices, $quantity);
 
 		$priceFormated = array();

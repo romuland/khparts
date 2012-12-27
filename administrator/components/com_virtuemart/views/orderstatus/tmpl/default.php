@@ -13,7 +13,7 @@
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
 * other free or open source software licenses.
-* @version $Id: default.php 5981 2012-05-01 23:51:25Z electrocity $
+* @version $Id: default.php 6307 2012-08-07 07:39:45Z alatak $
 */
 
 // Check to ensure this file is included in Joomla!
@@ -36,6 +36,9 @@ AdminUIHelper::startAdminArea();
 			</th>
 			<th>
 			<?php echo $this->sort('order_status_code') ?>
+			</th>
+			<th>
+				<?php echo JText::_('COM_VIRTUEMART_ORDER_STATUS_STOCK_HANDLE'); ?>
 			</th>
 			<th>
 				<?php echo JText::_('COM_VIRTUEMART_DESCRIPTION'); ?>
@@ -73,12 +76,20 @@ AdminUIHelper::startAdminArea();
 				<td width="10">
 					<?php echo $checked; ?>
 				</td>
-
 				<td align="left">
-					<a href="<?php echo $editlink; ?>"><?php echo JText::_($row->order_status_name); ?></a>
+					<a href="<?php echo $editlink; ?>"><?php echo $row->order_status_name; ?></a>
+					<?php
+					$lang =JFactory::getLanguage();
+					if ($lang->hasKey($row->order_status_name)) {
+						echo " (".JText::_($row->order_status_name).")";
+					}
+					?>
 				</td>
 				<td align="left">
 					<?php echo $row->order_status_code; ?>
+				</td>
+				<td align="left">
+					<?php echo  JText::_($this->stockHandelList[$row->order_stock_handle]); ?>
 				</td>
 				<td align="left">
 					<?php echo JText::_($row->order_status_description); ?>
@@ -94,22 +105,9 @@ AdminUIHelper::startAdminArea();
 				</td>
 			</tr>
 			<?php
-// 			<td class="order">
-// 						<span><?php echo ShopFunctions::orderUpIcon( $i, true, 'orderup', 'Move Up' ); ></span>
-// 						<span><?php echo ShopFunctions::orderDownIcon( $i, $n, true, 'orderdown', 'Move Down' ); ></span>
-// 					<input class="ordering" type="text" name="order[]" size="5" value="<?php echo $row->ordering;>" class="text_area" style="text-align: center" />
-// 				</td>
 			$k = 1 - $k;
 		}
-		?><?php /* NO limit used in model
-		<tfoot>
-			<tr>
-				<td colspan="10">
-					<?php echo $this->pagination->getListFooter(); ?>
-				</td>
-			</tr>
-		</tfoot>
-		*/ ?>
+		?>
 	</table>
 </div>
 

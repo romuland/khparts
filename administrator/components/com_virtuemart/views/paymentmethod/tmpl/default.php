@@ -13,7 +13,7 @@
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
 * other free or open source software licenses.
-* @version $Id: default.php 5628 2012-03-08 09:00:21Z alatak $
+* @version $Id: default.php 6475 2012-09-21 11:54:21Z Milbo $
 */
 
 // Check to ensure this file is included in Joomla!
@@ -58,7 +58,7 @@ AdminUIHelper::startAdminArea();
 			</th>
 			<?php if(Vmconfig::get('multix','none')!=='none'){ ?>
 			<th width="10">
-				<?php echo JText::_('COM_VIRTUEMART_CALC_SHARED'); ?>
+				<?php echo JText::_('COM_VIRTUEMART_SHARED'); ?>
 			</th>
 			<?php } ?>
 			 <th><?php echo $this->sort('virtuemart_paymentmethod_id', 'COM_VIRTUEMART_ID')  ?></th>

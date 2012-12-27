@@ -80,10 +80,10 @@ $option = JRequest::getWord('option');
 					
 					<?php // echo JHTML::_('image', JURI::root().'/components/com_virtuemart/assets/images/stars/'.round($review->vote).'.gif',$review->vote,array("title" => (JText::_('COM_VIRTUEMART_RATING_TITLE').' : '. $review->vote . ' :: ' . $this->max_rating)));
 					$maxrating = VmConfig::get('vm_maximum_rating_scale', 5);
-				    $ratingwidth = round($review->vote) * 24;
+				    $ratingwidth = round($review->review_rating) * 24;
 				    ?>
 	
-				    <span title="<?php echo (JText::_("COM_VIRTUEMART_RATING_TITLE").' '. round($review->vote) . '/' . $maxrating) ?>" class="ratingbox" style="display:inline-block;">
+				    <span title="<?php echo (JText::_("COM_VIRTUEMART_RATING_TITLE").' '. round($review->review_rating) . '/' . $maxrating) ?>" class="ratingbox" style="display:inline-block;">
 						<span class="stars-orange" style="width:<?php echo $ratingwidth.'px'; ?>">
 						</span>
 				    </span>

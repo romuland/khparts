@@ -14,14 +14,11 @@
  * to the GNU General Public License, and as distributed it includes or
  * is derivative of works licensed under the GNU General Public License or
  * other free or open source software licenses.
- * @version $Id: userfields.php 6176 2012-06-28 09:24:53Z Milbo $
+ * @version $Id: userfields.php 6363 2012-08-21 18:11:25Z alatak $
  */
 
 // Check to ensure this file is included in Joomla!
 defined('_JEXEC') or die('Restricted access');
-
-// Load the model framework
-jimport( 'joomla.application.component.model');
 
 // Load the helpers
 if(!class_exists('ParamHelper')) require(JPATH_VM_ADMINISTRATOR.DS.'helpers'.DS.'paramhelper.php');
@@ -68,14 +65,21 @@ class VirtueMartModelUserfields extends VmModel {
 		,'euvatid'          => 'virtuemart_shoppergroup_id'
 		,'webaddress'       => 'webaddresstype'
 		);
+		$this->_selectedOrdering = 'ordering';
+		$this->_selectedOrderingDir = 'ASC';
 	}
 
 
 	/**
 	 * Prepare a user field for database update
 	 */
-	public function prepareFieldDataSave($fieldType, $fieldName, $value, &$post,$params) {
+	public function prepareFieldDataSave($field, &$data) {
 		//		$post = JRequest::get('post');
+		$fieldType = $field->type;
+		$fieldName = $field->name;
+		$value = $data[$field->name];
+		$params = $field->params;
+
 		if(!class_exists('vmFilter'))require(JPATH_VM_ADMINISTRATOR.DS.'helpers'.DS.'vmfilter.php');
 		switch(strtolower($fieldType)) {
 			case 'webaddress':
@@ -93,10 +97,11 @@ class VirtueMartModelUserfields extends VmModel {
 				break;
 			case 'email':
 			case 'emailaddress':
+				//vmdebug('emailaddress before filter',$value);
 				$value = vmFilter::mail( $value );
-				$value = str_replace('mailto:','', $value);
-				$value = str_replace(array('\'','"',',','%','*','/','\\','?','^','`','{','}','|','~'),array(''),$value);
-			//vmdebug('mail',$value);
+				//$value = str_replace('mailto:','', $value);
+				//$value = str_replace(array('\'','"',',','%','*','/','\\','?','^','`','{','}','|','~'),array(''),$value);
+				//vmdebug('emailaddress after filter',$value);
 				break;
 			// case 'phone':
 				// $value = vmFilter::phone( $value );
@@ -112,13 +117,11 @@ class VirtueMartModelUserfields extends VmModel {
 				.'-'.JRequest::getInt('birthday_selector_day');
 				break;
 			case 'textarea':
-
 				$value = JRequest::getVar($fieldName, '', 'post', 'string' ,JREQUEST_ALLOWRAW);
 				$value = vmFilter::hl( $value,'text' );
 				break;
-			default:
-			case 'editorta':
 
+			case 'editorta':
 				$value = JRequest::getVar($fieldName, '', 'post', 'string' ,JREQUEST_ALLOWRAW);
 				$value = vmFilter::hl( $value,'no_js_flash' );
 				break;
@@ -143,7 +146,7 @@ class VirtueMartModelUserfields extends VmModel {
 					JPluginHelper::importPlugin('vmuserfield');
 					$dispatcher = JDispatcher::getInstance();
 					// vmdebug('params',$params);
-					$dispatcher->trigger('plgVmPrepareUserfieldDataSave',array($fieldType, $fieldName, &$post, &$value, $params) );
+					$dispatcher->trigger('plgVmPrepareUserfieldDataSave',array($fieldType, $fieldName, &$data, &$value, $params) );
 					return $value;
 				}
 
@@ -170,15 +173,16 @@ class VirtueMartModelUserfields extends VmModel {
 
 			$this->_data->load((int)$this->_id);
 		}
+
 		if(strpos($this->_data->type,'plugin')!==false){
   			JPluginHelper::importPlugin('vmuserfield');
   			$dispatcher = JDispatcher::getInstance();
 			$plgName = substr($this->_data->type,6);
-			$type = 'vmuserfield';
-
-  			$retValue = $dispatcher->trigger('plgVmDeclarePluginParamsUserfield',array($type,$plgName,$this->_id,&$this->_data));
+			$type = 'userfield';
+  			$retValue = $dispatcher->trigger('plgVmDeclarePluginParamsUserfield',array($type,$plgName,$this->_data->userfield_jplugin_id,&$this->_data));
 			// vmdebug('pluginGet',$type,$plgName,$this->_id,$this->_data);
 		}
+
 		// Parse the parameters, if any
 		else $this->_params->parseParam($this->_data->params);
 
@@ -204,7 +208,7 @@ class VirtueMartModelUserfields extends VmModel {
 	}
 
 	static function getCoreFields(){
-		return array( 'name','username', 'email', 'password', 'password2' , 'agreed' , 'usertype');
+		return array( 'name','username', 'email', 'password', 'password2' , 'agreed');
 	}
 
 	/**
@@ -247,14 +251,24 @@ class VirtueMartModelUserfields extends VmModel {
 		}
 
 		// Store the fieldvalues, if any, in a correct array
-		$fieldValues = $this->postData2FieldValues($data['vNames'], $data['vValues'], $data['virtuemart_userfield_id']);
+		$fieldValues = $this->postData2FieldValues($data['vNames'], $data['vValues'], $data['virtuemart_userfield_id'] );
 
 
 		if(strpos($data['type'],'plugin')!==false){
-
+			// missing string FIX, Bad way ?
+			if (JVM_VERSION===1) {
+				$tb = '#__plugins';
+				$ext_id = 'id';
+			} else {
+				$tb = '#__extensions';
+				$ext_id = 'extension_id';
+			}
+			$plgName = substr($data['type'],6);
+			$q = 'SELECT `' . $ext_id . '` FROM `' . $tb . '` WHERE `element` = "'.$plgName.'"';
+			$this->_db->setQuery($q);
+			$data['userfield_jplugin_id'] = $this->_db->loadResult();
 			JPluginHelper::importPlugin('vmuserfield');
 			$dispatcher = JDispatcher::getInstance();
-			$plgName = substr($data['type'],6);
 			$dispatcher->trigger('plgVmOnBeforeUserfieldSave',array( $plgName , &$data, &$field ) );
 		}
 
@@ -266,7 +280,7 @@ class VirtueMartModelUserfields extends VmModel {
 
 		if (!$field->check(count($fieldValues))) {
 			// Perform data checks
-			vmError($field->getError());
+			//vmError($field->getError());
 			return false;
 		}
 
@@ -304,7 +318,12 @@ class VirtueMartModelUserfields extends VmModel {
 		if (!$this->storeFieldValues($fieldValues, $_id)) {
 			return false;
 		}
-
+		if(strpos($data['type'],'plugin')!==false){
+			JPluginHelper::importPlugin('vmuserfield');
+					$dispatcher = JDispatcher::getInstance();
+					$plgName = substr($data['type'],6);
+					$dispatcher->trigger('plgVmOnStoreInstallPluginTable',array( 'userfield' , $data  ) );
+		}
 		if ($reorderRequired) {
 			$field->reorder();
 		}
@@ -363,7 +382,7 @@ class VirtueMartModelUserfields extends VmModel {
 	 */
 	public function getUserFieldsFor($layoutName, $type,$userId = -1){
 
- 		vmdebug('getUserFieldsFor '.$layoutName.' '. $type .' ' . $userId);
+ 		//vmdebug('getUserFieldsFor '.$layoutName.' '. $type .' ' . $userId);
 		$register = false;
 
 		if(VmConfig::get('oncheckout_show_register',1) and $type=='BT'){
@@ -415,7 +434,7 @@ class VirtueMartModelUserfields extends VmModel {
 			unset($corefields[2]); //the 2 is for the email field, it is necessary in almost anycase.
 			foreach($userFields as $field){
 				if(in_array($field->name,$corefields)){
-					$field->required = 1;
+					$field->required = 0;
 					$field->value = '';
 					$field->default = '';
 
@@ -614,13 +633,17 @@ class VirtueMartModelUserfields extends VmModel {
 		,'links' => array()
 		);
 
+		$admin = false;
+		if(!class_exists('Permissions')) require(JPATH_VM_ADMINISTRATOR.DS.'helpers'.DS.'permissions.php');
+		if(Permissions::getInstance()->check('admin','storeadmin')){
+			$admin  = true;
+		}
 
 		// 		vmdebug('my user data in getUserFieldsFilled',$_selection,$_userData);
 		$_userData=(array)($_userData);
 		if (is_array($_selection)) {
 
 			foreach ($_selection as $_fld) {
-
 
 				$_return['fields'][$_fld->name] = array(
 					     'name' => $_prefix . $_fld->name
@@ -632,13 +655,18 @@ class VirtueMartModelUserfields extends VmModel {
 				,'required' => $_fld->required
 				,'hidden' => false
 				,'formcode' => ''
+				,'description' => JText::_($_fld->description)
 				);
 
+				$readonly = '';
+				if(!$admin){
+					if($_fld->readonly ){
+						$readonly = ' readonly="readonly" ';
+					}
+				}
 // 				vmdebug ('getUserFieldsFilled',$_fld->name);
 				// 			if($_fld->name==='email') vmdebug('user data email getuserfieldbyuser',$_userData);
 				// First, see if there are predefined fields by checking the name
-						//require_once('fb.php');
-						
 				switch( $_fld->name ) {
 
 					// 				case 'email':
@@ -648,8 +676,27 @@ class VirtueMartModelUserfields extends VmModel {
 						$_return['fields'][$_fld->name]['formcode'] =
 						ShopFunctions::renderCountryList($_return['fields'][$_fld->name]['value'], false, array(), $_prefix, $_fld->required);
 
-						// Translate the value from ID to name
-						$_return['fields'][$_fld->name]['value'] = shopFunctions::getCountryByID($_return['fields'][$_fld->name]['value']);
+						if(!empty($_return['fields'][$_fld->name]['value'])){
+							// Translate the value from ID to name
+							$db = JFactory::getDBO ();
+							$q = 'SELECT * FROM `#__virtuemart_countries` WHERE virtuemart_country_id = "' . (int)$_return['fields'][$_fld->name]['value'] . '"';
+							$db->setQuery ($q);
+							$r = $db->loadAssoc();
+							if($r){
+								$_return['fields'][$_fld->name]['value'] = !empty($r['country_name'])? $r['country_name']:'' ;
+								$_return['fields'][$_fld->name]['country_2_code'] = !empty($r['country_2_code'])? $r['country_2_code']:'' ;
+								$_return['fields'][$_fld->name]['country_3_code'] = !empty($r['country_3_code'])? $r['country_3_code']:'' ;
+							} else {
+								vmError('Model Userfields, country with id '.$_return['fields'][$_fld->name]['value'].' not found');
+							}
+						} else {
+							$_return['fields'][$_fld->name]['value'] = '' ;
+							$_return['fields'][$_fld->name]['country_2_code'] = '' ;
+							$_return['fields'][$_fld->name]['country_3_code'] = '' ;
+						}
+
+						//$_return['fields'][$_fld->name]['value'] = JText::_(shopFunctions::getCountryByID($_return['fields'][$_fld->name]['value']));
+						//$_return['fields'][$_fld->name]['state_2_code'] = JText::_(shopFunctions::getCountryByID($_return['fields'][$_fld->name]['value']));
 						break;
 
 					case 'virtuemart_state_id':
@@ -660,12 +707,28 @@ class VirtueMartModelUserfields extends VmModel {
 						false,
 						$_fld->required
 						);
-						
 
- 
-//fb($_fld->name."=".shopFunctions::getStateByID($_return['fields'][$_fld->name]['value']));
 
-						$_return['fields'][$_fld->name]['value'] = shopFunctions::getStateByID($_return['fields'][$_fld->name]['value']);
+						if(!empty($_return['fields'][$_fld->name]['value'])){
+							// Translate the value from ID to name
+							$db = JFactory::getDBO ();
+							$q = 'SELECT * FROM `#__virtuemart_states` WHERE virtuemart_state_id = "' . (int)$_return['fields'][$_fld->name]['value'] . '"';
+							$db->setQuery ($q);
+							$r = $db->loadAssoc();
+							if($r){
+								$_return['fields'][$_fld->name]['value'] = !empty($r['state_name'])? $r['state_name']:'' ;
+								$_return['fields'][$_fld->name]['state_2_code'] = !empty($r['state_2_code'])? $r['state_2_code']:'' ;
+								$_return['fields'][$_fld->name]['state_3_code'] = !empty($r['state_3_code'])? $r['state_3_code']:'' ;
+							} else {
+								vmError('Model Userfields, state with id '.$_return['fields'][$_fld->name]['value'].' not found');
+							}
+						} else {
+							$_return['fields'][$_fld->name]['value'] = '' ;
+							$_return['fields'][$_fld->name]['state_2_code'] = '' ;
+							$_return['fields'][$_fld->name]['state_3_code'] = '' ;
+						}
+
+						//$_return['fields'][$_fld->name]['value'] = shopFunctions::getStateByID($_return['fields'][$_fld->name]['value']);
 						break;
 						//case 'agreed':
 						//	$_return['fields'][$_fld->name]['formcode'] = '<input type="checkbox" id="'.$_prefix.'agreed_field" name="'.$_prefix.'agreed" value="1" '
@@ -685,10 +748,10 @@ class VirtueMartModelUserfields extends VmModel {
 					default:
 						if(strpos($_fld->type,'plugin')!==false){
 
-						JPluginHelper::importPlugin('vmuserfield');
-						$dispatcher = JDispatcher::getInstance();
-						$dispatcher->trigger('plgVmOnUserfieldDisplay',array($_prefix, $_fld, &$_return) );
-						break;
+							JPluginHelper::importPlugin('vmuserfield');
+							$dispatcher = JDispatcher::getInstance();
+							$dispatcher->trigger('plgVmOnUserfieldDisplay',array($_prefix, $_fld,isset($_userData['virtuemart_user_id'])?$_userData['virtuemart_user_id']:0,  &$_return) );
+							break;
 						}
 					switch( $_fld->type ) {
 						case 'hidden':
@@ -697,7 +760,7 @@ class VirtueMartModelUserfields extends VmModel {
 							. '" value="' . $_return['fields'][$_fld->name]['value'] .'" '
 							. ($_fld->required ? ' class="required"' : '')
 							. ($_fld->maxlength ? ' maxlength="' . $_fld->maxlength . '"' : '')
-							. ($_fld->readonly ? ' readonly="readonly"' : '') . ' /> ';
+							. $readonly . ' /> ';
 							$_return['fields'][$_fld->name]['hidden'] = true;
 							break;
 						case 'date':
@@ -725,8 +788,11 @@ class VirtueMartModelUserfields extends VmModel {
 							$_return['fields'][$_fld->name]['formcode'] = vmJsApi::jDate($_return['fields'][$_fld->name]['value'],  $_prefix.$_fld->name,$_prefix.$_fld->name . '_field',false,($currentYear-100).':'.$currentYear);
 							break;
 						case 'emailaddress':
-							if(empty($_return['fields'][$_fld->name]['value'])) $_return['fields'][$_fld->name]['value'] = JFactory::getUser()->email;
-							// 							vmdebug('emailaddress',$_fld);
+							if( JFactory::getApplication()->isSite()) {
+								if(empty($_return['fields'][$_fld->name]['value'])) {
+									$_return['fields'][$_fld->name]['value'] = JFactory::getUser()->email;
+								}
+							}							// 							vmdebug('emailaddress',$_fld);
 						case 'text':
 						case 'webaddress':
 
@@ -735,24 +801,27 @@ class VirtueMartModelUserfields extends VmModel {
 							. '" value="' . $_return['fields'][$_fld->name]['value'] .'" '
 							. ($_fld->required ? ' class="required"' : '')
 							. ($_fld->maxlength ? ' maxlength="' . $_fld->maxlength . '"' : '')
-							. ($_fld->readonly ? ' readonly="readonly"' : '') . ' /> ';
+							. $readonly . ' /> ';
 							break;
 						case 'textarea':
 							$_return['fields'][$_fld->name]['formcode'] = '<textarea id="'
 							. $_prefix.$_fld->name . '_field" name="' . $_prefix.$_fld->name . '" cols="' . $_fld->cols
 							. '" rows="'.$_fld->rows . '" class="inputbox" '
-							. ($_fld->readonly ? ' readonly="readonly"' : '').'>'
+							. $readonly.'>'
 							. $_return['fields'][$_fld->name]['value'] .'</textarea>';
 							break;
 						case 'editorta':
 							jimport( 'joomla.html.editor' );
 							$editor = JFactory::getEditor();
-							$_return['fields'][$_fld->name]['formcode'] = $editor->display($_prefix.$_fld->name, $_return['fields'][$_fld->name]['value'], 300, 150, $_fld->cols, $_fld->rows);
+							$_return['fields'][$_fld->name]['formcode'] = $editor->display($_prefix.$_fld->name, $_return['fields'][$_fld->name]['value'], '150', '100', $_fld->cols, $_fld->rows,  array('pagebreak', 'readmore'));
 							break;
 						case 'checkbox':
 							$_return['fields'][$_fld->name]['formcode'] = '<input type="checkbox" name="'
 							. $_prefix.$_fld->name . '" id="' . $_prefix.$_fld->name . '_field" value="1" '
 							. ($_return['fields'][$_fld->name]['value'] ? 'checked="checked"' : '') .'/>';
+							 if($_return['fields'][$_fld->name]['value']) {
+								 $_return['fields'][$_fld->name]['value'] = JText::_($_prefix.$_fld->title);
+							 }
 							break;
 							// /*##mygruz20120223193710 { :*/
 						// case 'userfieldplugin': //why not just vmuserfieldsplugin ?
@@ -765,8 +834,8 @@ class VirtueMartModelUserfields extends VmModel {
 							// break;
 							// /*##mygruz20120223193710 } */
 						case 'multicheckbox':
-						case 'select':
 						case 'multiselect':
+						case 'select':
 						case 'radio':
 							$_qry = 'SELECT fieldtitle, fieldvalue '
 							. 'FROM #__virtuemart_userfield_values '
@@ -780,53 +849,81 @@ class VirtueMartModelUserfields extends VmModel {
 								$_v->fieldtitle = JText::_($_v->fieldtitle);
 							}
 							$_attribs = array();
-							if ($_fld->readonly) {
+							if ($_fld->readonly and !$admin) {
 								$_attribs['readonly'] = 'readonly';
 							}
 							if ($_fld->required) {
 								$_attribs['class'] = 'required';
 							}
 
-							if ($_fld->type == 'radio') {
+							if ($_fld->type == 'radio' or $_fld->type == 'select') {
 								$_selected = $_return['fields'][$_fld->name]['value'];
 							} else {
 								$_attribs['size'] = $_fld->size; // Use for all but radioselects
-								$_selected = explode("|*|", $_return['fields'][$_fld->name]['value']);
+								if (!is_array($_return['fields'][$_fld->name]['value'])){
+									$_selected = explode("|*|", $_return['fields'][$_fld->name]['value']);
+								} else {
+									$_selected = $_return['fields'][$_fld->name]['value'];
+								}
 							}
 
 							// Nested switch...
 							switch($_fld->type) {
 								case 'multicheckbox':
-									$_return['fields'][$_fld->name]['formcode'] = '';
+									// todo: use those
+									$_attribs['rows'] = $_fld->rows;
+									$_attribs['cols'] = $_fld->cols;
+									$formcode = '';
+									$field_values="";
 									$_idx = 0;
-									$rows = $_fld->rows;
-									$row = 1;
+									$separator_form = '<br />';
+									$separator_title = ',';
 									foreach ($_values as $_val) {
-										if 	($row > $rows) {
-											$row = 1;
-											$br = '<br />';
-										} else {
-											$row ++ ;
-											$br = '';
-										}
-										$_return['fields'][$_fld->name]['formcode'] .= '<input type="checkbox" name="'
+										 if ( in_array($_val->fieldvalue, $_selected)) {
+											 $is_selected='checked="checked"';
+											 $field_values.= JText::_($_val->fieldtitle). $separator_title;
+										 }  else {
+											 $is_selected='';
+										 }
+										$formcode .= '<input type="checkbox" name="'
 										. $_prefix.$_fld->name . '[]" id="' . $_prefix.$_fld->name . '_field' . $_idx . '" value="'. $_val->fieldvalue . '" '
-										. (in_array($_val->fieldvalue, $_selected) ? 'checked="checked"' : '') .'/> ' . JText::_($_val->fieldtitle) . $br;
-
+										. $is_selected .'/> <label for="' . $_prefix.$_fld->name . '_field' . $_idx . '">'.JText::_($_val->fieldtitle) .'</label>'. $separator_form;
 										$_idx++;
 									}
-									break;
-								case 'select':
-									$_return['fields'][$_fld->name]['formcode'] = JHTML::_('select.genericlist', $_values, $_prefix.$_fld->name, $_attribs, 'fieldvalue', 'fieldtitle', $_selected[0]);
+									// remove last br
+									$_return['fields'][$_fld->name]['formcode'] =substr($formcode ,0,-strlen($separator_form));
+									$_return['fields'][$_fld->name]['value'] = substr($field_values,0,-strlen($separator_title));
 									break;
 								case 'multiselect':
 									$_attribs['multiple'] = 'multiple';
-									$_attribs['rows'] = $_fld->rows;
-									$_attribs['cols'] = $_fld->cols;
+									$field_values="";
 									$_return['fields'][$_fld->name]['formcode'] = JHTML::_('select.genericlist', $_values, $_prefix.$_fld->name.'[]', $_attribs, 'fieldvalue', 'fieldtitle', $_selected);
+									$separator_form = '<br />';
+									$separator_title = ',';
+									foreach ($_values as $_val) {
+										 if ( in_array($_val->fieldvalue, $_selected)) {
+											 $field_values.= JText::_($_val->fieldtitle). $separator_title;
+										 }
+										}
+									$_return['fields'][$_fld->name]['value'] = substr($field_values,0,-strlen($separator_title));
+
 									break;
+								case 'select':
+									$_return['fields'][$_fld->name]['formcode'] = JHTML::_('select.genericlist', $_values, $_prefix.$_fld->name, $_attribs, 'fieldvalue', 'fieldtitle', $_selected);
+									foreach ($_values as $_val) {
+										 if (  $_val->fieldvalue==$_selected) {
+											 $_return['fields'][$_fld->name]['value'] = JText::_($_val->fieldtitle);
+										 }
+									}
+									break;
+
 								case 'radio':
 									$_return['fields'][$_fld->name]['formcode'] =  JHTML::_('select.radiolist', $_values, $_prefix.$_fld->name, $_attribs, 'fieldvalue', 'fieldtitle', $_selected);
+									foreach ($_values as $_val) {
+										 if (  $_val->fieldvalue==$_selected) {
+											 $_return['fields'][$_fld->name]['value'] = JText::_($_val->fieldtitle);
+										 }
+									}
 									break;
 							}
 							break;
@@ -871,7 +968,7 @@ class VirtueMartModelUserfields extends VmModel {
 	 * @param int $virtuemart_userfield_id ID of the userfield to relate
 	 * @return array Data to bind to the userfield_values table
 	 */
-	private function postData2FieldValues($titles, $values, $virtuemart_userfield_id){
+	private function postData2FieldValues($titles, $values, $virtuemart_userfield_id  ){
 
 		$_values = array();
 		if (is_array($titles) && is_array($values)) {

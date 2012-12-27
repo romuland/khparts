@@ -13,14 +13,11 @@
  * to the GNU General Public License, and as distributed it includes or
  * is derivative of works licensed under the GNU General Public License or
  * other free or open source software licenses.
- * @version $Id: vendor.php 6151 2012-06-25 14:25:39Z alatak $
+ * @version $Id: vendor.php 6425 2012-09-11 20:17:08Z Milbo $
  */
 
 // Check to ensure this file is included in Joomla!
 defined ('_JEXEC') or die('Restricted access');
-
-// Load the model framework
-jimport ('joomla.application.component.model');
 
 if (!class_exists ('VmModel')) {
 	require(JPATH_VM_ADMINISTRATOR . DS . 'helpers' . DS . 'vmmodel.php');
@@ -198,8 +195,7 @@ class VirtueMartModelVendor extends VmModel {
 
 		if ($this->_id != $oldVendorId) {
 
-			$app = JFactory::getApplication ();
-			$app->enqueueMessage ('Developer notice, tried to update vendor xref should not appear in singlestore');
+			vmdebug('Developer notice, tried to update vendor xref should not appear in singlestore');
 
 			//update user table
 			$usertable = $this->getTable ('vmusers');
@@ -394,4 +390,23 @@ class VirtueMartModelVendor extends VmModel {
 		$vendorAddressBt->load ($virtuemart_userinfo_id);
 		return $vendorAddressBt;
 	}
+
+	private $_vendorFields = FALSE;
+	public function getVendorAddressFields(){
+
+		if(!$this->_vendorFields){
+			$userId = VirtueMartModelVendor::getUserIdByVendorId ($this->_id);
+			$userModel = VmModel::getModel ('user');
+			$virtuemart_userinfo_id = $userModel->getBTuserinfo_id ($userId);
+
+			// this is needed to set the correct user id for the vendor when the user is logged
+			$userModel->getVendor($this->_id,FALSE);
+
+			$vendorFieldsArray = $userModel->getUserInfoInUserFields ('mail', 'BT', $virtuemart_userinfo_id, FALSE, TRUE);
+			$this->_vendorFields = $vendorFieldsArray[$virtuemart_userinfo_id];
+		}
+
+		return $this->_vendorFields;
+	}
+
 }

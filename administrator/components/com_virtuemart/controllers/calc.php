@@ -13,7 +13,7 @@
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
 * other free or open source software licenses.
-* @version $Id: calc.php 6071 2012-06-06 15:33:04Z Milbo $
+* @version $Id: calc.php 6442 2012-09-13 13:04:33Z Milbo $
 */
 
 // Check to ensure this file is included in Joomla!
@@ -71,7 +71,6 @@ class VirtuemartControllerCalc extends VmController {
 		// Check token
 		JRequest::checkToken() or jexit( 'Invalid Token' );
 
-		//capturing virtuemart_calc_id
 		$id = 0;
 		$cid	= JRequest::getVar( 'cid', array(), 'post', 'array' );
 		JArrayHelper::toInteger($cid);
@@ -106,7 +105,6 @@ class VirtuemartControllerCalc extends VmController {
 		// Check token
 		JRequest::checkToken() or jexit( 'Invalid Token' );
 
-		//capturing virtuemart_calc_id
 		$id = 0;
 		$cid	= JRequest::getVar( 'cid', array(), 'post', 'array' );
 		JArrayHelper::toInteger($cid);

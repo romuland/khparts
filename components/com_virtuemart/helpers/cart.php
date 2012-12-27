@@ -15,7 +15,7 @@
  * to the GNU General Public License, and as distributed it includes or
  * is derivative of works licensed under the GNU General Public License or
  * other free or open source software licenses.
- * @version $Id: cart.php 6205 2012-07-03 13:10:28Z alatak $
+ * @version $Id: cart.php 6557 2012-10-17 19:16:22Z Milbo $
  */
 // Check to ensure this file is included in Joomla!
 defined('_JEXEC') or die('Restricted access');
@@ -37,7 +37,7 @@ class VirtueMartCart {
 	var $_dataValidated = false;
 	var $_confirmDone = false;
 	var $_lastError = null; // Used to pass errmsg to the cart using addJS()
-	//todo multivendor stuff must be set in the add function, first product determins ownership of cart, or a fixed vendor is used
+	//todo multivendor stuff must be set in the add function, first product determines ownership of cart, or a fixed vendor is used
 	var $vendorId = 1;
 	var $lastVisitedCategoryId = 0;
 	var $virtuemart_shipmentmethod_id = 0;
@@ -51,12 +51,14 @@ class VirtueMartCart {
 	var $couponCode = '';
 	var $cartData = null;
 	var $lists = null;
+	var $order_number=null; // added to solve emptying cart for payment notification
 	// 	var $user = null;
 // 	var $prices = null;
 	var $pricesUnformatted = null;
 	var $pricesCurrency = null;
 	var $paymentCurrency = null;
 	var $STsameAsBT = 0;
+	var $productParentOrderable = TRUE;
 
 	private static $_cart = null;
 	private static $_triesValidateCoupon;
@@ -105,14 +107,10 @@ class VirtueMartCart {
 				self::$_cart->customer_comment 					= base64_decode($sessionCart->customer_comment);
 				self::$_cart->couponCode 							= $sessionCart->couponCode;
 				self::$_cart->cartData 								= $sessionCart->cartData;
-
-// 				if(!class_exists('calculationHelper')) require(JPATH_VM_ADMINISTRATOR.DS.'helpers'.DS.'calculationh.php');
-// 				$calculator = calculationHelper::getInstance();
-// 				self::$_cart->cartData								= $calculator->getCartData();
+				self::$_cart->order_number							= $sessionCart->order_number;
 				self::$_cart->lists 									= $sessionCart->lists;
-				// 				self::$_cart->user 									= $sessionCart->user;
-// 				self::$_cart->prices 								= $sessionCart->prices;
-				self::$_cart->pricesUnformatted					= $sessionCart->pricesUnformatted;
+
+				//self::$_cart->pricesUnformatted					= $sessionCart->pricesUnformatted;
 				self::$_cart->pricesCurrency						= $sessionCart->pricesCurrency;
 				self::$_cart->paymentCurrency						= $sessionCart->paymentCurrency;
 
@@ -143,7 +141,7 @@ class VirtueMartCart {
 	public function setPreferred() {
 
 		$usermodel = VmModel::getModel('user');
-		$user = $usermodel->getUser();
+		$user = $usermodel->getCurrentUser();
 
 		if (empty($this->BT) || (!empty($this->BT) && count($this->BT) <=1) ) {
 			foreach ($user->userInfo as $address) {
@@ -213,6 +211,8 @@ class VirtueMartCart {
 		$sessionCart->virtuemart_paymentmethod_id 	= $this->virtuemart_paymentmethod_id;
 		$sessionCart->automaticSelectedShipment 		= $this->automaticSelectedShipment;
 		$sessionCart->automaticSelectedPayment 		= $this->automaticSelectedPayment;
+		$sessionCart->order_number 		            = $this->order_number;
+
 		$sessionCart->BT 										= $this->BT;
 		$sessionCart->ST 										= $this->ST;
 		$sessionCart->tosAccepted 							= $this->tosAccepted;
@@ -222,7 +222,7 @@ class VirtueMartCart {
 		$sessionCart->lists 									= $this->lists;
 		// 		$sessionCart->user 									= $this->user;
 // 		$sessionCart->prices 								= $this->prices;
-		$sessionCart->pricesUnformatted					= $this->pricesUnformatted;
+		//$sessionCart->pricesUnformatted					= $this->pricesUnformatted;
 		$sessionCart->pricesCurrency						= $this->pricesCurrency;
 		$sessionCart->paymentCurrency						= $this->paymentCurrency;
 
@@ -276,6 +276,11 @@ class VirtueMartCart {
 		return $this->_inCheckOut;
 	}
 
+	public function setOutOfCheckout(){
+		$this->_inCheckOut = false;
+		$this->setCartIntoSession();
+	}
+
 	/**
 	 * Set the last error that occured.
 	 * This is used on error to pass back to the cart when addJS() is invoked.
@@ -319,7 +324,11 @@ class VirtueMartCart {
 		//Iterate through the prod_id's and perform an add to cart for each one
 		foreach ($virtuemart_product_ids as $p_key => $virtuemart_product_id) {
 
-			$tmpProduct = $this->getProduct((int) $virtuemart_product_id);
+			$quantityPost = (int) $post['quantity'][$p_key];
+
+			if($quantityPost === 0) continue;
+
+			$tmpProduct = $this->getProduct((int) $virtuemart_product_id,$quantityPost);
 			//			dump($tmpProduct,'my product add to cart before');
 			// trying to save some space in the session table
 			$product = new stdClass();
@@ -388,8 +397,6 @@ class VirtueMartCart {
 			// This is extremly important for performance reasons, else the sessions becomes too big.
 			// Check if we have a product
 			if ($product) {
-				$quantityPost = (int) $post['quantity'][$p_key];
-
 				if(!empty( $post['virtuemart_category_id'][$p_key])){
 					$virtuemart_category_idPost = (int) $post['virtuemart_category_id'][$p_key];
 					$product->virtuemart_category_id = $virtuemart_category_idPost;
@@ -401,7 +408,35 @@ class VirtueMartCart {
 				if (isset($post['customPrice'])) {
 
 					$product->customPrices = $post['customPrice'];
-					if (isset($post['customPlugin'])) $product->customPlugin = json_encode($post['customPlugin']);
+					if (isset($post['customPlugin'])){
+
+						if(!class_exists('vmFilter'))require(JPATH_VM_ADMINISTRATOR.DS.'helpers'.DS.'vmfilter.php');
+
+						if(!is_array($post['customPlugin'])){
+							$customPluginPost = (array)	$post['customPlugin'];
+						} else {
+							$customPluginPost = $post['customPlugin'];
+						}
+						VmConfig::$echoDebug=TRUE;
+
+						foreach($customPluginPost as &$customPlugin){
+							if(is_array($customPlugin)){
+								foreach($customPlugin as &$customPlug){
+									if(is_array($customPlug)){
+										foreach($customPlug as &$customPl){
+											$value = vmFilter::hl( $customPl,array('deny_attribute'=>'*'));
+											$value = preg_replace('@<[\/\!]*?[^<>]*?>@si','',$value);//remove all html tags
+											$value = (string)preg_replace('#on[a-z](.+?)\)#si','',$value);//replace start of script onclick() onload()...
+											$value = trim(str_replace('"', ' ', $value),"'") ;
+											$customPl = (string)preg_replace('#^\'#si','',$value);
+										}
+									}
+								}
+							}
+						}
+
+						$product->customPlugin = json_encode($customPluginPost);
+					}
 
 					$productKey .= '::';
 
@@ -424,12 +459,19 @@ class VirtueMartCart {
 
 				}
 
+				// Add in the quantity in case the customfield plugins need it
+				$product->quantity = (int)$quantityPost;
+
+
 				if(!class_exists('vmCustomPlugin')) require(JPATH_VM_PLUGINS.DS.'vmcustomplugin.php');
 				JPluginHelper::importPlugin('vmcustom');
 				$dispatcher = JDispatcher::getInstance();
 				// on returning false the product have not to be added to cart
-				if ( $dispatcher->trigger('plgVmOnAddToCart',array(&$product)) === false )
-					continue;
+				$addToCartReturnValues = $dispatcher->trigger('plgVmOnAddToCart',array(&$product));
+ 			    foreach ($addToCartReturnValues as $returnValue) {
+						if ( $returnValue === false )
+							continue 2;
+					}
 
 
 				if (array_key_exists($productKey, $this->products) && (empty($product->customPlugin)) ) {
@@ -477,7 +519,7 @@ class VirtueMartCart {
 	 * @access public
 	 */
 	public function removeProductCart($prod_id=0) {
-		/* Check for cart IDs */
+		// Check for cart IDs
 		if (empty($prod_id))
 		$prod_id = JRequest::getVar('cart_virtuemart_product_id');
 		unset($this->products[$prod_id]);
@@ -524,27 +566,6 @@ class VirtueMartCart {
 		return false;
 	}
 
-
-	/**
-	 * Function Description
-	 *
-	 * @author Max Milbers
-	 * @access public
-	 * @param array $cart the cart to get the products for
-	 * @return array of product objects
-	 */
-// 	$this->pricesUnformatted = $product_prices;
-
-	public function getCartPrices($checkAutomaticSelected=true) {
-
-		if(!class_exists('calculationHelper')) require(JPATH_VM_ADMINISTRATOR.DS.'helpers'.DS.'calculationh.php');
-		$calculator = calculationHelper::getInstance();
-
-		$this->pricesUnformatted = $calculator->getCheckoutPrices($this, $checkAutomaticSelected);
-
-		return $this->pricesUnformatted;
-	}
-
 	/**
 	 * Proxy function for getting a product object
 	 *
@@ -553,10 +574,10 @@ class VirtueMartCart {
 	 * @param int $virtuemart_product_id The product ID to get the object for
 	 * @return object The product details object
 	 */
-	private function getProduct($virtuemart_product_id) {
+	private function getProduct($virtuemart_product_id, $quantity) {
 		JModel::addIncludePath(JPATH_VM_ADMINISTRATOR . DS . 'models');
 		$model = JModel::getInstance('Product', 'VirtueMartModel');
-		$product = $model->getProduct($virtuemart_product_id, true, false);
+		$product = $model->getProduct($virtuemart_product_id, true, false,true,$quantity);
 
 		if ( VmConfig::get('oncheckout_show_images')){
 			$model->addImages($product,1);
@@ -611,7 +632,7 @@ class VirtueMartCart {
 			$productsleft = $product->product_in_stock - $product->product_ordered;
 			// TODO $productsleft = $product->product_in_stock - $product->product_ordered - $quantityincart ;
 			if ($quantity > $productsleft ){
-				if($productsleft>0 and $stockhandle='disableadd'){
+				if($productsleft>0 and $stockhandle=='disableadd'){
 					$quantity = $productsleft;
 					$errorMsg = JText::sprintf('COM_VIRTUEMART_CART_PRODUCT_OUT_OF_QUANTITY',$quantity);
 					$this->setError($errorMsg);
@@ -671,7 +692,8 @@ class VirtueMartCart {
 		}
 		$this->couponCode = $coupon_code;
 		$this->setCartIntoSession();
-		return '';
+		return JText::_('COM_VIRTUEMART_CART_COUPON_VALID');
+
 	}
 
 	/**
@@ -720,6 +742,7 @@ class VirtueMartCart {
 			$this->setCartIntoSession();
 			$app->redirect(JRoute::_($relUrl,$this->useXHTML,$this->useSSL), $redirectMsg);
 		} else {
+			$this->_inCheckOut = false;
 			$this->setCartIntoSession();
 			return false;
 		}
@@ -731,7 +754,7 @@ class VirtueMartCart {
 		$this->_inCheckOut = true;
 
 		$this->tosAccepted = JRequest::getInt('tosAccepted', $this->tosAccepted);
-
+		$this->STsameAsBT = JRequest::getInt('STsameAsBT', $this->STsameAsBT);
 		$this->customer_comment = JRequest::getVar('customer_comment', $this->customer_comment);
 
 		// no HTML TAGS but permit all alphabet
@@ -740,6 +763,9 @@ class VirtueMartCart {
 		$value = trim(str_replace('"', ' ', $value),"'") ;
 		$this->customer_comment=	(string)preg_replace('#^\'#si','',$value);//replace ' at start
 
+		$this->cartData = $this->prepareCartData();
+		$this->prepareCartPrice( ) ;
+
 		if (($this->selected_shipto = JRequest::getVar('shipto', null)) !== null) {
 			JModel::addIncludePath(JPATH_VM_ADMINISTRATOR . DS . 'models');
 			$userModel = JModel::getInstance('user', 'VirtueMartModel');
@@ -747,9 +773,6 @@ class VirtueMartCart {
 			$this->validateUserData('ST', $stData[0]);
 		}
 
-		$this->setCartIntoSession();
-
-		$mainframe = JFactory::getApplication();
 		if (count($this->products) == 0) {
 			return $this->redirecter('index.php?option=com_virtuemart', JText::_('COM_VIRTUEMART_CART_NO_PRODUCT'));
 		} else {
@@ -766,6 +789,7 @@ class VirtueMartCart {
 			return $this->redirecter('index.php?option=com_virtuemart&view=cart' , $redirectMsg);
 		}
 
+		//$this->prepareAddressDataInCart();
 		//But we check the data again to be sure
 		if (empty($this->BT)) {
 			$redirectMsg = '';
@@ -818,10 +842,10 @@ class VirtueMartCart {
 			//Add a hook here for other shipment methods, checking the data of the choosed plugin
 			$dispatcher = JDispatcher::getInstance();
 			$retValues = $dispatcher->trigger('plgVmOnCheckoutCheckDataShipment', array(  $this));
-
+			//vmdebug('plgVmOnCheckoutCheckDataShipment CART', $retValues);
 			foreach ($retValues as $retVal) {
 				if ($retVal === true) {
-					break; // Plugin completed succesful; nothing else to do
+					break; // Plugin completed succesfull; nothing else to do
 				} elseif ($retVal === false) {
 					// Missing data, ask for it (again)
 					return $this->redirecter('index.php?option=com_virtuemart&view=cart&task=edit_shipment' , $redirectMsg);
@@ -831,25 +855,28 @@ class VirtueMartCart {
 		}
 		//echo 'hier ';
 		//Test Payment and show payment plugin
-		if (empty($this->virtuemart_paymentmethod_id)) {
-			return $this->redirecter('index.php?option=com_virtuemart&view=cart&task=editpayment' , $redirectMsg);
-		} else {
-			if(!class_exists('vmPSPlugin')) require(JPATH_VM_PLUGINS.DS.'vmpsplugin.php');
-			JPluginHelper::importPlugin('vmpayment');
-			//Add a hook here for other payment methods, checking the data of the choosed plugin
-			$dispatcher = JDispatcher::getInstance();
-			$retValues = $dispatcher->trigger('plgVmOnCheckoutCheckDataPayment', array( $this));
+		if($this->pricesUnformatted['salesPrice']>0.0){
+			if (empty($this->virtuemart_paymentmethod_id)) {
+				return $this->redirecter('index.php?option=com_virtuemart&view=cart&task=editpayment' , $redirectMsg);
+			} else {
+				if(!class_exists('vmPSPlugin')) require(JPATH_VM_PLUGINS.DS.'vmpsplugin.php');
+				JPluginHelper::importPlugin('vmpayment');
+				//Add a hook here for other payment methods, checking the data of the choosed plugin
+				$dispatcher = JDispatcher::getInstance();
+				$retValues = $dispatcher->trigger('plgVmOnCheckoutCheckDataPayment', array( $this));
 
-			foreach ($retValues as $retVal) {
-				if ($retVal === true) {
-					break; // Plugin completed succesful; nothing else to do
-				} elseif ($retVal === false) {
-					// Missing data, ask for it (again)
-					return $this->redirecter('index.php?option=com_virtuemart&view=cart&task=editpayment' , $redirectMsg);
-					// 	NOTE: inactive plugins will always return null, so that value cannot be used for anything else!
+				foreach ($retValues as $retVal) {
+					if ($retVal === true) {
+						break; // Plugin completed succesful; nothing else to do
+					} elseif ($retVal === false) {
+						// Missing data, ask for it (again)
+						return $this->redirecter('index.php?option=com_virtuemart&view=cart&task=editpayment' , $redirectMsg);
+						// 	NOTE: inactive plugins will always return null, so that value cannot be used for anything else!
+					}
 				}
 			}
 		}
+
 
 		if (empty($this->tosAccepted)) {
 
@@ -917,7 +944,7 @@ class VirtueMartCart {
 		}
 
 		$usersModel = VmModel::getModel('user');
-		return $usersModel->validateUserData($type, $obj);
+		return $usersModel->validateUserData($obj,$type);
 
 	}
 
@@ -949,6 +976,7 @@ class VirtueMartCart {
 			JPluginHelper::importPlugin('vmshipment');
 			JPluginHelper::importPlugin('vmcustom');
 			JPluginHelper::importPlugin('vmpayment');
+			JPluginHelper::importPlugin('vmcalculation');
 			$returnValues = $dispatcher->trigger('plgVmConfirmedOrder', array($this, $order));
 			// may be redirect is done by the payment plugin (eg: paypal)
 			// if payment plugin echos a form, false = nothing happen, true= echo form ,
@@ -967,23 +995,37 @@ class VirtueMartCart {
 	 */
 	public function emptyCart(){
 
-		//We delete the old stuff
-		$this->products = array();
-		$this->_inCheckOut = false;
-		$this->_dataValidated = false;
-		$this->_confirmDone = false;
-		$this->customer_comment = '';
-		$this->couponCode = '';
-		$this->tosAccepted = null;
-		$this->virtuemart_shipmentmethod_id = 0; //OSP 2012-03-14
-		$this->virtuemart_paymentmethod_id = 0;
+		self::emptyCartValues($this);
 
 		$this->setCartIntoSession();
 	}
 
 
+	/**
+	 * emptyCart: Used for payment handling.
+	 *
+	 * @author Valerie Cartan Isaksen
+	 *
+	 */
+	static public function emptyCartValues($cartData){
+
+		//We delete the old stuff
+		$cartData->products = array();
+		$cartData->_inCheckOut = false;
+		$cartData->_dataValidated = false;
+		$cartData->_confirmDone = false;
+		$cartData->customer_comment = '';
+		$cartData->couponCode = '';
+		$cartData->tosAccepted = null;
+		$cartData->virtuemart_shipmentmethod_id = 0; //OSP 2012-03-14
+		$cartData->virtuemart_paymentmethod_id = 0;
+		$cartData->order_number=null;
+
+	}
+
 	function saveAddressInCart($data, $type, $putIntoSession = true) {
 
+		//vmdebug('email $data',$data['email']);
 		// VirtueMartModelUserfields::getUserFields() won't work
 		if(!class_exists('VirtueMartModelUserfields')) require(JPATH_VM_ADMINISTRATOR.DS.'models'.DS.'userfields.php' );
 		$userFieldsModel = VmModel::getModel('userfields');
@@ -1002,7 +1044,9 @@ class VirtueMartCart {
 				}
 
 				if(empty($data['email'])){
-					$address['email'] = JFactory::getUser()->email;
+					$jUser = JFactory::getUser();
+					$address['email'] = $jUser->email;
+					//vmdebug('email was empty',$address['email']);
 				}
 
 			} else {
@@ -1021,14 +1065,23 @@ class VirtueMartCart {
 			foreach ($prepareUserFields as $fld) {
 				if(!empty($fld->name)){
 					$name = $fld->name;
+					/*if($fld->readonly){
+						vmdebug(' saveAddressInCart ',$data[$prefix.$name]);
+					}*/
 					if($fld->required){
+						//vmdebug('saveAddressInCart $prefix='.$prefix.' $name='.$name,$data);
 						if(!empty($data[$prefix.$name])){
 							$address[$name] = $data[$prefix.$name];
 						} else {
 							$address[$name] = $this->{$type}[$name];
 						}
 					} else {
-						$address[$name] = $data[$prefix.$name];
+						if(!empty($data[$prefix.$name])){
+							$address[$name] = $data[$prefix.$name];
+						} else {
+							$address[$name] = '';
+							//vmdebug('saveAddressInCart the $data[$prefix.$name] ($prefix.$name = '.$prefix.$name.' is empty');
+						}
 					}
 				}
 			}
@@ -1046,7 +1099,6 @@ class VirtueMartCart {
 					}else {
 						$address[$name] = $data->{$prefix.$name};
 					}
-
 				}
 			}
 
@@ -1058,6 +1110,7 @@ class VirtueMartCart {
 
 		$this->{$type} = $address;
 
+		//vmdebug('saveAddressInCart '.$type,$address);
 
 		if($putIntoSession){
 			$this->setCartIntoSession();
@@ -1072,6 +1125,9 @@ class VirtueMartCart {
 	*/
 	function CheckAutomaticSelectedShipment($cart_prices, $checkAutomaticSelected ) {
 
+		if(count($this->products)==0 ) {
+			return false;
+		}
 		$nbShipment = 0;
 		$virtuemart_shipmentmethod_id=0;
 		if (!class_exists('vmPSPlugin')) require(JPATH_VM_PLUGINS . DS . 'vmpsplugin.php');
@@ -1176,11 +1232,10 @@ class VirtueMartCart {
 	*/
 	function prepareCartViewData(){
 		$data = new stdClass();
-		/* Get the products for the cart */
+		// Get the products for the cart
 		$this->cartData = $this->prepareCartData();
 
-// 		$this->prepareCartPrice( $this->prices ) ;
-		$this->prepareCartPrice( $this->pricesUnformatted ) ;
+		$this->prepareCartPrice( ) ;
 
 		$this->prepareAddressDataInCart();
 		$this->prepareVendor();
@@ -1197,18 +1252,13 @@ class VirtueMartCart {
 	public function prepareCartData($checkAutomaticSelected=true){
 
 		// Get the products for the cart
-// 		$prices = array();
 		$product_prices = $this->getCartPrices($checkAutomaticSelected);
 
 		if (empty($product_prices)) return null;
 		if(!class_exists('CurrencyDisplay')) require(JPATH_VM_ADMINISTRATOR.DS.'helpers'.DS.'currencydisplay.php');
 		$currency = CurrencyDisplay::getInstance();
 
-
-		if(!class_exists('calculationHelper')) require(JPATH_VM_ADMINISTRATOR.DS.'helpers'.DS.'calculationh.php');
 		$calculator = calculationHelper::getInstance();
-
-// 		$this->prices = $prices;
 
 		$this->pricesCurrency = $currency->getCurrencyForDisplay();
 
@@ -1222,7 +1272,7 @@ class VirtueMartCart {
 		return $cartData ;
 	}
 
-	private function prepareCartPrice( $prices ){
+	private function prepareCartPrice( ){
 
 		foreach ($this->products as $cart_item_id=>$product){
 			$product->virtuemart_category_id = $this->getCardCategoryId($product->virtuemart_product_id);
@@ -1235,15 +1285,28 @@ class VirtueMartCart {
 			} else {
 				$product->customfields ='';
 			}
-// 			$product->salesPrice = empty($prices[$cart_item_id]['salesPrice'])? 0:$prices[$cart_item_id]['salesPrice'];
-// 			$product->basePriceWithTax = empty($prices[$cart_item_id]['salesPrice'])? 0:$prices[$cart_item_id]['basePriceWithTax'];
-// 			$product->basePriceWithTax = $prices[$cart_item_id]['basePriceWithTax'];
-// 			$product->subtotal = $prices[$cart_item_id]['subtotal'];
-// 			$product->subtotal_tax_amount = $prices[$cart_item_id]['subtotal_tax_amount'];
-// 			$product->subtotal_discount = $prices[$cart_item_id]['subtotal_discount'];
-// 			$product->subtotal_with_tax = $prices[$cart_item_id]['subtotal_with_tax'];
 			$product->cart_item_id = $cart_item_id ;
 		}
+	}
+
+	/**
+	 * Function Description
+	 *
+	 * @author Max Milbers
+	 * @access public
+	 * @param array $cart the cart to get the products for
+	 * @return array of product objects
+	 */
+// 	$this->pricesUnformatted = $product_prices;
+
+	public function getCartPrices($checkAutomaticSelected=true) {
+
+		if(!class_exists('calculationHelper')) require(JPATH_VM_ADMINISTRATOR.DS.'helpers'.DS.'calculationh.php');
+		$calculator = calculationHelper::getInstance();
+
+		$this->pricesUnformatted = $calculator->getCheckoutPrices($this, $checkAutomaticSelected);
+
+		return $this->pricesUnformatted;
 	}
 
 	function prepareAddressDataInCart($type='BT',$new = false){
@@ -1370,7 +1433,7 @@ class VirtueMartCart {
 	function prepareVendor(){
 
 		$vendorModel = VmModel::getModel('vendor');
-		$this->vendor = $vendorModel->getVendor();
+		$this->vendor = $vendorModel->getVendor(1);
 		$vendorModel->addImages($this->vendor,1);
 		return $this->vendor;
 	}

@@ -42,6 +42,8 @@ class Migrator extends VmModel{
 		if(!empty($jrmax_execution_time)){
 			// 			vmdebug('$jrmax_execution_time',$jrmax_execution_time);
 			if($max_execution_time!=$jrmax_execution_time) @ini_set( 'max_execution_time', $jrmax_execution_time );
+		} else if((int)$max_execution_time<60) {
+			@ini_set( 'max_execution_time', 60 );
 		}
 
 		$this->maxScriptTime = ini_get('max_execution_time')*0.80-1;	//Lets use 30% of the execution time as reserve to store the progress
@@ -50,7 +52,7 @@ class Migrator extends VmModel{
 		if(!empty($jrmemory_limit)){
 			@ini_set( 'memory_limit', $jrmemory_limit.'M' );
 		} else {
-			$memory_limit = ini_get('memory_limit');
+			$memory_limit = (int) substr(ini_get('memory_limit'),0,-1);
 			if($memory_limit<128)  @ini_set( 'memory_limit', '128M' );
 		}
 
@@ -71,6 +73,7 @@ class Migrator extends VmModel{
 			$this->_app->enqueueMessage('Found prior migration process, resume migration maxScriptTime '.$this->maxScriptTime.' maxMemoryLimit '.$this->maxMemoryLimit/(1024*1024));
 		}
 
+		$this->_keepOldProductIds = VmConfig::get('keepOldProductIds',FALSE);
 	}
 
 	private function return_bytes($val) {
@@ -521,7 +524,7 @@ class Migrator extends VmModel{
 					vmError ($this->_db->getErrorMsg() );
 				}
 				$userfields->type = $field->type;
-				$type = $userfields->formatFieldType($data);
+				$type = $userfields->formatFieldType($field);
 				if (!$userinfo->_modifyColumn ('ADD', $field->name, $type)) {
 					vmError($userinfo->getError());
 					return false;
@@ -1136,7 +1139,8 @@ class Migrator extends VmModel{
 
 					$product['product_price_quantity_start'] = $product['price_quantity_start'];
 					$product['product_price_quantity_end'] = $product['price_quantity_end'];
-
+		             $product['product_price_publish_up'] = $product['product_price_vdate'];
+					$product['product_price_publish_down'] = $product['product_price_edate'];
 					$product['created_on'] = $this->_changeToStamp($product['cdate']);
 					$product['modified_on'] = $this->_changeToStamp($product['mdate']); //we could remove this to set modified_on today
 					$product['product_available_date'] = $this->_changeToStamp($product['product_available_date']);
@@ -1176,6 +1180,9 @@ class Migrator extends VmModel{
 
 					$product['virtuemart_product_id'] = $productModel->store($product);
 
+					if($this->_keepOldProductIds){
+						$product['virtuemart_product_id'] = $product['product_id'];
+					}
 					if(!empty($product['product_id']) and !empty($product['virtuemart_product_id'])){
 						$alreadyKnownIds[$product['product_id']] = $product['virtuemart_product_id'];
 					} else {
@@ -1743,9 +1750,9 @@ class Migrator extends VmModel{
 		$weightUnitMigrate=array (
                   'kg' => 'KG'
 		, 'kilos' => 'KG'
-		, 'gr' => 'GR'
+		, 'gr' => 'G'
 		, 'pound' => 'LB'
-		, 'livre' => 'LB'
+		, 'livre' => 'LB'   //TODO ERROR HERE
 		, 'once' => 'OZ'
 		, 'ounce' => 'OZ'
 		);

@@ -13,7 +13,7 @@
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
 * other free or open source software licenses.
-* @version $Id: edit_vendor.php 5314 2012-01-24 15:23:17Z Milbo $
+* @version $Id: edit_vendor.php 6303 2012-08-01 07:42:16Z alatak $
 */
 
 // Check to ensure this file is included in Joomla!
@@ -112,7 +112,7 @@ defined('_JEXEC') or die('Restricted access'); ?>
 					<legend>
 						<?php echo JText::_('COM_VIRTUEMART_STORE_FORM_DESCRIPTION');?>
 					</legend>
-					<?php echo $this->editor->display('vendor_store_desc', $this->vendor->vendor_store_desc, '100%', 220, 70, 15)?>
+					<?php echo $this->editor->display('vendor_store_desc', $this->vendor->vendor_store_desc, '100%', 450, 70, 15)?>
 				</fieldset>
 			</td>
 		</tr>
@@ -122,7 +122,7 @@ defined('_JEXEC') or die('Restricted access'); ?>
 					<legend>
 						<?php echo JText::_('COM_VIRTUEMART_STORE_FORM_TOS');?>
 					</legend>
-					<?php echo $this->editor->display('vendor_terms_of_service', $this->vendor->vendor_terms_of_service, '100%', 220, 70, 15)?>
+					<?php echo $this->editor->display('vendor_terms_of_service', $this->vendor->vendor_terms_of_service, '100%', 450, 70, 15)?>
 				</fieldset>
 			</td>
 		</tr>
@@ -132,7 +132,7 @@ defined('_JEXEC') or die('Restricted access'); ?>
 					<legend>
 						<?php echo JText::_('COM_VIRTUEMART_STORE_FORM_LEGAL');?>
 					</legend>
-					<?php echo $this->editor->display('vendor_legal_info', $this->vendor->vendor_legal_info, '100%', 220, 70, 15)?>
+					<?php echo $this->editor->display('vendor_legal_info', $this->vendor->vendor_legal_info, '100%', 400, 70, 15)?>
 				</fieldset>
 			</td>
 		</tr>

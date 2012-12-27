@@ -3,7 +3,7 @@
  * abstract controller class containing get,store,delete,publish and pagination
  *
  *
- * This class provides the functions for the calculatoins
+ * This class provides the functions for the calculations
  *
  * @package	VirtueMart
  * @subpackage Helpers
@@ -253,7 +253,7 @@ class VmView extends JView{
 
 		$taskName = ' <small><small>[ ' . JText::_('COM_VIRTUEMART_' . $task) . ' ]</small></small>';
 		JToolBarHelper::title($viewText . ' ' . $taskName . $msg, 'head vm_' . $view . '_48');
-		$this->assignRef('viewName',$viewName);
+		$this->assignRef('viewName',$viewText); //was $viewName?
 	}
 
 	function sort($orderby ,$name=null ){
@@ -276,6 +276,7 @@ class VmView extends JView{
 		<input type="hidden" name="view" value="'.$controller.'" />
 		'. JHTML::_( 'form.token' );
 	}
+
 	function getToolbar() {
 
 		// add required stylesheets from admin template
@@ -307,4 +308,35 @@ class VmView extends JView{
 		//generate the html and return
 		return $bar->render();
 	}
+
+	/**
+	 * Additional grid function for custom toggles
+	 *
+	 * @return string HTML code to write the toggle button
+	 */
+	function toggle( $field, $i, $toggle, $imgY = 'tick.png', $imgX = 'publish_x.png', $prefix='' )
+	{
+
+		$img 	= $field ? $imgY : $imgX;
+		if ($toggle == 'published') {
+			// Stay compatible with grid.published
+			$task 	= $field ? 'unpublish' : 'publish';
+			$alt 	= $field ? JText::_('COM_VIRTUEMART_PUBLISHED') : JText::_('COM_VIRTUEMART_UNPUBLISHED');
+			$action = $field ? JText::_('COM_VIRTUEMART_UNPUBLISH_ITEM') : JText::_('COM_VIRTUEMART_PUBLISH_ITEM');
+		} else {
+			$task 	= $field ? $toggle.'.0' : $toggle.'.1';
+			$alt 	= $field ? JText::_('COM_VIRTUEMART_PUBLISHED') : JText::_('COM_VIRTUEMART_DISABLED');
+			$action = $field ? JText::_('COM_VIRTUEMART_DISABLE_ITEM') : JText::_('COM_VIRTUEMART_ENABLE_ITEM');
+		}
+
+		if (JVM_VERSION>1) {
+			return ('<a href="javascript:void(0);" onclick="return listItemTask(\'cb'. $i .'\',\''. $task .'\')" title="'. $action .'">'
+				.JHTML::_('image', 'admin/' .$img, $alt, null, true) .'</a>');
+		} else {
+			return ('<a href="javascript:void(0);" onclick="return listItemTask(\'cb'. $i .'\',\''. $task .'\')" title="'. $action .'">'
+				.'<img src="images/'. $img .'" border="0" alt="'. $alt .'" /></a>');
+		}
+
+	}
+
 }

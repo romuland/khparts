@@ -18,7 +18,7 @@
 
 // Check to ensure this file is included in Joomla!
 defined ( '_JEXEC' ) or die ( 'Restricted access' );
-$min = VmConfig::get('asks_minimum_comment_length', 10);
+$min = VmConfig::get('asks_minimum_comment_length', 50);
 $max = VmConfig::get('asks_maximum_comment_length', 2000) ;
 vmJsApi::JvalideForm();
 $document = JFactory::getDocument();
@@ -82,7 +82,7 @@ if (empty ( $this->product )) {
 
 				<div class="width50 floatright right paddingtop">
 					<?php echo JText::_('COM_VIRTUEMART_ASK_COUNT')  ?>
-					<input type="text" value="0" size="4" class="counter" ID="counter" name="counter" maxlength="4" readonly="readonly" />
+					<input type="text" value="0" size="4" class="counter" id="counter" name="counter" maxlength="4" readonly="readonly" />
 				</div>
 			</div>
 

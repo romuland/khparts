@@ -69,7 +69,31 @@ class VirtuemartViewVendor extends VmView {
 
 			$vendor = $model->getVendor($virtuemart_vendor_id);
 			$model->addImages($vendor);
+			if (VmConfig::get ('enable_content_plugin', 0)) {
+				// add content plugin //
+				$dispatcher = & JDispatcher::getInstance ();
+				JPluginHelper::importPlugin ('content');
+				$vendor->text = $vendor->vendor_store_desc;
+				jimport ('joomla.html.parameter');
+				$params = new JParameter('');
 
+				if (JVM_VERSION === 2) {
+					$results = $dispatcher->trigger ('onContentPrepare', array('com_virtuemart.vendor', &$vendor, &$params, 0));
+					// More events for 3rd party content plugins
+					// This do not disturb actual plugins, because we don't modify $vendor->text
+					$res = $dispatcher->trigger ('onContentAfterTitle', array('com_virtuemart.vendor', &$vendor, &$params, 0));
+					$vendor->event->afterDisplayTitle = trim (implode ("\n", $res));
+
+					$res = $dispatcher->trigger ('onContentBeforeDisplay', array('com_virtuemart.vendor', &$vendor, &$params, 0));
+					$vendor->event->beforeDisplayContent = trim (implode ("\n", $res));
+
+					$res = $dispatcher->trigger ('onContentAfterDisplay', array('com_virtuemart.vendor', &$vendor, &$params, 0));
+					$vendor->event->afterDisplayContent = trim (implode ("\n", $res));
+				} else {
+					$results = $dispatcher->trigger ('onPrepareContent', array(& $vendor, & $params, 0));
+				}
+				$vendor->vendor_store_desc = $vendor->text;
+			}
 			$this->assignRef('vendor', $vendor);
 
 			if(!class_exists('VirtueMartModelVendor')) require(JPATH_VM_ADMINISTRATOR.DS.'models'.DS.'vendor.php');
@@ -120,6 +144,7 @@ class VirtuemartViewVendor extends VmView {
 		$this->comment = JRequest::getString('comment');
 		$virtuemart_vendor_id = JRequest::getInt('virtuemart_vendor_id');
 		$this->doVendor=$doVendor;
+		//$this->doVendor=TRUE;
 		$vendorModel = VmModel::getModel('vendor');
 		$this->vendor = $vendorModel->getVendor($virtuemart_vendor_id);
 		// in this particular case, overwrite the value for fix the recipient name

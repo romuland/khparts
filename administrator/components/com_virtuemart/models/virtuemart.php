@@ -13,15 +13,14 @@
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
 * other free or open source software licenses.
-* @version $Id: virtuemart.php 4332 2011-10-10 10:23:59Z alatak $
+* @version $Id: virtuemart.php 6350 2012-08-14 17:18:08Z Milbo $
 */
 
 // Check to ensure this file is included in Joomla!
 defined('_JEXEC') or die('Restricted access');
 
 // Load the model framework
-jimport( 'joomla.application.component.model');
-
+if(!class_exists('JModel')) require JPATH_VM_LIBRARIES.DS.'joomla'.DS.'application'.DS.'component'.DS.'model.php';
 
 /**
  * Model for Macola

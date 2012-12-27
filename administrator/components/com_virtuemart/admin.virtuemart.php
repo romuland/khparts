@@ -2,7 +2,7 @@
 defined( '_JEXEC' ) or die( 'Restricted access' );
 /**
 *
-* @version $Id: admin.virtuemart.php 5671 2012-03-15 13:06:26Z Milbo $
+* @version $Id: admin.virtuemart.php 6246 2012-07-09 19:00:20Z Milbo $
 * @package VirtueMart
 * @subpackage core
 * @copyright Copyright (C) VirtueMart Team - All rights reserved.
@@ -55,7 +55,7 @@ if(!Permissions::getInstance()->isSuperVendor()){
 
 
 
-/* Require specific controller if requested */
+// Require specific controller if requested
 if($_controller = JRequest::getWord('view', JRequest::getWord('controller', 'virtuemart'))) {
 	if (file_exists(JPATH_VM_ADMINISTRATOR.DS.'controllers'.DS.$_controller.'.php')) {
 		// Only if the file exists, since it might be a Joomla view we're requesting...

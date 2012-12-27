@@ -37,8 +37,6 @@ class VirtuemartViewOrders extends VmView {
 
 		$this->loadHelper('html');
 
-//		require(JPATH_VM_ADMINISTRATOR.DS.'models'.DS.'vendor.php'); Obsolete now??
-		//if(!class_exists('vmOrderPlugin')) require(JPATH_VM_PLUGINS.DS.'vmorderplugin.php');
 		if(!class_exists('vmPSPlugin')) require(JPATH_VM_PLUGINS.DS.'vmpsplugin.php');
 
 		$orderStatusModel=VmModel::getModel('orderstatus');
@@ -47,12 +45,6 @@ class VirtuemartViewOrders extends VmView {
 		$this->SetViewTitle( 'ORDER');
 
 		$orderModel = VmModel::getModel();
-
-// 		JToolBarHelper::custom( 'orderPrint', 'print','','COM_VIRTUEMART_PRINT',false);
-// 		JToolBarHelper::custom( 'invoice', 'invoice','','COM_VIRTUEMART_INVOICE',false);
-
-// 		JToolBarHelper::deleteListX();
-
 
 		$curTask = JRequest::getWord('task');
 		if ($curTask == 'edit') {
@@ -113,7 +105,12 @@ class VirtuemartViewOrders extends VmView {
 
 			}
 
-                       // $_shipmentInfo = ShopFunctions::getShipmentRateDetails($orderbt->virtuemart_shipmentmethod_id);
+			if(!isset($_orderStatusList[$orderbt->order_status])){
+				if(empty($orderbt->order_status)){
+					$orderbt->order_status = 'unknown';
+				}
+				$_orderStatusList[$orderbt->order_status] = JText::_('COM_VIRTUEMART_UNKNOWN_ORDER_STATUS');
+			}
 
 			/* Assign the data */
 			$this->assignRef('orderdetails', $order);
@@ -188,7 +185,6 @@ class VirtuemartViewOrders extends VmView {
 
 			 /* Toolbar */
 			JToolBarHelper::save('updatestatus', JText::_('COM_VIRTUEMART_UPDATE_STATUS'));
-			//JToolBarHelper::custom( 'exportOrdersAsCSV', 'exportCSV','','COM_VIRTUEMART_ITEM_EXPORT',false);
 
 			JToolBarHelper::deleteListX();
 

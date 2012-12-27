@@ -13,7 +13,7 @@
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
 * other free or open source software licenses.
-* @version $Id: products.php 5573 2012-02-29 14:05:31Z alatak $
+* @version $Id: products.php 6306 2012-08-06 14:19:51Z Milbo $
 */
 
 if(!class_exists('VmTable'))require(JPATH_VM_ADMINISTRATOR.DS.'helpers'.DS.'vmtable.php');
@@ -118,8 +118,10 @@ class TableProducts extends VmTable {
 
 		//We could put into the params also the product_availability and the low_stock_notification
 		$varsToPushParam = array(
-				    				'min_order_level'=>array(0.0,'float'),
-				    				'max_order_level'=>array(0.0,'float')
+				    				'min_order_level'=>array(null,'float'),
+				    				'max_order_level'=>array(null,'float'),
+									//'product_packaging'=>array(null,'float'),
+									'product_box'=>array(null,'float')
 									);
 
 		$this->setParameterable('product_params',$varsToPushParam);

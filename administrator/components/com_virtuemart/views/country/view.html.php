@@ -13,7 +13,7 @@
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
 * other free or open source software licenses.
-* @version $Id: view.html.php 6068 2012-06-06 14:59:42Z Milbo $
+* @version $Id: view.html.php 6307 2012-08-07 07:39:45Z alatak $
 */
 
 // Check to ensure this file is included in Joomla!
@@ -34,8 +34,14 @@ class VirtuemartViewCountry extends VmView {
     function display($tpl = null) {
 
 		// Load the helper(s)
-
-
+		if (!class_exists( 'VmConfig' )) require(JPATH_COMPONENT_ADMINISTRATOR.DS.'helpers'.DS.'config.php');
+		VmConfig::loadConfig();
+		if(VmConfig::get('enableEnglish', 1)){
+		    $jlang =JFactory::getLanguage();
+		    $jlang->load('com_virtuemart_countries', JPATH_ADMINISTRATOR, 'en-GB', true);
+		    $jlang->load('com_virtuemart_countries', JPATH_ADMINISTRATOR, $jlang->getDefault(), true);
+		    $jlang->load('com_virtuemart_countries', JPATH_ADMINISTRATOR, null, true);
+		}
 		$this->loadHelper('html');
 
 

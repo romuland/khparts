@@ -13,14 +13,12 @@
  * to the GNU General Public License, and as distributed it includes or
  * is derivative of works licensed under the GNU General Public License or
  * other free or open source software licenses.
- * @version $Id: orderstatus.php 6040 2012-05-20 12:50:52Z Milbo $
+ * @version $Id: orderstatus.php 6350 2012-08-14 17:18:08Z Milbo $
  */
 
 // Check to ensure this file is included in Joomla!
 defined('_JEXEC') or die('Restricted access');
 
-// Load the model framework
-jimport( 'joomla.application.component.model');
 
 if(!class_exists('VmModel'))require(JPATH_VM_ADMINISTRATOR.DS.'helpers'.DS.'vmmodel.php');
 
@@ -80,15 +78,15 @@ class VirtueMartModelOrderstatus extends VmModel {
 
 	}
 
-	function renderOrderStatusList($multiple = true,$value = '')
+	function renderOrderStatusList($value, $name = 'order_status[]' )
 	{
-		if ($multiple) {
+		//if ($multiple) {
 			$attrs = 'multiple="multiple"';
-			$name ='order_status[]';
-		} else {
-			$name ='order_status';
-			$attrs ='';
-		}
+			//$name ='order_status[]';
+		//} else {
+		//	$name ='order_status';
+			//$attrs ='';
+		//}
 
 		if (!$this->renderStatusList) {
 			$orderStates = $this->getOrderStatusNames();

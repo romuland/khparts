@@ -13,7 +13,7 @@
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
 * other free or open source software licenses.
-* @version $Id: usergroups.php 5279 2012-01-15 18:01:42Z Milbo $
+* @version $Id: usergroups.php 6475 2012-09-21 11:54:21Z Milbo $
 */
 
 // Check to ensure this file is included in Joomla!
@@ -55,11 +55,6 @@ class TableUsergroups extends VmTable {
 	 * @return boolean True if the table buffer is contains valid data, false otherwise.
 	 */
 	function check($nrOfValues){
-
-//		if (!$this->group_name) {
-//			vmError(JText::_('COM_VIRTUEMART_PERMISSION_GROUP_MUST_HAVE_NAME'));
-//			return false;
-//		}
 
 		if (preg_match('/[^a-z0-9\._\-]/i', $this->group_name) > 0) {
 			vmError(JText::_('COM_VIRTUEMART_PERMISSION_GROUP_NAME_INVALID_CHARACTERS'));

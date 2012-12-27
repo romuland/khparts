@@ -13,7 +13,7 @@
  * to the GNU General Public License, and as distributed it includes or
  * is derivative of works licensed under the GNU General Public License or
  * other free or open source software licenses.
- * @version $Id: default_reviews.php 6211 2012-07-04 08:07:02Z alatak $
+ * @version $Id: default_reviews.php 6300 2012-07-26 00:40:10Z Milbo $
  */
 
 // Check to ensure this file is included in Joomla!
@@ -23,7 +23,6 @@ defined ('_JEXEC') or die ('Restricted access');
 if ($this->allowRating || $this->showReview) {
 	$maxrating = VmConfig::get ('vm_maximum_rating_scale', 5);
 	$ratingsShow = VmConfig::get ('vm_num_ratings_show', 3); // TODO add  vm_num_ratings_show in vmConfig
-	//$starsPath = JURI::root().VmConfig::get('assets_general_path').'images/stars/';
 	$stars = array();
 	$showall = JRequest::getBool ('showall', FALSE);
 	$ratingWidth = $maxrating * 24;
@@ -75,7 +74,7 @@ if ($this->showReview) {
 					?>
 					<div class="<?php echo $color ?>">
 						<span class="date"><?php echo JHTML::date ($review->created_on, JText::_ ('DATE_FORMAT_LC')); ?></span>
-						<span class="vote"><?php echo $stars[(int)$review->vote] ?></span>
+						<span class="vote"><?php echo $stars[(int)$review->review_rating] ?></span>
 						<blockquote><?php echo $review->comment; ?></blockquote>
 						<span class="bold"><?php echo $review->customer ?></span>
 					</div>

@@ -13,7 +13,7 @@
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
 * other free or open source software licenses.
-* @version $Id: edit.php 6053 2012-06-05 12:36:21Z Milbo $
+* @version $Id: edit.php 6285 2012-07-16 16:11:17Z alatak $
 */
 
 // Check to ensure this file is included in Joomla!
@@ -45,7 +45,7 @@ if($this->userDetails->user_is_vendor){
 	$tabarray['vendor'] = 'COM_VIRTUEMART_VENDOR';
 }
 $tabarray['shopper'] = 'COM_VIRTUEMART_SHOPPER_FORM_LBL';
-$tabarray['user'] = 'COM_VIRTUEMART_USER_FORM_TAB_GENERALINFO';
+//$tabarray['user'] = 'COM_VIRTUEMART_USER_FORM_TAB_GENERALINFO';
 if ($this->shipToId != 0 || $this->new) {
 	$tabarray['shipto'] = 'COM_VIRTUEMART_USER_FORM_SHIPTO_LBL';
 }
@@ -54,7 +54,7 @@ if (($_ordcnt = count($this->orderlist)) > 0) {
 }
 
 
-AdminUIHelper::buildTabs ( $this, $tabarray,'vm-user' );
+AdminUIHelper::buildTabs ( $this, $tabarray,'vm-user');
 
 ?>
 

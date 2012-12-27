@@ -13,7 +13,7 @@
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
 * other free or open source software licenses.
-* @version $Id: edit.php 5225 2012-01-06 01:50:19Z electrocity $
+* @version $Id: edit.php 6326 2012-08-08 14:14:28Z alatak $
 */
 
 // Check to ensure this file is included in Joomla!
@@ -30,7 +30,13 @@ AdminUIHelper::imitateTabs('start','COM_VIRTUEMART_COUNTRY_DETAILS');
 	<fieldset>
 	<legend><?php echo JText::_('COM_VIRTUEMART_COUNTRY_DETAILS'); ?></legend>
 	<table class="admintable">
-		<?php echo VmHTML::row('input','COM_VIRTUEMART_COUNTRY_NAME','country_name',$this->country->country_name); ?>
+		<?php
+		$lang = JFactory::getLanguage();
+		$prefix="COM_VIRTUEMART_COUNTRY_";
+		$country_string = $lang->hasKey($prefix.$this->country->country_3_code) ? ' (' . JText::_($prefix.$this->country->country_3_code) . ')' : ' ';
+        ?>
+		<?php echo VmHTML::row('input','COM_VIRTUEMART_COUNTRY_REFERENCE_NAME','country_name',$this->country->country_name, 'class="inputbox"', '', 50, 50, $country_string); ?>
+
 		<?php echo VmHTML::row('booleanlist','COM_VIRTUEMART_PUBLISH','published',$this->country->published); ?>
 <?php /* TODO not implemented		<tr>
 			<td width="110" class="key">

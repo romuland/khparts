@@ -13,7 +13,7 @@
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
 * other free or open source software licenses.
-* @version $Id: default.php 5972 2012-04-30 14:44:24Z electrocity $
+* @version $Id: default.php 6307 2012-08-07 07:39:45Z alatak $
 */
 
 // Check to ensure this file is included in Joomla!
@@ -42,11 +42,11 @@ AdminUIHelper::startAdminArea();
 		<th><input type="checkbox" name="toggle" value="" onclick="checkAll('<?php echo count($this->inventorylist); ?>')" /></th>
 		<th><?php echo $this->sort('product_name') ?></th>
 		<th><?php echo $this->sort('product_sku')?></th>
-		<th><?php echo $this->sort('product_in_stock','COM_VIRTUEMART_PRODUCT_INVENTORY_STOCK') ?></th>
-		<th><?php echo $this->sort('product_price','COM_VIRTUEMART_PRODUCT_PRICE') ?></th>
+		<th><?php echo $this->sort('product_in_stock','COM_VIRTUEMART_PRODUCT_FORM_IN_STOCK') ?></th>
+		<th><?php echo JText::_('COM_VIRTUEMART_PRODUCT_FORM_ORDERED_STOCK') ?> </th>
+		<th><?php echo $this->sort('product_price','COM_VIRTUEMART_PRODUCT_FORM_PRICE_COST') ?></th>
 		<th><?php echo $this->sort('product_price', 'COM_VIRTUEMART_PRODUCT_INVENTORY_PRICE') ?></th>
 		<th><?php echo $this->sort('product_weight','COM_VIRTUEMART_PRODUCT_INVENTORY_WEIGHT') ?></th>
-		<th><?php echo JText::_('COM_VIRTUEMART_PRODUCT_FORM_ORDERED_STOCK') ?> </th>
 		<th><?php echo $this->sort('published')?></th>
 	</tr>
 	</thead>
@@ -77,10 +77,10 @@ AdminUIHelper::startAdminArea();
 				<td><?php echo JHTML::_('link', JRoute::_($link), $product->product_name, array('title' => JText::_('COM_VIRTUEMART_EDIT').' '.$product->product_name)); ?></td>
 				<td><?php echo $product->product_sku; ?></td>
 				<td <?php echo $stockstatut; ?>><?php echo $product->product_in_stock; ?></td>
+				<td <?php echo $stockstatut; ?> width="5%"><?php echo $product->product_ordered; ?></td>
 				<td><?php echo $product->product_price_display; ?></td>
 				<td><?php echo $product->product_instock_value; ?></td>
 				<td><?php echo $product->product_weight." ". $product->weigth_unit_display; ?></td>
-				<td><?php echo $product->product_ordered; ?></td>
 				<td><?php echo $published; ?></td>
 			</tr>
 		<?php

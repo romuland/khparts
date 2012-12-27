@@ -13,7 +13,7 @@
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
 * other free or open source software licenses.
-* @version $Id: edit.php 6053 2012-06-05 12:36:21Z Milbo $
+* @version $Id: edit.php 6472 2012-09-19 08:46:21Z alatak $
 */
 
 // Check to ensure this file is included in Joomla!
@@ -67,6 +67,9 @@ function myValidator(f, t)
 if($this->userDetails->virtuemart_user_id!=0) {
     $tabarray = array();
     if($this->userDetails->user_is_vendor){
+	    if(!empty($this->add_product_link)) {
+		    echo $this->add_product_link;
+	    }
 	    $tabarray['vendor'] = 'COM_VIRTUEMART_VENDOR';
     }
     $tabarray['shopper'] = 'COM_VIRTUEMART_SHOPPER_FORM_LBL';
@@ -77,7 +80,6 @@ if($this->userDetails->virtuemart_user_id!=0) {
     if (($_ordcnt = count($this->orderlist)) > 0) {
 	    $tabarray['orderlist'] = 'COM_VIRTUEMART_YOUR_ORDERS';
     }
-
 
     shopFunctionsF::buildTabs ( $this, $tabarray);
 

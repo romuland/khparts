@@ -13,163 +13,131 @@
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
 * other free or open source software licenses.
-* @version $Id: edit_vendor.php 6139 2012-06-20 13:50:51Z Milbo $
+* @version $Id: edit_vendor.php 6347 2012-08-14 15:49:02Z Milbo $
 */
 
 // Check to ensure this file is included in Joomla!
 defined('_JEXEC') or die('Restricted access'); ?>
-
-
-<fieldset class="adminForm">
-	<legend>
-		<?php echo JText::_('COM_VIRTUEMART_VENDOR_FORM_INFO_LBL') ?>
-	</legend>
-	<table class="admintable width100">
+<?php ///echo $this->langList; ?>
+<div class="col50">
+	<table class="admintable">
 		<tr>
-			<td class="key">
-				<?php echo JText::_('COM_VIRTUEMART_STORE_FORM_STORE_NAME'); ?>
+			<td valign="top">
+				<fieldset>
+					<legend>
+						<?php echo JText::_('COM_VIRTUEMART_VENDOR_FORM_INFO_LBL') ?>
+					</legend>
+					<table class="admintable">
+						<tr>
+							<td class="key">
+								<?php echo JText::_('COM_VIRTUEMART_STORE_FORM_STORE_NAME'); ?>:
+							</td>
+							<td>
+								<input class="inputbox" type="text" name="vendor_store_name" id="vendor_store_name" size="50" value="<?php echo $this->vendor->vendor_store_name; ?>" />
+							</td>
+						</tr>
+						<tr>
+							<td class="key">
+								<?php echo JText::_('COM_VIRTUEMART_STORE_FORM_COMPANY_NAME'); ?>:
+							</td>
+							<td>
+								<input class="inputbox" type="text" name="vendor_name" id="vendor_name" size="50" value="<?php echo $this->vendor->vendor_name; ?>" />
+							</td>
+						</tr>
+						<tr>
+							<td class="key">
+								<?php echo JText::_('COM_VIRTUEMART_PRODUCT_FORM_URL'); ?>:
+							</td>
+							<td>
+								<input class="inputbox" type="text" name="vendor_url" id="vendor_url" size="50" value="<?php echo $this->vendor->vendor_url; ?>" />
+							</td>
+						</tr>
+						<tr>
+							<td class="key">
+								<?php echo JText::_('COM_VIRTUEMART_STORE_FORM_MPOV'); ?>:
+							</td>
+							<td>
+								<input class="inputbox" type="text" name="vendor_min_pov" id="vendor_min_pov" size="10" value="<?php echo $this->vendor->vendor_min_pov; ?>" />
+							</td>
+						</tr>
+
+					</table>
+				</fieldset>
 			</td>
-			<td>
-				<input class="inputbox" type="text" name="vendor_store_name" id="vendor_store_name" size="50" value="<?php echo $this->vendor->vendor_store_name; ?>" />
+
+			<td valign="top">
+				<fieldset>
+					<legend>
+						<?php echo JText::_('COM_VIRTUEMART_STORE_CURRENCY_DISPLAY') ?>
+					</legend>
+					<table class="admintable">
+						<tr>
+							<td class="key">
+								<?php echo JText::_('COM_VIRTUEMART_CURRENCY'); ?>:
+							</td>
+							<td>
+								<?php echo JHTML::_('Select.genericlist', $this->currencies, 'vendor_currency', '', 'virtuemart_currency_id', 'currency_name', $this->vendor->vendor_currency); ?>
+							</td>
+						</tr>
+						<tr>
+							<td class="key">
+								<?php echo JText::_('COM_VIRTUEMART_STORE_FORM_ACCEPTED_CURRENCIES'); ?>:
+							</td>
+							<td>
+								<?php echo JHTML::_('Select.genericlist', $this->currencies, 'vendor_accepted_currencies[]', 'size=10 multiple="multiple"', 'virtuemart_currency_id', 'currency_name', $this->vendor->vendor_accepted_currencies); ?>
+							</td>
+						</tr>
+					</table>
+				</fieldset>
 			</td>
 		</tr>
 		<tr>
-			<td class="key">
-				<?php echo JText::_('COM_VIRTUEMART_STORE_FORM_COMPANY_NAME'); ?>
-			</td>
-			<td>
-				<input class="inputbox" type="text" name="vendor_name" id="vendor_name" size="50" value="<?php echo $this->vendor->vendor_name; ?>" />
-			</td>
-		</tr>		<tr>
-			<td class="key">
-				<?php echo JText::_('COM_VIRTUEMART_SHOPPER_FORM_PHONE'); ?>
-			</td>
-			<td>
-				<input class="inputbox" type="text" name="vendor_phone" id="vendor_phone" size="50" value="<?php echo $this->vendor->vendor_phone; ?>" />
+		<td colspan="2">
+		<fieldset>
+			<legend>
+				<?php echo JText::_('COM_VIRTUEMART_VENDOR_FORM_INFO_LBL') ?>
+			</legend>
+			<?php
+				echo $this->vendor->images[0]->displayFilesHandler($this->vendor->virtuemart_media_id,'vendor');
+			?>
+
+
+		</fieldset>
+
+		</td>
+		</tr>
+		<tr>
+		<td colspan="2">
+				<fieldset>
+					<legend>
+						<?php echo JText::_('COM_VIRTUEMART_STORE_FORM_DESCRIPTION');?>
+					</legend>
+					<?php echo $this->editor->display('vendor_store_desc', $this->vendor->vendor_store_desc, '100%', 450, 70, 15)?>
+				</fieldset>
 			</td>
 		</tr>
 		<tr>
-			<td class="key">
-				<?php echo JText::_('COM_VIRTUEMART_URL'); ?>
-			</td>
-			<td>
-				<input class="inputbox" type="text" name="vendor_url" id="vendor_url" size="50" value="<?php echo $this->vendor->vendor_url; ?>" />
-			</td>
-		</tr>
-		<tr>
-			<td class="key">
-				<?php echo JText::_('COM_VIRTUEMART_STORE_FORM_MPOV'); ?>
-			</td>
-			<td>
-				<input class="inputbox" type="text" name="vendor_min_pov" id="vendor_min_pov" size="10" value="<?php echo $this->vendor->vendor_min_pov; ?>" />
+			<td colspan="2">
+				<fieldset>
+					<legend>
+						<?php echo JText::_('COM_VIRTUEMART_STORE_FORM_TOS');?>
+					</legend>
+					<?php echo $this->editor->display('vendor_terms_of_service', $this->vendor->vendor_terms_of_service, '100%', 450, 70, 15)?>
+				</fieldset>
 			</td>
 		</tr>
-
 		<tr>
-
-		</tr>
-	</table>
-</fieldset>
-
-
-<fieldset class="adminForm">
-	<legend>
-		<?php echo JText::_('COM_VIRTUEMART_CURRENCY_DISPLAY') ?>
-	</legend>
-	<table class="admintable width100">
-		<tr>
-			<td class="key">
-				<?php echo JText::_('COM_VIRTUEMART_STORE_FORM_CURRENCY'); ?>
-			</td>
-			<td>
-				<?php echo JHTML::_('Select.genericlist', $this->currencies, 'vendor_currency', '', 'virtuemart_currency_id', 'currency_name', $this->vendor->vendor_currency); ?>
-			</td>
-		</tr><?php /*
-	<tr>
-		<td class="key">
-			<?php echo JText::_('COM_VIRTUEMART_CURRENCY_SYMBOL'); ?>
-		</td>
-		<td>
-			<input class="inputbox" type="text" name="currency_symbol" id="currency_symbol" size="20" value="<?php echo $this->currency->currency_symbol; ?>" />
-		</td>
-	</tr>
-	<tr>
-		<td class="key">
-			<?php echo JText::_('COM_VIRTUEMART_CURRENCY_DECIMALS'); ?>
-		</td>
-		<td>
-			<input class="inputbox" type="text" name="currency_decimal_place" id="currency_decimal_place" size="20" value="<?php echo $this->currency->currency_decimal_place; ?>" />
-		</td>
-	</tr>
-	<tr>
-		<td class="key">
-			<?php echo JText::_('COM_VIRTUEMART_CURRENCY_DECIMALSYMBOL'); ?>
-		</td>
-		<td>
-			<input class="inputbox" type="text" name="currency_decimal_symbol" id="currency_decimal_symbol" size="10" value="<?php echo $this->currency->currency_decimal_symbol; ?>" />
-		</td>
-	</tr>
-	<tr>
-		<td class="key">
-			<?php echo JText::_('COM_VIRTUEMART_CURRENCY_THOUSANDS'); ?>
-		</td>
-		<td>
-			<input class="inputbox" type="text" name="currency_thousands" id="currency_thousands" size="10" value="<?php echo $this->currency->currency_thousands; ?>" />
-		</td>
-	</tr>
-	<tr>
-		<td class="key">
-			<?php echo JText::_('COM_VIRTUEMART_CURRENCY_POSITIVE_DISPLAY'); ?>
-		</td>
-		<td >
-			<input class="inputbox" type="text" name="currency_positive_style" id="currency_positive_style" size="50" value="<?php echo $this->currency->currency_positive_style; ?>" />
-		</td>
-	</tr>
-	<tr>
-		<td class="key">
-			<?php echo JText::_('COM_VIRTUEMART_CURRENCY_NEGATIVE_DISPLAY'); ?>
-		</td>
-		<td>
-			<input class="inputbox" type="text" name="currency_negative_style" id="currency_negative_style" size="50" value="<?php echo $this->currency->currency_negative_style; ?>" />
-		</td>
-	</tr>
-<tr>
-	<?php echo JText::_('COM_VIRTUEMART_CURRENCY_DISPLAY_EXPL'); ?>
-</tr> */ ?>
-		<tr>
-			<td class="key">
-				<?php echo JText::_('COM_VIRTUEMART_STORE_FORM_ACCEPTED_CURRENCIES'); ?>
-			</td>
-			<td><br />
-				<?php echo JHTML::_('Select.genericlist', $this->currencies, 'vendor_accepted_currencies[]', 'size=20 multiple', 'virtuemart_currency_id', 'currency_name', $this->vendor->vendor_accepted_currencies); ?>
+			<td colspan="2">
+				<fieldset>
+					<legend>
+						<?php echo JText::_('COM_VIRTUEMART_STORE_FORM_LEGAL');?>
+					</legend>
+					<?php echo $this->editor->display('vendor_legal_info', $this->vendor->vendor_legal_info, '100%', 400, 70, 15)?>
+				</fieldset>
 			</td>
 		</tr>
 	</table>
-</fieldset>
-
-<fieldset class="adminForm">
-	<legend>
-		<?php echo JText::_('COM_VIRTUEMART_VENDOR_FORM_MEDIA') ?>
-	</legend>
-
-	<?php
-		echo $this->vendor->images[0]->displayFileHandler();
-	?>
-</fieldset>
-
-<fieldset>
-	<legend>
-		<?php echo JText::_('COM_VIRTUEMART_STORE_FORM_DESCRIPTION');?>
-	</legend>
-	<?php echo $this->editor->display('vendor_store_desc', $this->vendor->vendor_store_desc, '100%', 220, 70, 15)?>
-</fieldset>
-
-<fieldset>
-	<legend>
-		<?php echo JText::_('COM_VIRTUEMART_STORE_FORM_TOS');?>
-	</legend>
-	<?php echo $this->editor->display('vendor_terms_of_service', $this->vendor->vendor_terms_of_service, '100%', 220, 70, 15)?>
-</fieldset>
-
+</div>
 <input type="hidden" name="user_is_vendor" value="1" />
 <input type="hidden" name="virtuemart_vendor_id" value="<?php echo $this->vendor->virtuemart_vendor_id; ?>" />
+<input type="hidden" name="last_task" value="<?php echo JRequest::getCmd('task'); ?>" />

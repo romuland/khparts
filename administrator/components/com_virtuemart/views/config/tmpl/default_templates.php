@@ -35,7 +35,7 @@ defined('_JEXEC') or die('Restricted access');
 			</td>
 			<td>
 			    <?php
-			    echo JHTML::_('Select.genericlist', $this->jTemplateList, 'vmtemplate', 'size=1 width=200', 'value', 'name', $this->config->get('vmtemplate'));
+			    echo JHTML::_('Select.genericlist', $this->jTemplateList, 'vmtemplate', 'size=1 width=200', 'value', 'name', VmConfig::get('vmtemplate','default'));
 			    ?>
 			</td>
 		    </tr>
@@ -48,7 +48,7 @@ defined('_JEXEC') or die('Restricted access');
 			</td>
 			<td>
 			    <?php
-			    echo JHTML::_('Select.genericlist', $this->jTemplateList, 'categorytemplate', 'size=1', 'value', 'name', $this->config->get('categorytemplate'));
+			    echo JHTML::_('Select.genericlist', $this->jTemplateList, 'categorytemplate', 'size=1', 'value', 'name', VmConfig::get('categorytemplate','default'));
 			    ?>
 			</td>
 		    </tr>
@@ -60,7 +60,7 @@ defined('_JEXEC') or die('Restricted access');
 			    </span>
 			</td>
 			<td>
-			   <?php echo VmHTML::checkbox('showCategory', $this->config->get('showCategory',1)); ?>
+			   <?php echo VmHTML::checkbox('showCategory', VmConfig::get('showCategory',1)); ?>
 			</td>
 		    </tr>
 		    <tr>
@@ -70,7 +70,7 @@ defined('_JEXEC') or die('Restricted access');
 			    </span>
 			</td>
 			<td>
-			   <?php echo VmHTML::checkbox('show_manufacturers', $this->config->get('show_manufacturers', 1)); ?>
+			   <?php echo VmHTML::checkbox('show_manufacturers', VmConfig::get('show_manufacturers', 1)); ?>
 			</td>
 		    </tr>
 		    <tr>
@@ -81,7 +81,7 @@ defined('_JEXEC') or die('Restricted access');
 			</td>
 			<td>
 			    <?php
-			    echo JHTML::_('Select.genericlist', $this->categoryLayoutList, 'categorylayout', 'size=1', 'value', 'text', $this->config->get('categorylayout'));
+			    echo JHTML::_('Select.genericlist', $this->categoryLayoutList, 'categorylayout', 'size=1', 'value', 'text', VmConfig::get('categorylayout',0));
 			    ?>
 			</td>
 		    </tr>
@@ -92,7 +92,7 @@ defined('_JEXEC') or die('Restricted access');
 			    </span>
 			</td>
 			<td>
-			    <input type="text" name="categories_per_row" size="4" class="inputbox" value="<?php echo $this->config->get('categories_per_row') ?>" />
+			    <input type="text" name="categories_per_row" size="4" class="inputbox" value="<?php echo VmConfig::get('categories_per_row') ?>" />
 			</td>
 		    </tr>
 		    <tr>
@@ -103,7 +103,7 @@ defined('_JEXEC') or die('Restricted access');
 			</td>
 			<td>
 			    <?php
-			    echo JHTML::_('Select.genericlist', $this->productLayoutList, 'productlayout', 'size=1', 'value', 'text', $this->config->get('productlayout'));
+			    echo JHTML::_('Select.genericlist', $this->productLayoutList, 'productlayout', 'size=1', 'value', 'text', VmConfig::get('productlayout',0));
 			    ?>
 			</td>
 		    </tr>
@@ -114,7 +114,7 @@ defined('_JEXEC') or die('Restricted access');
 			    </span>
 			</td>
 			<td>
-			    <input type="text" name="products_per_row" size="4" class="inputbox" value="<?php echo $this->config->get('products_per_row') ?>" />
+			    <input type="text" name="products_per_row" size="4" class="inputbox" value="<?php echo VmConfig::get('products_per_row',3) ?>" />
 			</td>
 		    </tr>
 
@@ -125,7 +125,7 @@ defined('_JEXEC') or die('Restricted access');
 		    </span>
 		</td>
 		<td>
-		    <input type="text" name="manufacturer_per_row" size="4" class="inputbox" value="<?php echo $this->config->get('manufacturer_per_row') ?>" />
+		    <input type="text" name="manufacturer_per_row" size="4" class="inputbox" value="<?php echo VmConfig::get('manufacturer_per_row',3) ?>" />
 		</td>
 	    </tr>
 	    <tr>
@@ -135,97 +135,13 @@ defined('_JEXEC') or die('Restricted access');
 		    </span>
 		</td>
 		<td>
-		    <input type="text" name="pagination_sequence" class="inputbox" value="<?php echo $this->config->get('pagination_sequence') ?>" />
+		    <input type="text" name="pagination_sequence" class="inputbox" value="<?php echo VmConfig::get('pagination_sequence') ?>" />
 		</td>
 	    </tr>
       </table>
       </fieldset>
-	</td>
-	<td>
-      <fieldset>
-		<legend><?php echo JText::_('COM_VIRTUEMART_ADMIN_CFG_HOMEPAGE_SETTINGS') ?></legend>
-                    <table class="admintable">
-                           <tr>
-			<td class="key">
-			    <span class="hasTip" title="<?php echo JText::_('COM_VIRTUEMART_ADMIN_CFG_MAIN_LAYOUT_TIP'); ?>">
-			    <?php echo JText::_('COM_VIRTUEMART_ADMIN_CFG_MAIN_LAYOUT') ?>
-			    </span>
-			</td>
-			<td>
-			    <?php
-			    echo JHTML::_('Select.genericlist', $this->vmLayoutList, 'vmlayout', 'size=1', 'value', 'text', $this->config->get('vmlayout'));
-			    ?>
-			</td>
-		    </tr>
-		    <tr>
-			<td class="key">
-			    <span class="hasTip" title="<?php echo JText::_('COM_VIRTUEMART_ADMIN_CFG_SHOW_FEATURED_TIP'); ?>" >
-			    <label for="show_featured"><?php echo JText::_('COM_VIRTUEMART_ADMIN_CFG_SHOW_FEATURED') ?></label>
-			    </span>
-			</td>
-			<td>
-			    <?php echo VmHTML::checkbox('show_featured', $this->config->get('show_featured')); ?>
-			</td>
-		    </tr>
-		    <tr>
-			<td class="key">
-			    <span class="hasTip" title="<?php echo JText::_('COM_VIRTUEMART_ADMIN_CFG_FEATURED_PRODUCTS_PER_ROW_EXPLAIN'); ?>">
-			    <?php echo JText::_('COM_VIRTUEMART_ADMIN_CFG_FEATURED_PRODUCTS_PER_ROW') ?>
-			    </span>
-			</td>
-			<td>
-			    <input type="text" name="featured_products_per_row" size="4" class="inputbox" value="<?php echo $this->config->get('featured_products_per_row') ?>" />
-			</td>
-		    </tr>
-			<tr>
-			<td class="key">
-			    <span class="hasTip" title="<?php echo JText::_('COM_VIRTUEMART_ADMIN_CFG_SHOW_TOPTEN_TIP'); ?>" >
-			    <label for="show_topTen"><?php echo JText::_('COM_VIRTUEMART_ADMIN_CFG_SHOW_TOPTEN') ?></label>
-			    </span>
-			</td>
-			<td>
-			    <?php echo VmHTML::checkbox('show_topTen', $this->config->get('show_topTen')); ?>
-			</td>
-		    </tr>
-		     <tr>
-			<td class="key">
-			    <span class="hasTip" title="<?php echo JText::_('COM_VIRTUEMART_ADMIN_CFG_TOPTEN_PRODUCTS_PER_ROW_EXPLAIN'); ?>">
-			    <?php echo JText::_('COM_VIRTUEMART_ADMIN_CFG_TOPTEN_PRODUCTS_PER_ROW') ?>
-			    </span>
-			</td>
-			<td>
-			    <input type="text" name="topten_products_per_row" size="4" class="inputbox" value="<?php echo $this->config->get('topten_products_per_row') ?>" />
-			</td>
-		    </tr>
-			<tr>
-			<td class="key">
-			    <span class="hasTip" title="<?php echo JText::_('COM_VIRTUEMART_ADMIN_CFG_SHOW_RECENT_TIP'); ?>" >
-			    <label for="show_recent"><?php echo JText::_('COM_VIRTUEMART_ADMIN_CFG_SHOW_RECENT') ?></label>
-			    </span>
-			</td>
-			<td>
-			    <?php echo VmHTML::checkbox('show_recent', $this->config->get('show_recent')); ?>
-			</td>
-		    </tr>
-
-		    <tr>
-			<td class="key">
-			    <span class="hasTip" title="<?php echo JText::_('COM_VIRTUEMART_ADMIN_CFG_SHOW_LATEST_TIP'); ?>" >
-			    <label for="show_latest"><?php echo JText::_('COM_VIRTUEMART_ADMIN_CFG_SHOW_LATEST') ?></label>
-			    </span>
-			</td>
-			<td>
-			    <?php echo VmHTML::checkbox('show_latest', $this->config->get('show_latest')); ?>
-			</td>
-		    </tr>
-		</table>
-	    </fieldset>
-	</td>
-</tr>
-
-<tr>
-	<td>
-	<fieldset>
+	  
+	  <fieldset>
 		<legend><?php echo JText::_('COM_VIRTUEMART_ADMIN_CFG_MEDIA_TITLE') ?></legend>
 		<table class="admintable">
 			<tr>
@@ -235,7 +151,7 @@ defined('_JEXEC') or die('Restricted access');
 				</span>
 				</td>
 				<td>
-					<input type="text" name="assets_general_path"  size="60" class="inputbox" value="<?php echo $this->config->get('assets_general_path') ?>" />
+					<input type="text" name="assets_general_path"  size="60" class="inputbox" value="<?php echo VmConfig::get('assets_general_path') ?>" />
 				</td>
 			</tr>
 			<tr>
@@ -245,7 +161,7 @@ defined('_JEXEC') or die('Restricted access');
 				</span>
 				</td>
 				<td>
-					<input type="text" name="media_category_path"  size="60" class="inputbox" value="<?php echo $this->config->get('media_category_path') ?>" />
+					<input type="text" name="media_category_path"  size="60" class="inputbox" value="<?php echo VmConfig::get('media_category_path') ?>" />
 				</td>
 			</tr>
 			<tr>
@@ -255,7 +171,7 @@ defined('_JEXEC') or die('Restricted access');
 				</span>
 				</td>
 				<td>
-					<input type="text" name="media_product_path"  size="60" class="inputbox" value="<?php echo $this->config->get('media_product_path') ?>" />
+					<input type="text" name="media_product_path"  size="60" class="inputbox" value="<?php echo VmConfig::get('media_product_path') ?>" />
 				</td>
 			</tr>
 			<tr>
@@ -265,7 +181,7 @@ defined('_JEXEC') or die('Restricted access');
 				</span>
 				</td>
 				<td>
-					<input type="text" name="media_manufacturer_path"  size="60" class="inputbox" value="<?php echo $this->config->get('media_manufacturer_path') ?>" />
+					<input type="text" name="media_manufacturer_path"  size="60" class="inputbox" value="<?php echo VmConfig::get('media_manufacturer_path') ?>" />
 				</td>
 			</tr>
 			<tr>
@@ -275,7 +191,7 @@ defined('_JEXEC') or die('Restricted access');
 				</span>
 				</td>
 				<td>
-					<input type="text" name="media_vendor_path"  size="60" class="inputbox" value="<?php echo $this->config->get('media_vendor_path') ?>" />
+					<input type="text" name="media_vendor_path"  size="60" class="inputbox" value="<?php echo VmConfig::get('media_vendor_path') ?>" />
 				</td>
 			</tr>
 			<tr>
@@ -285,7 +201,7 @@ defined('_JEXEC') or die('Restricted access');
 				</span>
 			</td>
 			<td>
-				<input type="text" name="forSale_path"  size="60" class="inputbox" value="<?php echo $this->config->get('forSale_path') ?>" />
+				<input type="text" name="forSale_path"  size="60" class="inputbox" value="<?php echo VmConfig::get('forSale_path') ?>" />
 			</td>
 			</tr>
 			<tr>
@@ -295,7 +211,7 @@ defined('_JEXEC') or die('Restricted access');
 				</span>
 			</td>
 			<td>
-				<input type="text" name="forSale_path_thumb"  size="60" class="inputbox" value="<?php echo $this->config->get('forSale_path_thumb') ?>" />
+				<input type="text" name="forSale_path_thumb"  size="60" class="inputbox" value="<?php echo VmConfig::get('forSale_path_thumb') ?>" />
 			</td>
 			</tr>
 			<?php
@@ -308,7 +224,7 @@ defined('_JEXEC') or die('Restricted access');
 						</span>
 					</td>
 					<td>
-						<?php echo VmHTML::checkbox('img_resize_enable', $this->config->get('img_resize_enable')); ?>
+						<?php echo VmHTML::checkbox('img_resize_enable', VmConfig::get('img_resize_enable')); ?>
 					</td>
 				</tr>
 				<tr>
@@ -318,7 +234,7 @@ defined('_JEXEC') or die('Restricted access');
 						</span>
 					</td>
 					<td>
-						<input type="text" name="img_width" class="inputbox" value="<?php echo $this->config->get('img_width') ?>" />
+						<input type="text" name="img_width" class="inputbox" value="<?php echo VmConfig::get('img_width') ?>" />
 					</td>
 				</tr>
 				<tr>
@@ -328,7 +244,7 @@ defined('_JEXEC') or die('Restricted access');
 						</span>
 					</td>
 					<td>
-						<input type="text" name="img_height" class="inputbox" value="<?php echo $this->config->get('img_height') ?>" />
+						<input type="text" name="img_height" class="inputbox" value="<?php echo VmConfig::get('img_height') ?>" />
 					</td>
 				</tr>
 				<?php
@@ -337,8 +253,8 @@ defined('_JEXEC') or die('Restricted access');
 				<tr>
 					<td colspan="2"><strong><?php echo JText::_('COM_VIRTUEMART_ADMIN_CFG_GD_MISSING') ?></strong>
 						<input type="hidden" name="img_resize_enable" value="0" />
-						<input type="hidden" name="img_width" value="<?php echo  $this->config->get('img_width',90) ?>" />
-						<input type="hidden" name="img_height" value="<?php echo  $this->config->get('img_height',90) ?>" />
+						<input type="hidden" name="img_width" value="<?php echo  VmConfig::get('img_width',90) ?>" />
+						<input type="hidden" name="img_height" value="<?php echo  VmConfig::get('img_height',90) ?>" />
 					</td>
 				</tr>
 			<?php }
@@ -351,7 +267,7 @@ defined('_JEXEC') or die('Restricted access');
 			</td>
 			<td>
 				<?php
-				echo JHTML::_('Select.genericlist', $this->noimagelist, 'no_image_set', 'size=1', 'value', 'text', $this->config->get('no_image_set'));
+				echo JHTML::_('Select.genericlist', $this->noimagelist, 'no_image_set', 'size=1', 'value', 'text', VmConfig::get('no_image_set'));
 				?>
 			</td>
 			</tr>
@@ -363,14 +279,161 @@ defined('_JEXEC') or die('Restricted access');
 			</td>
 			<td>
 				<?php
-				echo JHTML::_('Select.genericlist', $this->noimagelist, 'no_image_found', 'size=1', 'value', 'text', $this->config->get('no_image_found'));
+				echo JHTML::_('Select.genericlist', $this->noimagelist, 'no_image_found', 'size=1', 'value', 'text', VmConfig::get('no_image_found'));
 				?>
 			</td>
 			</tr>
 		</table>
 		</fieldset>
+		
+	</td>
+	<td valign="top">
+      <fieldset>
+		<legend><?php echo JText::_('COM_VIRTUEMART_ADMIN_CFG_HOMEPAGE_SETTINGS') ?></legend>
+                    <table class="admintable">
+                           <tr>
+			<td class="key">
+			    <span class="hasTip" title="<?php echo JText::_('COM_VIRTUEMART_ADMIN_CFG_MAIN_LAYOUT_TIP'); ?>">
+			    <?php echo JText::_('COM_VIRTUEMART_ADMIN_CFG_MAIN_LAYOUT') ?>
+			    </span>
+			</td>
+			<td>
+			    <?php
+			    echo JHTML::_('Select.genericlist', $this->vmLayoutList, 'vmlayout', 'size=1', 'value', 'text', VmConfig::get('vmlayout',0));
+			    ?>
+			</td>
+		    </tr>
+			
+			<tr>
+			<td class="key">
+			    <span class="hasTip" title="<?php echo JText::_('COM_VIRTUEMART_ADMIN_CFG_SHOW_STORE_DESC_TIP'); ?>" >
+			    <label for="show_store_desc"><?php echo JText::_('COM_VIRTUEMART_ADMIN_CFG_SHOW_STORE_DESC') ?></label>
+			    </span>
+			</td>
+			<td>
+			    <?php echo VmHTML::checkbox('show_store_desc', VmConfig::get('show_store_desc')); ?>
+			</td>
+		    </tr>
+			
+			<tr>
+			<td class="key">
+			    <span class="hasTip" title="<?php echo JText::_('COM_VIRTUEMART_ADMIN_CFG_SHOW_CATEGORIES_TIP'); ?>" >
+			    <label for="show_categories"><?php echo JText::_('COM_VIRTUEMART_ADMIN_CFG_SHOW_CATEGORIES') ?></label>
+			    </span>
+			</td>
+			<td>
+			    <?php echo VmHTML::checkbox('show_categories', VmConfig::get('show_categories')); ?>
+			</td>
+		    </tr>
+			
+			<tr>
+			<td class="key">
+			    <span class="hasTip" title="<?php echo JText::_('COM_VIRTUEMART_ADMIN_CFG_CATEGORIES_PER_ROW_EXPLAIN'); ?>">
+			    <?php echo JText::_('COM_VIRTUEMART_ADMIN_CFG_CATEGORIES_PER_ROW') ?>
+			    </span>
+			</td>
+			<td>
+			    <input type="text" name="homepage_categories_per_row" size="4" class="inputbox" value="<?php echo VmConfig::get('homepage_categories_per_row', 3) ?>" />
+			</td>
+		    </tr>
+			
+			<tr>
+			<td class="key">
+			    <span class="hasTip" title="<?php echo JText::_('COM_VIRTUEMART_ADMIN_CFG_PRODUCTS_PER_ROW_EXPLAIN'); ?>">
+			    <?php echo JText::_('COM_VIRTUEMART_ADMIN_CFG_PRODUCTS_PER_ROW') ?>
+			    </span>
+			</td>
+			<td>
+			    <input type="text" name="homepage_products_per_row" size="4" class="inputbox" value="<?php echo VmConfig::get('homepage_products_per_row', 3) ?>" />
+			</td>
+		    </tr>
+			
+		    <tr>
+			<td class="key">
+			    <span class="hasTip" title="<?php echo JText::_('COM_VIRTUEMART_ADMIN_CFG_SHOW_FEATURED_TIP'); ?>" >
+			    <label for="show_featured"><?php echo JText::_('COM_VIRTUEMART_ADMIN_CFG_SHOW_FEATURED') ?></label>
+			    </span>
+			</td>
+			<td>
+			    <?php echo VmHTML::checkbox('show_featured', VmConfig::get('show_featured')); ?>
+			</td>
+		    </tr>
+		    <tr>
+			<td class="key">
+			    <span class="hasTip" title="<?php echo JText::_('COM_VIRTUEMART_ADMIN_CFG_FEAT_PROD_ROWS_EXPL'); ?>">
+			    <?php echo JText::_('COM_VIRTUEMART_ADMIN_CFG_FEAT_PROD_ROWS') ?>
+			    </span>
+			</td>
+			<td>
+			    <input type="text" name="featured_products_rows" size="4" class="inputbox" value="<?php echo VmConfig::get('featured_products_rows', 1) ?>" />
+			</td>
+		    </tr>
+			
+			<tr>
+			<td class="key">
+			    <span class="hasTip" title="<?php echo JText::_('COM_VIRTUEMART_ADMIN_CFG_SHOW_TOPTEN_TIP'); ?>" >
+			    <label for="show_topTen"><?php echo JText::_('COM_VIRTUEMART_ADMIN_CFG_SHOW_TOPTEN') ?></label>
+			    </span>
+			</td>
+			<td>
+			    <?php echo VmHTML::checkbox('show_topTen', VmConfig::get('show_topTen')); ?>
+			</td>
+		    </tr>
+		    <tr>
+			<td class="key">
+			    <span class="hasTip" title="<?php echo JText::_('COM_VIRTUEMART_ADMIN_CFG_TOPTEN_PROD_ROWS_EXPL'); ?>">
+			    <?php echo JText::_('COM_VIRTUEMART_ADMIN_CFG_TOPTEN_PROD_ROWS') ?>
+			    </span>
+			</td>
+			<td>
+			    <input type="text" name="topTen_products_rows" size="4" class="inputbox" value="<?php echo VmConfig::get('topTen_products_rows', 1) ?>" />
+			</td>
+		    </tr>
+			
+			<tr>
+			<td class="key">
+			    <span class="hasTip" title="<?php echo JText::_('COM_VIRTUEMART_ADMIN_CFG_SHOW_RECENT_TIP'); ?>" >
+			    <label for="show_recent"><?php echo JText::_('COM_VIRTUEMART_ADMIN_CFG_SHOW_RECENT') ?></label>
+			    </span>
+			</td>
+			<td>
+			    <?php echo VmHTML::checkbox('show_recent', VmConfig::get('show_recent')); ?>
+			</td>
+		    </tr>
+			<tr>
+			<td class="key">
+			    <span class="hasTip" title="<?php echo JText::_('COM_VIRTUEMART_ADMIN_CFG_REC_PROD_ROWS_EXPL'); ?>">
+			    <?php echo JText::_('COM_VIRTUEMART_ADMIN_CFG_REC_PROD_ROWS') ?>
+			    </span>
+			</td>
+			<td>
+			    <input type="text" name="recent_products_rows" size="4" class="inputbox" value="<?php echo VmConfig::get('recent_products_rows', 1) ?>" />
+			</td>
+		    </tr>
 
-	<td>
+		    <tr>
+			<td class="key">
+			    <span class="hasTip" title="<?php echo JText::_('COM_VIRTUEMART_ADMIN_CFG_SHOW_LATEST_TIP'); ?>" >
+			    <label for="show_latest"><?php echo JText::_('COM_VIRTUEMART_ADMIN_CFG_SHOW_LATEST') ?></label>
+			    </span>
+			</td>
+			<td>
+			    <?php echo VmHTML::checkbox('show_latest', VmConfig::get('show_latest')); ?>
+			</td>
+		    </tr>
+			<tr>
+			<td class="key">
+			    <span class="hasTip" title="<?php echo JText::_('COM_VIRTUEMART_ADMIN_CFG_LAT_PROD_ROWS_EXPL'); ?>">
+			    <?php echo JText::_('COM_VIRTUEMART_ADMIN_CFG_LAT_PROD_ROWS') ?>
+			    </span>
+			</td>
+			<td>
+			    <input type="text" name="latest_products_rows" size="4" class="inputbox" value="<?php echo VmConfig::get('latest_products_rows', 1) ?>" />
+			</td>
+		    </tr>
+		</table>
+	    </fieldset>
+		
 		<fieldset>
 		<legend class="hasTip" title="<?php echo JText::_('COM_VIRTUEMART_ADMIN_CFG_FRONT_CSS_JS_SETTINGS_TIP'); ?>"><?php echo JText::_('COM_VIRTUEMART_ADMIN_CFG_FRONT_CSS_JS_SETTINGS') ?></legend>
 		<table class="admintable">
@@ -381,7 +444,7 @@ defined('_JEXEC') or die('Restricted access');
 				</span>
 			</td>
 			<td>
-				<?php echo VmHTML::checkbox('css', $this->config->get('css',1)); ?>
+				<?php echo VmHTML::checkbox('css', VmConfig::get('css',1)); ?>
 			</td>
 			</tr>
 			<tr>
@@ -391,7 +454,7 @@ defined('_JEXEC') or die('Restricted access');
 				</span>
 			</td>
 			<td>
-				<?php echo VmHTML::checkbox('jquery', $this->config->get('jquery',1)); ?>
+				<?php echo VmHTML::checkbox('jquery', VmConfig::get('jquery',1)); ?>
 			</td>
 			</tr>
 			<tr>
@@ -401,7 +464,7 @@ defined('_JEXEC') or die('Restricted access');
 				</span>
 			</td>
 			<td>
-				<?php echo VmHTML::checkbox('jprice', $this->config->get('jprice',1)); ?>
+				<?php echo VmHTML::checkbox('jprice', VmConfig::get('jprice',1)); ?>
 			</td>
 			</tr>
 			<tr>
@@ -411,7 +474,7 @@ defined('_JEXEC') or die('Restricted access');
 				</span>
 			</td>
 			<td>
-				<?php echo VmHTML::checkbox('jsite', $this->config->get('jsite',1)); ?>
+				<?php echo VmHTML::checkbox('jsite', VmConfig::get('jsite',1)); ?>
 			</td>
 			</tr>
 
@@ -423,13 +486,14 @@ defined('_JEXEC') or die('Restricted access');
 				</td>
 				<td>
 					<?php
-					echo VmHTML::checkbox('google_jquery', $this->config->get('google_jquery','1'));
+					echo VmHTML::checkbox('google_jquery', VmConfig::get('google_jquery','1'));
 					?>
 				</td>
 			</tr>
 		</table>
 	    </fieldset>
+		
 	</td>
+</tr>
 
-  </tr>
 </table>

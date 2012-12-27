@@ -22,8 +22,10 @@ defined('_JEXEC') or  die( 'Direct Access to '.basename(__FILE__).' is not allow
 */
 /* Load  VM fonction */
 require('helper.php');
+if (!class_exists( 'VmConfig' )) require(JPATH_ADMINISTRATOR . DS . 'components' . DS . 'com_virtuemart'.DS.'helpers'.DS.'config.php');
 
-if (!class_exists( 'VmConfig' )) require(JPATH_ADMINISTRATOR.DS.'components'.DS.'com_virtuemart'.DS.'helpers'.DS.'config.php');
+VmConfig::loadConfig();
+VmConfig::loadJLang('mod_virtuemart_category', true);
 vmJsApi::jQuery();
 vmJsApi::cssSite();
 

@@ -13,7 +13,7 @@
  * to the GNU General Public License, and as distributed it includes or
  * is derivative of works licensed under the GNU General Public License or
  * other free or open source software licenses.
- * @version $Id: user.php 6200 2012-07-02 23:39:10Z Milbo $
+ * @version $Id: user.php 6355 2012-08-20 09:23:27Z Milbo $
  */
 
 // Check to ensure this file is included in Joomla!
@@ -43,7 +43,7 @@ class VirtueMartControllerUser extends JController
 
 	}
 
-	function editAddressSt(){
+	function editAddressST(){
 
 		$view = $this->getView('user', 'html');
 
@@ -151,7 +151,7 @@ class VirtueMartControllerUser extends JController
 
 	function saveAddressST(){
 
-		$msg = $this->saveData(false,true);
+		$msg = $this->saveData(false,true,true);
 		$layout = 'edit';// JRequest::getWord('layout','edit');
 		$this->setRedirect( JRoute::_('index.php?option=com_virtuemart&view=user&layout='.$layout), $msg );
 
@@ -167,7 +167,7 @@ class VirtueMartControllerUser extends JController
 	 * @param boolean Defaults to false, the param is for the userModel->store function, which needs it to determine how to handle the data.
 	 * @return String it gives back the messages.
 	 */
-	private function saveData($cart=false,$register=false) {
+	private function saveData($cart=false,$register=false, $onlyAddress=false) {
 		$mainframe = JFactory::getApplication();
 		$currentUser = JFactory::getUser();
 		$msg = '';
@@ -191,13 +191,16 @@ class VirtueMartControllerUser extends JController
 			}
 
 			//It should always be stored
-			$ret = $userModel->store($data);
-
+			if($onlyAddress){
+				$ret = $userModel->storeAddress($data);
+			} else {
+				$ret = $userModel->store($data);
+			}
 			if($currentUser->guest==1){
 				$msg = (is_array($ret)) ? $ret['message'] : $ret;
-				$usersConfig = &JComponentHelper::getParams( 'com_users' );
+				$usersConfig = JComponentHelper::getParams( 'com_users' );
 				$useractivation = $usersConfig->get( 'useractivation' );
-				if (is_array($ret) && $ret['success'] && !$useractivation) {
+				if (is_array($ret) and $ret['success'] and !$useractivation) {
 					// Username and password must be passed in an array
 					$credentials = array('username' => $ret['user']->username,
 			  					'password' => $ret['user']->password_clear

@@ -13,7 +13,7 @@
  * to the GNU General Public License, and as distributed it includes or
  * is derivative of works licensed under the GNU General Public License or
  * other free or open source software licenses.
- * @version $Id: order_userinfos.php 5279 2012-01-15 18:01:42Z Milbo $
+ * @version $Id: order_userinfos.php 6475 2012-09-21 11:54:21Z Milbo $
  */
 
 if(!class_exists('VmTable'))require(JPATH_VM_ADMINISTRATOR.DS.'helpers'.DS.'vmtable.php');
@@ -34,23 +34,6 @@ class TableOrder_userinfos extends VmTable {
 		$this->setLoggable();
 	}
 
-	/**
-	 * Load the fieldlist
-	 */
-/*	private function loadFields(&$_db)
-	{
-		$_fieldlist = array();
-		$_q = "SHOW COLUMNS FROM `#__virtuemart_order_userinfos`";
-		$_db->setQuery($_q);
-		$_fields = $_db->loadObjectList();
-		if (count($_fields) > 0) {
-			foreach ($_fields as $key => $_f) {
-				$_fieldlist[$_f->Field] = $_f->Default;
-			}
-			$this->setProperties($_fieldlist);
-		}
-	}
-*/
 	/**
 	 * Add, change or drop userfields
 	 *

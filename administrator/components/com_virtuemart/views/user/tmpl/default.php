@@ -13,7 +13,7 @@
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
 * other free or open source software licenses.
-* @version $Id: default.php 5929 2012-04-20 12:35:10Z Milbo $
+* @version $Id: default.php 6477 2012-09-24 14:33:54Z Milbo $
 */
 
 // Check to ensure this file is included in Joomla!
@@ -48,12 +48,13 @@ AdminUIHelper::startAdminArea();
 
 			<th><?php echo $this->sort('ju.username', 'COM_VIRTUEMART_USERNAME')  ?></th>
 			<th><?php echo $this->sort('ju.name', 'COM_VIRTUEMART_USER_DISPLAYED_NAME')  ?></th>
-			<?php		if(Vmconfig::get('multix','none')!=='none'){ ?>
-				<th width="80"><?php echo JText::_('COM_VIRTUEMART_USER_IS_VENDOR'); ?></th>
-			<?php } ?>
+			<th><?php echo JText::_('COM_VIRTUEMART_EMAIL'); ?></th>
 			<th><?php echo JText::_('COM_VIRTUEMART_USER_GROUP'); ?></th>
 			<th><?php echo $this->sort('shopper_group_name', 'COM_VIRTUEMART_SHOPPERGROUP')  ?></th>
-			  <th><?php echo  JText::_('COM_VIRTUEMART_ID') ?></th>
+			<?php if(Vmconfig::get('multix','none')!=='none'){ ?>
+			<th width="80"><?php echo JText::_('COM_VIRTUEMART_USER_IS_VENDOR'); ?></th>
+			<?php } ?>
+			<th><?php echo  JText::_('COM_VIRTUEMART_ID') ?></th>
 		</tr>
 		</thead>
 		<?php
@@ -75,15 +76,14 @@ AdminUIHelper::startAdminArea();
 				<td align="left">
 					<?php echo $row->name; ?>
 				</td>
-				<?php		if(Vmconfig::get('multix','none')!=='none'){ ?>
-				<td align="center">
-					<?php echo $is_vendor; ?>
+				<td align="left">
+					<?php echo $row->email; ?>
 				</td>
-				<?php } ?>
 				<td align="left">
 					<?php
-					if(empty($row->perms)) $row->perms = 'shopper';
-					echo $row->perms . ' / (' . $row->usertype . ')';
+					echo $this->perm->getPermissions($row->id);
+				//	if(empty($row->perms)) $row->perms = 'shopper';
+				//	echo $row->perms . ' / (' . $row->usertype . ')';
 					?>
 				</td>
 				<td align="left">
@@ -92,6 +92,11 @@ AdminUIHelper::startAdminArea();
 					echo $row->shopper_group_name;
 					?>
 				</td>
+				<?php if(Vmconfig::get('multix','none')!=='none'){ ?>
+				<td align="center">
+					<?php echo $is_vendor; ?>
+				</td>
+				<?php } ?>
 				<td align="right">
 					<?php echo $row->id; ?>
 				</td>

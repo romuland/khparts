@@ -20,16 +20,35 @@ defined('_JEXEC') or die();
  *
  */
 class vmFile {
-	function makeSafe($file='') {
+
+	/**
+	 * This function does not allow unicode
+	 * @param      $string
+	 * @param bool $forceNoUni
+	 * @return mixed|string
+	 */
+	function makeSafe($string,$forceNoUni=false) {
+
+		$string = trim(JString::strtolower($string));
+
+		// Delete all '?'
+		$str = str_replace('?', '', $string);
+
+		// Replace double byte whitespaces by single byte (East Asian languages)
+		$str = preg_replace('/\xE3\x80\x80/', ' ', $str);
+		$str = str_replace(' ', '-', $str);
+
 		$lang = JFactory::getLanguage();
-		$file = $lang->transliterate($file);
+		$str = $lang->transliterate($str);
+
 		if(function_exists('mb_ereg_replace')){
 			$regex = array('#(\.){2,}#', '#[^\w\.\- ]#', '#^\.#');
-			return mb_ereg_replace($regex, '', $file);
+			return mb_ereg_replace($regex, '', $str);
 		} else {
-			jimport('joomla.filesystem.file');
-			return JFile::makeSafe($file);
+			$regex = array('#(\.){2,}#', '#[^A-Za-z0-9\.\_\- ]#', '#^\.#');
+			return preg_replace($regex, '', $str);
 		}
+
 	}
 }
 
@@ -37,6 +56,10 @@ class VmMediaHandler {
 
 	var $media_attributes = 0;
 	var $setRole = false;
+	var $file_name = '';
+	var $file_extension = '';
+	var $virtuemart_media_id = '';
+
 
 	function __construct($id=0){
 
@@ -81,15 +104,9 @@ class VmMediaHandler {
 			$choosed = true;
 		}
 		else if($type == 'forSale' || $type== 'file_is_forSale'){
-			//todo add this path to config
-			$safePath = VmConfig::get('forSale_path',0);
-			if(empty($safePath)){
-				$lastIndex= strrpos(JPATH_ROOT,DS);
-				$suggestedPath = substr(JPATH_ROOT,0,$lastIndex).DS.'vmfiles';
-				VmWarn('COM_VIRTUEMART_WARN_NO_SAFE_PATH_SET',JText::_('COM_VIRTUEMART_ADMIN_CFG_MEDIA_FORSALE_PATH'),$suggestedPath);
 
-			}else {
-				$relUrl = $safePath;
+			$relUrl = shopFunctions::checkSafePath();
+			if($relUrl){
 				$choosed = true;
 				$this->file_is_forSale=1;
 			}
@@ -210,12 +227,9 @@ class VmMediaHandler {
 			$this->file_url_folder_thumb = $this->file_url_folder.'resized/';
 			$this->file_path_folder = str_replace('/',DS,$this->file_url_folder);
 		} else {
-			$safePath = VmConfig::get('forSale_path',0);
-			if(empty($safePath)){
-				$lastIndex= strrpos(JPATH_ROOT,DS);
-				$suggestedPath = substr(JPATH_ROOT,0,$lastIndex).DS.'vmfiles';
-				VmWarn('COM_VIRTUEMART_WARN_NO_SAFE_PATH_SET',JText::_('COM_VIRTUEMART_ADMIN_CFG_MEDIA_FORSALE_PATH'),$suggestedPath);
-				return false;
+			$safePath = shopFunctions::checkSafePath();
+			if(!$safePath){
+				return FALSE;
 			}
 			$this->file_path_folder = $safePath;
 			$this->file_url_folder = $this->file_path_folder;//str_replace(DS,'/',$this->file_path_folder);
@@ -346,7 +360,12 @@ class VmMediaHandler {
 		public function determineFoldersToTest(){
 
 			$file_path = str_replace('/',DS,$this->file_url_folder);
-			$this->addFoldersToTest(JPATH_ROOT.DS.$file_path);
+			if($this->file_is_forSale){
+				$this->addFoldersToTest($file_path);
+			} else {
+				$this->addFoldersToTest(JPATH_ROOT.DS.$file_path);
+			}
+
 
 			$file_path_thumb = str_replace('/',DS,$this->file_url_folder_thumb);
 			$this->addFoldersToTest(JPATH_ROOT.DS.$file_path_thumb);
@@ -567,6 +586,10 @@ class VmMediaHandler {
 		 */
 		function uploadFile($urlfolder,$overwrite = false){
 
+			if(empty($urlfolder) OR strlen($urlfolder)<2){
+				vmError('Not able to upload file, give path/url empty/too short '.$urlfolder.' please correct path in your virtuemart config');
+				return false;
+			}
 			$media = JRequest::getVar('upload', array(), 'files');
 
 			$app = JFactory::getApplication();
@@ -574,11 +597,27 @@ class VmMediaHandler {
 				case 0:
 					$path_folder = str_replace('/',DS,$urlfolder);
 
+					//Sadly it does not work to upload unicode files,
+					// the ä for example is stored on windows as Ã¤, this seems to be a php issue (maybe a config setting)
+					//
 					//Sanitize name of media
-					$media['name'] = vmFile::makeSafe( $media['name'] );
+				/*	$dotPos = strrpos($media['name'],'.');
+					$safeMediaName = vmFile::makeSafe( $media['name'] );
+					if($dotPos!==FALSE){
+						$mediaPure = substr($media['name'],0,$dotPos);
+						$mediaExtension = strtolower(substr($media['name'],$dotPos));
+					} else{
+						$mediaPure = '';
+						$mediaExtension = '';
+					}
+				*/
+
+					$safeMediaName = vmFile::makeSafe( $media['name'] );
+					$media['name'] = $safeMediaName;
 
 					$mediaPure = JFile::stripExt($media['name']);
 					$mediaExtension = '.'.strtolower(JFile::getExt($media['name']));
+					vmdebug('uploadFile $safeMediaName',$media['name'],$safeMediaName,$mediaPure,$mediaExtension);
 
 					if(!$overwrite){
 						while (file_exists(JPATH_ROOT.DS.$path_folder.$mediaPure.$mediaExtension)) {
@@ -858,10 +897,11 @@ class VmMediaHandler {
 		 * @param array $fileIds
 		 */
 		public function displayFilesHandler($fileIds,$type){
-			//$this->lists= $this->displayImages($type);
+
+			VmConfig::loadJLang('com_virtuemart_media');
 			$html = $this->displayFileSelection($fileIds,$type);
 			$html .= $this->displayFileHandler();
-			//$html .= '<div style="display:none"><div id="media-dialog" >'.$this->lists['htmlImages'].'</div></div>';//$type);
+
 			if(empty($this->_db)) $this->_db = JFactory::getDBO();
 			$this->_db->setQuery('SELECT FOUND_ROWS()');
 			$imagetotal = $this->_db->loadResult();
@@ -938,7 +978,7 @@ class VmMediaHandler {
 			$html='';
 			$html .= '<fieldset class="checkboxes">' ;
 			$html .= '<legend>'.JText::_('COM_VIRTUEMART_IMAGES').'</legend>';
-			$html .=  '<span class="hasTip always-left" title="'.JText::_('COM_VIRTUEMART_SEARCH_TITLE_TIP').'">'.JText::_('COM_VIRTUEMART_SEARCH_TITLE') . ' ' . JText::_('COM_VIRTUEMART_IMAGES') . ' :</span>';
+			$html .=  '<span class="hasTip always-left" title="'.JText::_('COM_VIRTUEMART_SEARCH_MEDIA_TIP').'">'.JText::_('COM_VIRTUEMART_SEARCH_MEDIA') . '</span>';
 			$html .=   '
 					<input type="text" name="searchMedia" id="searchMedia" data-start="0" value="' .JRequest::getString('searchMedia') . '" class="text_area always-left" />
 					<button class="reset-value fg-button">'.JText::_('COM_VIRTUEMART_RESET') .'</button>
@@ -1017,7 +1057,7 @@ class VmMediaHandler {
 
 
 		/**
-		 * Retrieve a list of layouts from the default and choosen templates directory.
+		 * Retrieve a list of layouts from the default and chosen templates directory.
 		 *
 		 * We may use here the getFiles function of the media model or write something simular
 		 * @author Max Milbers
@@ -1081,6 +1121,8 @@ class VmMediaHandler {
 		 */
 		public function displayFileHandler(){
 
+			VmConfig::loadJLang('com_virtuemart_media');
+			//VmConfig::loadJLang('com_virtuemart_media');
 			$identify = ''; // ':'.$this->virtuemart_media_id;
 
 			$this->addHiddenByType();
@@ -1097,13 +1139,9 @@ class VmMediaHandler {
 			$html .= ' <table class="adminform"> ';
 
 			if ($this->published || $this->virtuemart_media_id === 0){
-
-				//if($this->_id==0){
-				//	$media->media_published = 1;
-				//}
-				$checked =  "checked=\"checked\"";
+				$checked = 1;
 			} else {
-				$checked ='';
+				$checked = 0;
 			}
 
 			$html .= '<tr>';
@@ -1112,9 +1150,12 @@ class VmMediaHandler {
 			$html .= '<td class="labelcell">
 		<label for="published">'. JText::_('COM_VIRTUEMART_FILES_FORM_FILE_PUBLISHED') .'</label>
 	</td>
-	<td>
-		<input type="checkbox" class="inputbox" id="media_published'.$identify.'" name="media_published'.$identify.'" '.$checked.' size="16" value="1" />
-	</td>';
+	<td>';
+		if(!class_exists('VmHTML')) require(JPATH_VM_ADMINISTRATOR.DS.'helpers'.DS.'html.php');
+		$html .= VmHTML::checkbox('media_published',$checked,1,0,'class="inputbox"','media_published'.$identify) ;
+		//<input type="checkbox" class="inputbox" id="media_published'.$identify.'" name="media_published'.$identify.'" '.$checked.' size="16" value="1" />
+
+	$html .='</td>';
 			$html .= '<td rowspan = "8">';
 			$html .= JHTML::image($this->file_url_thumb, 'thumbnail', 'id="vm_thumb_image" style="overflow: auto; float: right;"');
 			// $html .= $this->displayMediaThumb('',false,'id="vm_thumb_image" style="overflow: auto; float: right;"');

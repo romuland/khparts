@@ -15,7 +15,7 @@
  * to the GNU General Public License, and as distributed it includes or
  * is derivative of works licensed under the GNU General Public License or
  * other free or open source software licenses.
- * @version $Id: default.php 6215 2012-07-04 13:25:23Z enytheme $
+ * @version $Id: default.php 6530 2012-10-12 09:40:36Z alatak $
  */
 // Check to ensure this file is included in Joomla!
 defined('_JEXEC') or die('Restricted access');
@@ -23,13 +23,12 @@ defined('_JEXEC') or die('Restricted access');
 // addon for joomla modal Box
 JHTML::_('behavior.modal');
 // JHTML::_('behavior.tooltip');
-$url = JRoute::_('index.php?option=com_virtuemart&view=productdetails&task=askquestion&virtuemart_product_id=' . $this->product->virtuemart_product_id . '&virtuemart_category_id=' . $this->product->virtuemart_category_id . '&tmpl=component');
 $document = JFactory::getDocument();
 $document->addScriptDeclaration("
 	jQuery(document).ready(function($) {
 		$('a.ask-a-question').click( function(){
 			$.facebox({
-				iframe: '" . $url . "',
+				iframe: '" . $this->askquestion_url . "',
 				rev: 'iframe|550|550'
 			});
 			return false ;
@@ -52,7 +51,7 @@ if (empty($this->product)) {
 }
 ?>
 
-<div class="productdetails-view">
+<div class="productdetails-view productdetails">
 
     <?php
     // Product Navigation
@@ -81,7 +80,7 @@ if (empty($this->product)) {
 		$categoryName = $this->product->category_name ;
 	} else {
 		$catURL =  JRoute::_('index.php?option=com_virtuemart');
-		$categoryName = jtext::_('COM_VIRTUEMART_SHOP_HOME') ;
+		$categoryName = jText::_('COM_VIRTUEMART_SHOP_HOME') ;
 	}
 	?>
 	<div class="back-to-category">
@@ -143,17 +142,17 @@ if (empty($this->product)) {
     ?>
 
     <div>
-	<div class="width50 floatleft">
+	<div class="width60 floatleft">
 <?php
 echo $this->loadTemplate('images');
 ?>
 	</div>
 
-	<div class="width50 floatright">
+	<div class="width40 floatright">
 	    <div class="spacer-buy-area">
 
 		<?php
-		// TO DO in Multi-Vendor not needed at the moment and just would lead to confusion
+		// TODO in Multi-Vendor not needed at the moment and just would lead to confusion
 		/* $link = JRoute::_('index2.php?option=com_virtuemart&view=virtuemart&task=vendorinfo&virtuemart_vendor_id='.$this->product->virtuemart_vendor_id);
 		  $text = JText::_('COM_VIRTUEMART_VENDOR_FORM_INFO_LBL');
 		  echo '<span class="bold">'. JText::_('COM_VIRTUEMART_PRODUCT_DETAILS_VENDOR_LBL'). '</span>'; ?><a class="modal" href="<?php echo $link ?>"><?php echo $text ?></a><br />
@@ -192,17 +191,18 @@ echo $this->loadTemplate('images');
 		    }
 		}
 		// Product Price
-		if ($this->show_prices and (empty($this->product->images[0]) or $this->product->images[0]->file_is_downloadable == 0)) {
+		    // the test is done in show_prices
+		//if ($this->show_prices and (empty($this->product->images[0]) or $this->product->images[0]->file_is_downloadable == 0)) {
 		    echo $this->loadTemplate('showprices');
-		}
+		//}
 		?>
 
 		<?php
 		// Add To Cart Button
 // 			if (!empty($this->product->prices) and !empty($this->product->images[0]) and $this->product->images[0]->file_is_downloadable==0 ) {
-		if (!VmConfig::get('use_as_catalog', 0) and !empty($this->product->prices)) {
+//		if (!VmConfig::get('use_as_catalog', 0) and !empty($this->product->prices['salesPrice'])) {
 		    echo $this->loadTemplate('addtocart');
-		}  // Add To Cart Button END
+//		}  // Add To Cart Button END
 		?>
 
 		<?php
@@ -226,11 +226,11 @@ echo $this->loadTemplate('images');
 
 <?php
 // Ask a question about this product
-if (VmConfig::get('ask_question', 1) == '1') {
+if (VmConfig::get('ask_question', 1) == 1) {
     ?>
     		<div class="ask-a-question">
-    		    <a class="ask-a-question" href="<?php echo $url ?>" ><?php echo JText::_('COM_VIRTUEMART_PRODUCT_ENQUIRY_LBL') ?></a>
-    		    <!--<a class="ask-a-question modal" rel="{handler: 'iframe', size: {x: 700, y: 550}}" href="<?php echo $url ?>"><?php echo JText::_('COM_VIRTUEMART_PRODUCT_ENQUIRY_LBL') ?></a>-->
+    		    <a class="ask-a-question" href="<?php echo $this->askquestion_url ?>" ><?php echo JText::_('COM_VIRTUEMART_PRODUCT_ENQUIRY_LBL') ?></a>
+    		    <!--<a class="ask-a-question modal" rel="{handler: 'iframe', size: {x: 700, y: 550}}" href="<?php echo $this->askquestion_url ?>"><?php echo JText::_('COM_VIRTUEMART_PRODUCT_ENQUIRY_LBL') ?></a>-->
     		</div>
 		<?php }
 		?>
@@ -268,19 +268,11 @@ if (VmConfig::get('ask_question', 1) == '1') {
     } // Product custom_fields END
     // Product Packaging
     $product_packaging = '';
-    if ($this->product->packaging || $this->product->box) {
+    if ($this->product->product_box) {
 	?>
-        <div class="product-packaging">
-
+        <div class="product-box">
 	    <?php
-	    if ($this->product->packaging) {
-		$product_packaging .= JText::_('COM_VIRTUEMART_PRODUCT_PACKAGING1') . $this->product->packaging;
-		if ($this->product->box)
-		    $product_packaging .= '<br />';
-	    }
-	    if ($this->product->box)
-		$product_packaging .= JText::_('COM_VIRTUEMART_PRODUCT_PACKAGING2') . $this->product->box;
-	    echo str_replace("{unit}", $this->product->product_unit ? $this->product->product_unit : JText::_('COM_VIRTUEMART_PRODUCT_FORM_UNIT_DEFAULT'), $product_packaging);
+	        echo JText::_('COM_VIRTUEMART_PRODUCT_UNITS_IN_BOX') .$this->product->product_box;
 	    ?>
         </div>
     <?php } // Product Packaging END

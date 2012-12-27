@@ -13,14 +13,11 @@
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
 * other free or open source software licenses.
-* @version $Id: manufacturer.php 6057 2012-06-06 00:44:52Z Milbo $
+* @version $Id: manufacturer.php 6350 2012-08-14 17:18:08Z Milbo $
 */
 
 // Check to ensure this file is included in Joomla!
 defined('_JEXEC') or die('Restricted access');
-
-// Load the model framework
-jimport( 'joomla.application.component.model');
 
 if(!class_exists('VmModel'))require(JPATH_VM_ADMINISTRATOR.DS.'helpers'.DS.'vmmodel.php');
 
@@ -54,15 +51,18 @@ class VirtueMartModelManufacturer extends VmModel {
      */
      public function getManufacturer() {
 
-     	if(empty($this->_data)){
-     		$this->_data = $this->getTable('manufacturers');
-     		$this->_data->load($this->_id);
+	    static $_manus = array();
+		if (!array_key_exists ($this->_id, $_manus)) {
+		    $this->_data = $this->getTable('manufacturers');
+		    $this->_data->load($this->_id);
 
-     		$xrefTable = $this->getTable('manufacturer_medias');
-     		$this->_data->virtuemart_media_id = $xrefTable->load($this->_id);
-     	}
+		    $xrefTable = $this->getTable('manufacturer_medias');
+		    $this->_data->virtuemart_media_id = $xrefTable->load($this->_id);
 
-     	return $this->_data;
+			$_manus[$this->_id] = $this->_data;
+	    }
+
+     	return $_manus[$this->_id];
      }
 
      /**
@@ -74,7 +74,7 @@ class VirtueMartModelManufacturer extends VmModel {
 	 */
 	public function store(&$data) {
 
-		/* Setup some place holders */
+		// Setup some place holders
 		$table = $this->getTable('manufacturers');
 
 		$table->bindChecknStore($data);
@@ -92,22 +92,6 @@ class VirtueMartModelManufacturer extends VmModel {
 		}
 		return $table->virtuemart_manufacturer_id;
 	}
-
-    /**
-     * Select the products to list on the product list page
-     */
-/*    public function getManufacturerList() {
-     	$db = JFactory::getDBO();
-     	// Pagination
-     	$this->getPagination();
-
-     	// Build the query
-     	$q = "SELECT
-			";
-     	$db->setQuery($q, $this->_pagination->limitstart, $this->_pagination->limit);
-     	return $db->loadObjectList('virtuemart_product_id');
-    }
-*/
 
     /**
      * Returns a dropdown menu with manufacturers

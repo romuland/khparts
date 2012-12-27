@@ -13,7 +13,7 @@
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
 * other free or open source software licenses.
-* @version $Id: default.php 5219 2012-01-05 05:43:54Z electrocity $
+* @version $Id: default.php 6326 2012-08-08 14:14:28Z alatak $
 */
 
 // Check to ensure this file is included in Joomla!
@@ -77,10 +77,20 @@ $states = JText::_('COM_VIRTUEMART_STATE_S');
 			<?php echo $checked; ?>
 		</td>
 		<td align="left">
-		    <a href="<?php echo $editlink; ?>"><?php echo $row->country_name; ?></a>&nbsp;
-		    <a title="<?php echo JText::sprintf('COM_VIRTUEMART_STATES_VIEW_LINK', $row->country_name ); ?>" href="<?php echo $statelink; ?>">[<?php echo $states ?>]</a>
+			<?php
+			$prefix="COM_VIRTUEMART_COUNTRY_";
+			$country_string= Jtext::_($prefix.$row->country_3_code); ?>
+		    <a href="<?php echo $editlink; ?>"><?php echo $row->country_name ?> </a>&nbsp;
+			<?php
+			$lang =JFactory::getLanguage();
+			if ($lang->hasKey($prefix.$row->country_3_code)) {
+				echo "(".$country_string.") ";
+			}
+			?>
+
+		    <a title="<?php echo JText::sprintf('COM_VIRTUEMART_STATES_VIEW_LINK', $country_string ); ?>" href="<?php echo $statelink; ?>">[<?php echo $states ?>]</a>
 		</td>
-<?php /* TODO not implemented				<td align="left">
+		<?php /* TODO not implemented				<td align="left">
 			<?php echo $row->virtuemart_worldzone_id; ?>
 		</td> */ ?>
 		<td> 

@@ -14,7 +14,7 @@
  * to the GNU General Public License, and as distributed it includes or
  * is derivative of works licensed under the GNU General Public License or
  * other free or open source software licenses.
- * @version $Id: view.html.php 6057 2012-06-06 00:44:52Z Milbo $
+ * @version $Id: view.html.php 6475 2012-09-21 11:54:21Z Milbo $
  */
 
 // Check to ensure this file is included in Joomla!
@@ -39,6 +39,13 @@ class VirtuemartViewCategory extends VmView {
 
 		$model = VmModel::getModel();
 		$layoutName = $this->getLayout();
+
+		$task = JRequest::getWord('task',$layoutName);
+		$this->assignRef('task', $task);
+
+		if(!class_exists('Permissions')) require(JPATH_VM_ADMINISTRATOR.DS.'helpers'.DS.'permissions.php');
+		$perms = Permissions::getInstance();
+		$this->assignRef('perms', $perms);
 
 		if ($layoutName == 'edit') {
 
@@ -91,7 +98,7 @@ class VirtuemartViewCategory extends VmView {
 
 			$keyWord ='';
 
-			$this->assignRef('model',	$model);
+			$this->assignRef('catmodel',	$model);
 			$this->addStandardDefaultViewCommands();
 			$this->addStandardDefaultViewLists($model,'category_name');
 
@@ -99,7 +106,7 @@ class VirtuemartViewCategory extends VmView {
 			$this->assignRef('categories', $categories);
 
 			$pagination = $model->getPagination();
-			$this->assignRef('pagination', $pagination);
+			$this->assignRef('catpagination', $pagination);
 
 		}
 

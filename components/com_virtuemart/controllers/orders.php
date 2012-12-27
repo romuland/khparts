@@ -13,7 +13,7 @@
  * to the GNU General Public License, and as distributed it includes or
  * is derivative of works licensed under the GNU General Public License or
  * other free or open source software licenses.
- * @version $Id: orders.php 5444 2012-02-15 15:31:35Z Milbo $
+ * @version $Id: orders.php 6383 2012-08-27 16:53:06Z alatak $
  */
 
 // Check to ensure this file is included in Joomla!
@@ -34,7 +34,7 @@ class VirtueMartControllerOrders extends JController
 	 * Todo do we need that anylonger? that way.
 	 * @see JController::display()
 	 */
-	public function display() {
+	public function display($cachable = false, $urlparams = false)  {
 
 		$format = JRequest::getWord('format','html');
 		if  ($format == 'pdf') $viewName= 'pdf';

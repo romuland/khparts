@@ -64,10 +64,15 @@ class VirtuemartViewInvoice extends VmView {
 		$this->assignRef('print', $print);
 
 		$this->format = JRequest::getWord('format','html');
-
 		if($layout == 'invoice'){
 			$document->setTitle( JText::_('COM_VIRTUEMART_INVOICE') );
 		}
+		$order_print=false;
+
+		if ($print and $this->format=='html') {
+			$order_print=true;
+		}
+
 
 		$orderModel = VmModel::getModel('orders');
 
@@ -93,7 +98,7 @@ class VirtuemartViewInvoice extends VmView {
 				// If the user is logged in, we will check if the order belongs to him
 				$virtuemart_order_id = JRequest::getInt('virtuemart_order_id',0) ;
 				if (!$virtuemart_order_id) {
-					$virtuemart_order_id = $orderModel->getOrderIdByOrderNumber(JRequest::getString('order_number'));
+					$virtuemart_order_id = VirtueMartModelOrders::getOrderIdByOrderNumber(JRequest::getString('order_number'));
 				}
 				$orderDetails = $orderModel->getOrder($virtuemart_order_id);
 
@@ -115,15 +120,13 @@ class VirtuemartViewInvoice extends VmView {
 			return 0;
 		}
 		$this->assignRef('orderDetails', $orderDetails);
-
-		if(empty($this->invoiceNumber)){
+        // if it is order print, invoice number should not be created, either it is there, either it has not been created
+		if(empty($this->invoiceNumber) and !$order_print){
 		    $invoiceNumberDate=array();
 			if (  $orderModel->createInvoiceNumber($orderDetails['details']['BT'], $invoiceNumberDate)) {
                 if (ShopFunctions::InvoiceNumberReserved( $invoiceNumberDate[0])) {
-	                if (!JFactory::getApplication()->isSite() ){
-	                    vmInfo('COM_VIRTUEMART_INVOICE_NUMBER_RESERVED');
-	                }
 	                if  ($this->uselayout!='mail') {
+		                $document->setTitle( JText::_('COM_VIRTUEMART_PAYMENT_INVOICE') );
                         return ;
 	                }
                 }
@@ -142,14 +145,23 @@ class VirtuemartViewInvoice extends VmView {
 				}
 			}
 		}
-
-		$shopperName =  $orderDetails['details']['BT']->title.' '.$orderDetails['details']['BT']->first_name.' '.$orderDetails['details']['BT']->last_name;
+		$company= empty($orderDetails['details']['BT']->company) ?"":$orderDetails['details']['BT']->company.", ";
+		$shopperName =  $company. $orderDetails['details']['BT']->title.' '.$orderDetails['details']['BT']->first_name.' '.$orderDetails['details']['BT']->last_name;
 		$this->assignRef('shopperName', $shopperName);
 
 		//Todo multix
 		$vendorId=1;
+		$emailCurrencyId=0;
+		$exchangeRate=FALSE;
+		if(!class_exists('vmPSPlugin')) require(JPATH_VM_PLUGINS.DS.'vmpsplugin.php');
+		  JPluginHelper::importPlugin('vmpayment');
+	    $dispatcher = JDispatcher::getInstance();
+	    $dispatcher->trigger('plgVmgetEmailCurrency',array( $orderDetails['details']['BT']->virtuemart_paymentmethod_id, $orderDetails['details']['BT']->virtuemart_order_id, &$emailCurrencyId));
 		if(!class_exists('CurrencyDisplay')) require(JPATH_VM_ADMINISTRATOR.DS.'helpers'.DS.'currencydisplay.php');
-		$currency = CurrencyDisplay::getInstance('',$vendorId);
+		$currency = CurrencyDisplay::getInstance($emailCurrencyId,$vendorId);
+			if ($emailCurrencyId) {
+				$currency->exchangeRateShopper=$orderDetails['details']['BT']->user_currency_rate;
+			}
 		$this->assignRef('currency', $currency);
 
 		//Create BT address fields
@@ -208,21 +220,14 @@ class VirtuemartViewInvoice extends VmView {
 		    JPluginHelper::importPlugin('vmpayment');
 		    $dispatcher = JDispatcher::getInstance();
 		    $returnValues = $dispatcher->trigger('plgVmOnShowOrderFEPayment',array( $orderDetails['details']['BT']->virtuemart_order_id, $orderDetails['details']['BT']->virtuemart_paymentmethod_id,  &$orderDetails['paymentName']));
-			if(is_array($returnValues)){
-				foreach($returnValues as $val){
-					if($val==false and $layout != 'mail'){
-						// don't send the invoice
-						$app = JFactory::getApplication();
-						$app->redirect('index.php?option=com_virtuemart&view=orders','Klarna is doing the invoice');
-		}
-				}
-			}
+
 		}
 
 		$virtuemart_vendor_id=1;
 		$vendorModel = VmModel::getModel('vendor');
 		$vendor = $vendorModel->getVendor($virtuemart_vendor_id);
 		$vendorModel->addImages($vendor);
+		$vendor->vendorFields = $vendorModel->getVendorAddressFields();
 		$this->assignRef('vendor', $vendor);
 
 // 		vmdebug('vendor', $vendor);
@@ -239,12 +244,11 @@ class VirtuemartViewInvoice extends VmView {
 		}
 		$this->assignRef('headFooter', $headFooter);
 
-		if(!class_exists('VirtueMartModelVendor')) require(JPATH_VM_ADMINISTRATOR.DS.'models'.DS.'vendor.php');
+		//Attention, this function will be removed, it wont be deleted, but it is obsoloete in any view.html.php
 		if(!class_exists('ShopFunctions')) require(JPATH_VM_ADMINISTRATOR.DS.'helpers'.DS.'shopfunctions.php');
-
 	    $vendorAddress= shopFunctions::renderVendorAddress($virtuemart_vendor_id, $lineSeparator);
-
 		$this->assignRef('vendorAddress', $vendorAddress);
+
 		$vendorEmail = $vendorModel->getVendorEmail($virtuemart_vendor_id);
 		$vars['vendorEmail'] = $vendorEmail;
 
@@ -274,6 +278,7 @@ class VirtuemartViewInvoice extends VmView {
 // 		$dumptrace = ob_get_contents();
 // 		ob_end_clean();
 // 		return false;
+
 
 		parent::display($tpl);
 	}

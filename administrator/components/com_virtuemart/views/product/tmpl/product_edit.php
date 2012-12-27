@@ -13,7 +13,7 @@
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
 * other free or open source software licenses.
-* @version $Id: product_edit.php 6053 2012-06-05 12:36:21Z Milbo $
+* @version $Id: product_edit.php 6347 2012-08-14 15:49:02Z Milbo $
 */
 
 // Check to ensure this file is included in Joomla!
@@ -26,7 +26,7 @@ vmJsApi::JvalideForm();
 $this->editor = JFactory::getEditor();
 
 ?>
-<form method="post" name="adminForm" action="index.php" enctype="multipart/form-data" ID="adminForm">
+<form method="post" name="adminForm" action="index.php" enctype="multipart/form-data" id="adminForm">
 
 <?php // Loading Templates in Tabs
 $tabarray = array();

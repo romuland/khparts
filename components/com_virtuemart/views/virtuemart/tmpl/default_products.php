@@ -6,7 +6,7 @@ $verticalseparator = " vertical-separator";
 
 foreach ($this->products as $type => $productList ) {
 // Calculating Products Per Row
-$products_per_row = VmConfig::get ( $type.'_products_per_row', 3 ) ;
+$products_per_row = VmConfig::get ( 'homepage_products_per_row', 3 ) ;
 $cellwidth = ' width'.floor ( 100 / $products_per_row );
 
 // Category and Columns Counter
@@ -22,6 +22,7 @@ $productTitle = JText::_('COM_VIRTUEMART_'.$type.'_PRODUCT')
 	<h4><?php echo $productTitle ?></h4>
 
 <?php // Start the Output
+
 foreach ( $productList as $product ) {
 
 	// Show the horizontal seperator
@@ -100,6 +101,7 @@ foreach ( $productList as $product ) {
 	} else {
 		$col ++;
 	}
+	
 }
 // Do we need a final closing row tag?
 if ($col != 1) { ?>

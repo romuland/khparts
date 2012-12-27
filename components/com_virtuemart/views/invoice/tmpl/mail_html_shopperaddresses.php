@@ -2,7 +2,7 @@
 /**
  *
  * Layout for the order email
- * shows the choosen adresses of the shopper
+ * shows the chosen adresses of the shopper
  * taken from the stored order
  *
  * @package	VirtueMart

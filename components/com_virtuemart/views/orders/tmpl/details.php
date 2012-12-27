@@ -13,7 +13,7 @@
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
 * other free or open source software licenses.
-* @version $Id: details.php 6053 2012-06-05 12:36:21Z Milbo $
+* @version $Id: details.php 6246 2012-07-09 19:00:20Z Milbo $
 */
 
 // Check to ensure this file is included in Joomla!
@@ -49,7 +49,7 @@ if($this->print){
 	<?php
 
 	/* Print view URL */
-	$details_url = juri::root().'index.php?option=com_virtuemart&view=orders&layout=details&tmpl=component&virtuemart_order_id=' . $this->orderdetails['details']['BT']->virtuemart_order_id;
+	$details_url = juri::root().'index.php?option=com_virtuemart&view=orders&layout=details&tmpl=component&virtuemart_order_id=' . $this->orderdetails['details']['BT']->virtuemart_order_id .'&order_pass=' . JRequest::getString('order_pass',false) .'&order_number='.JRequest::getString('order_number',false);
 	$details_link = "<a href=\"javascript:void window.open('$details_url', 'win2', 'status=no,toolbar=no,scrollbars=yes,titlebar=no,menubar=no,resizable=yes,width=640,height=480,directories=no,location=no');\"  >";
 	//$details_link .= '<span class="hasTip print_32" title="' . JText::_('COM_VIRTUEMART_PRINT') . '">&nbsp;</span></a>';
 	$button = (JVM_VERSION==1) ? '/images/M_images/printButton.png' : 'system/printButton.png';

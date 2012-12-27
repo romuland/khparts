@@ -71,15 +71,15 @@ if ($product_parent_id=JRequest::getInt('product_parent_id', false))   $col_prod
 	<table class="adminlist" cellspacing="0" cellpadding="0">
 	<thead>
 	<tr>
-		<th><input type="checkbox" name="toggle" value="" onclick="checkAll('<?php echo count($this->productlist); ?>')" /></th>
+		<th width="20px"><input type="checkbox" name="toggle" value="" onclick="checkAll('<?php echo count($this->productlist); ?>')" /></th>
 		<th><?php echo $this->sort('product_name',$col_product_name) ?> </th>
 		<?php if (!$product_parent_id ) { ?>
                 <th><?php echo $this->sort('product_parent_id','COM_VIRTUEMART_PRODUCT_CHILDREN_OF'); ?></th>
                 <?php } ?>
-                <th><?php echo JText::_('COM_VIRTUEMART_PRODUCT_PARENT_LIST_CHILDREN'); ?></th>
-                <th><?php echo JText::_('COM_VIRTUEMART_PRODUCT_MEDIA'); ?></th>
+                <th width="80px" ><?php echo JText::_('COM_VIRTUEMART_PRODUCT_PARENT_LIST_CHILDREN'); ?></th>
+                <th width="80px"><?php echo JText::_('COM_VIRTUEMART_PRODUCT_MEDIA'); ?></th>
 		<th><?php echo $this->sort('product_sku') ?></th>
-		<th><?php echo $this->sort('product_price', 'COM_VIRTUEMART_PRODUCT_PRICE_TITLE') ; ?></th>
+		<th width="80px" ><?php echo $this->sort('product_price', 'COM_VIRTUEMART_PRODUCT_PRICE_TITLE') ; ?></th>
 <?php /*		<th><?php echo JHTML::_('grid.sort', 'COM_VIRTUEMART_CATEGORY', 'c.category_name', $this->lists['filter_order_Dir'], $this->lists['filter_order'] ); ?></th> */ ?>
 <th><?php echo JText::_( 'COM_VIRTUEMART_CATEGORY'); ?></th>
 		<!-- Only show reordering fields when a category ID is selected! -->
@@ -92,11 +92,11 @@ if ($product_parent_id=JRequest::getInt('product_parent_id', false))   $col_prod
 			</th>
 		<?php } ?>
 		<th><?php echo $this->sort('mf_name', 'COM_VIRTUEMART_MANUFACTURER_S') ; ?></th>
-		<th><?php echo JText::_('COM_VIRTUEMART_REVIEW_S'); ?></th>
-
+		<th width="40px" ><?php echo JText::_('COM_VIRTUEMART_REVIEW_S'); ?></th>
+		<th width="40px" ><?php echo $this->sort('product_special', 'COM_VIRTUEMART_PRODUCT_FORM_SPECIAL'); ?>
+			 </th>
 		<th width="40px" ><?php echo $this->sort('published') ; ?></th>
-	                <th><?php echo $this->sort('virtuemart_product_id', 'COM_VIRTUEMART_ID')  ?></th>
-
+	                <th><?php echo $this->sort('p.virtuemart_product_id', 'COM_VIRTUEMART_ID')  ?></th>
         </tr>
 	</thead>
 	<tbody>
@@ -108,10 +108,11 @@ if ($product_parent_id=JRequest::getInt('product_parent_id', false))   $col_prod
 		foreach ($this->productlist as $key => $product) {
 			$checked = JHTML::_('grid.id', $i , $product->virtuemart_product_id,null,'virtuemart_product_id');
 			$published = JHTML::_('grid.published', $product, $i );
+			$is_featured = $this->toggle($product->product_special, $i, 'toggle.product_special');
 			?>
 			<tr class="row<?php echo $k ; ?>">
 				<!-- Checkbox -->
-				<td><?php echo $checked; ?></td>
+				<td align="right" ><?php echo $checked; ?></td>
 				<!-- Product name -->
 				<?php
 				$link = 'index.php?option=com_virtuemart&view=product&task=edit&virtuemart_product_id='.$product->virtuemart_product_id.'&product_parent_id='.$product->product_parent_id;
@@ -141,18 +142,18 @@ if ($product_parent_id=JRequest::getInt('product_parent_id', false))   $col_prod
 					/* Create URL */
 					$link = JRoute::_('index.php?view=media&virtuemart_product_id='.$product->virtuemart_product_id.'&option=com_virtuemart');
 				?>
-				<td><?php echo JHTML::_('link', $link, '<span class="icon-nofloat vmicon vmicon-16-media"></span> ('.$product->mediaitems.')', 'title ="'. JText::_('COM_VIRTUEMART_MEDIA_MANAGER').'" ' );
+				<td align="center"><?php echo JHTML::_('link', $link, '<span class="icon-nofloat vmicon vmicon-16-media"></span> ('.$product->mediaitems.')', 'title ="'. JText::_('COM_VIRTUEMART_MEDIA_MANAGER').'" ' );
 				 ?></td>
 				<!-- Product SKU -->
 				<td><?php echo $product->product_sku; ?></td>
 				<!-- Product price -->
-				<td><?php echo isset($product->product_price_display)? $product->product_price_display:JText::_('COM_VIRTUEMART_NO_PRICE_SET') ?></td>
+				<td align="right" ><?php echo isset($product->product_price_display)? $product->product_price_display:JText::_('COM_VIRTUEMART_NO_PRICE_SET') ?></td>
 				<!-- Category name -->
 				<td><?php //echo JHTML::_('link', JRoute::_('index.php?view=category&task=edit&virtuemart_category_id='.$product->virtuemart_category_id.'&option=com_virtuemart'), $product->category_name);
 					echo $product->categoriesList;
 				?></td>
 				<!-- Reorder only when category ID is present -->
-				<?php if( $this->virtuemart_category_id ) { ?>
+				<?php if ($this->virtuemart_category_id ) { ?>
 					<td class="order">
 						<span><?php echo $this->pagination->orderUpIcon( $i, true, 'orderup', JText::_('COM_VIRTUEMART_MOVE_UP'), $product->ordering ); ?></span>
 						<span><?php echo $this->pagination->orderDownIcon( $i, $total , true, 'orderdown', JText::_('COM_VIRTUEMART_MOVE_DOWN'), $product->ordering ); ?></span>
@@ -164,12 +165,16 @@ if ($product_parent_id=JRequest::getInt('product_parent_id', false))   $col_prod
 				<td><?php echo JHTML::_('link', JRoute::_('index.php?view=manufacturer&task=edit&virtuemart_manufacturer_id[]='.$product->virtuemart_manufacturer_id.'&option=com_virtuemart'), $product->mf_name); ?></td>
 				<!-- Reviews -->
 				<?php $link = 'index.php?option=com_virtuemart&view=ratings&task=listreviews&virtuemart_product_id='.$product->virtuemart_product_id; ?>
-				<td><?php echo JHTML::_('link', $link, $product->reviews.' ['.JText::_('COM_VIRTUEMART_REVIEW_FORM_LBL').']'); ?></td>
-
+				<td align="center" ><?php echo JHTML::_('link', $link, $product->reviews); ?></td>
+				<td align="center" >
+					<?php
+						echo $is_featured;
+					?>
+				 </td>
 				<!-- published -->
-				<td><?php echo $published; ?></td>
+				<td align="center" ><?php echo $published; ?></td>
                                 <!-- Vendor name -->
-				<td><?php echo $product->virtuemart_product_id; // echo $product->vendor_name; ?></td>
+				<td align="right"><?php echo $product->virtuemart_product_id; // echo $product->vendor_name; ?></td>
 			</tr>
 		<?php
 			$k = 1 - $k;

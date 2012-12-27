@@ -30,13 +30,13 @@ defined('_JEXEC') or die('Restricted access');
 		</span>
 	    </td>
 	    <td>
-		<?php echo VmHTML::checkbox('shop_is_offline', $this->config->get('shop_is_offline',0)); ?>
+		<?php echo VmHTML::checkbox('shop_is_offline', VmConfig::get('shop_is_offline',0)); ?>
 	    </td>
 	</tr>
 	<tr>
 	    <td class="key"><?php echo JText::_('COM_VIRTUEMART_ADMIN_CFG_SHOP_OFFLINE_MSG') ?></td>
 	    <td>
-		<textarea rows="6" cols="50" name="offline_message"><?php echo $this->config->get('offline_message'); ?></textarea>
+		<textarea rows="6" cols="50" name="offline_message"><?php echo VmConfig::get('offline_message'); ?></textarea>
 	    </td>
 	</tr>
 	<tr>
@@ -46,7 +46,7 @@ defined('_JEXEC') or die('Restricted access');
 		</span>
 	    </td>
 	    <td>
-		<?php echo VmHTML::checkbox('use_as_catalog', $this->config->get('use_as_catalog')); ?>
+		<?php echo VmHTML::checkbox('use_as_catalog', VmConfig::get('use_as_catalog')); ?>
 	    </td>
 	</tr>
 	<tr>
@@ -56,7 +56,7 @@ defined('_JEXEC') or die('Restricted access');
 		</span>
 	    </td>
 	    <td>
-		<?php echo JHTML::_('Select.genericlist', $this->currConverterList, 'currency_converter_module', 'size=1', 'value', 'text', $this->config->get('currency_converter_module')); ?>
+		<?php echo JHTML::_('Select.genericlist', $this->currConverterList, 'currency_converter_module', 'size=1', 'value', 'text', VmConfig::get('currency_converter_module')); ?>
 	    </td>
 	</tr>
 
@@ -68,7 +68,7 @@ defined('_JEXEC') or die('Restricted access');
 	    </td>
 	    <td>
 		    <?php
-		    echo VmHTML::checkbox('enable_content_plugin', $this->config->get('enable_content_plugin','0'));
+		    echo VmHTML::checkbox('enable_content_plugin', VmConfig::get('enable_content_plugin','0'));
 		    ?>
 	    </td>
 	    <?php	/* <tr>
@@ -82,7 +82,7 @@ defined('_JEXEC') or die('Restricted access');
 		</span>
 		</td>
 		<td>
-		<input type="text" name="dateformat" class="inputbox" value="<?php echo $this->config->get('dateformat') ?>" />
+		<input type="text" name="dateformat" class="inputbox" value="<?php echo VmConfig::get('dateformat') ?>" />
 	</td>
 	</tr> */ ?>
 	<tr>
@@ -92,7 +92,7 @@ defined('_JEXEC') or die('Restricted access');
 		</span>
 		</td>
 		<td>
-		<?php echo VmHTML::checkbox('useSSL', $this->config->get('useSSL',0)); ?>
+		<?php echo VmHTML::checkbox('useSSL', VmConfig::get('useSSL',0)); ?>
 		</td>
 	</tr>
 	    </table>
@@ -122,7 +122,7 @@ defined('_JEXEC') or die('Restricted access');
 		</td>
 		<td>
 		<?php
-			echo VmHTML::checkbox('enableEnglish', $this->config->get('enableEnglish','1'));
+			echo VmHTML::checkbox('enableEnglish', VmConfig::get('enableEnglish','1'));
 		?>
 	</td>
 	</tr>
@@ -141,10 +141,10 @@ defined('_JEXEC') or die('Restricted access');
 		    </td>
 		    <td>
 			    <select name="order_mail_html" id="order_mail_html">
-				    <option value="0" <?php if ($this->config->get('order_mail_html') == '0') echo 'selected="selected"'; ?>>
+				    <option value="0" <?php if (VmConfig::get('order_mail_html') == '0') echo 'selected="selected"'; ?>>
 					    <?php echo JText::_('COM_VIRTUEMART_ADMIN_CFG_MAIL_FORMAT_TEXT') ?>
 				    </option>
-				    <option value="1" <?php if ($this->config->get('order_mail_html') == '1') echo 'selected="selected"'; ?>>
+				    <option value="1" <?php if (VmConfig::get('order_mail_html') == '1') echo 'selected="selected"'; ?>>
 					    <?php echo JText::_('COM_VIRTUEMART_ADMIN_CFG_MAIL_FORMAT_HTML') ?>
 				    </option>
 			    </select>
@@ -158,7 +158,7 @@ defined('_JEXEC') or die('Restricted access');
 			    </span>
 		    </td>
 		    <td>
-			    <?php echo VmHTML::checkbox('mail_from_recipient', $this->config->get('mail_from_recipient',0)); ?>
+			    <?php echo VmHTML::checkbox('mail_from_recipient', VmConfig::get('mail_from_recipient',0)); ?>
 		    </td>
 	    </tr>
 	    <tr>
@@ -168,7 +168,7 @@ defined('_JEXEC') or die('Restricted access');
 			    </span>
 		    </td>
 		    <td>
-			    <?php echo VmHTML::checkbox('mail_from_setsender', $this->config->get('mail_from_setsender',0)); ?>
+			    <?php echo VmHTML::checkbox('mail_from_setsender', VmConfig::get('mail_from_setsender',0)); ?>
 		    </td>
 	    </tr -->
 
@@ -191,7 +191,7 @@ defined('_JEXEC') or die('Restricted access');
 					'admin'	=>	JText::_('COM_VIRTUEMART_ADMIN_CFG_ENABLE_DEBUG_ADMIN'),
 					'all'	=> JText::_('COM_VIRTUEMART_ADMIN_CFG_ENABLE_DEBUG_ALL')
 				);
-				echo VmHTML::radioList('debug_enable', $this->config->get('debug_enable','none'),$options);
+				echo VmHTML::radioList('debug_enable', VmConfig::get('debug_enable','none'),$options);
 				?>
 			</td>
 		</tr>
@@ -202,7 +202,7 @@ defined('_JEXEC') or die('Restricted access');
 		</span>
 		    </td>
 		    <td>
-			    <?php echo VmHTML::checkbox('dangeroustools', $this->config->get('dangeroustools')); ?>
+			    <?php echo VmHTML::checkbox('dangeroustools', VmConfig::get('dangeroustools')); ?>
 		    </td>
 	    </tr>
 	<tr>
@@ -218,7 +218,7 @@ defined('_JEXEC') or die('Restricted access');
 				'admin'	=>	JText::_('COM_VIRTUEMART_ADMIN_CFG_ENABLE_MULTIX_ADMIN')
 // 				'all'	=> JText::_('COM_VIRTUEMART_ADMIN_CFG_ENABLE_DEBUG_ALL')
 			);
-			echo VmHTML::radioList('multix', $this->config->get('multix','none'),$options);
+			echo VmHTML::radioList('multix', VmConfig::get('multix','none'),$options);
 		?>
 	</td>
 	</tr>

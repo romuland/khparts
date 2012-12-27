@@ -83,13 +83,13 @@ function vmInfo($publicdescr,$value=NULL){
 		}	else {
 			// 		$app ->enqueueMessage('Info: '.JText::_($publicdescr));
 			$publicdescr = $lang->_($publicdescr);
-			$app ->enqueueMessage(JText::_($publicdescr),'info');
+			$app ->enqueueMessage('Info: '.JText::_($publicdescr),'info');
 			// 		debug_print_backtrace();
 		}
 	}
 	else {
 		if (VmConfig::$maxMessageCount == VmConfig::$maxMessage) {
-			$app->enqueueMessage ('Max messages reached 92', 'info');
+			$app->enqueueMessage ('Max messages reached', 'info');
 		}
 	}
 
@@ -119,13 +119,13 @@ function vmAdminInfo($publicdescr,$value=NULL){
 			}	else {
 				// 		$app ->enqueueMessage('Info: '.JText::_($publicdescr));
 				$publicdescr = $lang->_($publicdescr);
-				$app ->enqueueMessage(JText::_($publicdescr),'info');
+				$app ->enqueueMessage('Info: '.JText::_($publicdescr),'info');
 				// 		debug_print_backtrace();
 			}
 		}
 		else {
 			if (VmConfig::$maxMessageCount == VmConfig::$maxMessage) {
-				$app->enqueueMessage ('Max messages reached 128', 'info');
+				$app->enqueueMessage ('Max messages reached', 'info');
 			}
 		}
 	}
@@ -149,13 +149,13 @@ function vmWarn($publicdescr,$value=NULL){
 		}	else {
 			// 		$app ->enqueueMessage('Info: '.JText::_($publicdescr));
 			$publicdescr = $lang->_($publicdescr);
-			$app ->enqueueMessage($publicdescr,'warning');
+			$app ->enqueueMessage('Info: '.$publicdescr,'warning');
 			// 		debug_print_backtrace();
 		}
 	}
 	else {
 		if (VmConfig::$maxMessageCount == VmConfig::$maxMessage) {
-			$app->enqueueMessage ('Max messages reached 158', 'info');
+			$app->enqueueMessage ('Max messages reached', 'info');
 		}
 	}
 
@@ -193,7 +193,7 @@ function vmError($descr,$publicdescr=''){
 	}
 	else {
 		if (VmConfig::$maxMessageCount == VmConfig::$maxMessage) {
-			$app->enqueueMessage ('Max messages reached 196', 'info');
+			$app->enqueueMessage ('Max messages reached', 'info');
 		}
 	}
 
@@ -230,12 +230,17 @@ function vmdebug($debugdescr,$debugvalues=NULL){
 				}
 			}
 
-			$app = JFactory::getApplication();
-			$app ->enqueueMessage('<span class="vmdebug" >vmdebug '.$debugdescr.'</span>');
+			if(!VmConfig::$echoDebug){
+				$app = JFactory::getApplication();
+				$app ->enqueueMessage('<span class="vmdebug" >vmdebug '.$debugdescr.'</span>');
+			} else {
+				echo $debugdescr;
+			}
+
 		}
 		else {
 			if (VmConfig::$maxMessageCount == VmConfig::$maxMessage) {
-				$app->enqueueMessage ('Max messages reached 238', 'info');
+				$app->enqueueMessage ('Max messages reached', 'info');
 			}
 		}
 
@@ -254,8 +259,13 @@ function vmTrace($notice,$force=FALSE){
 		echo '</pre>';
 		$body = ob_get_contents();
 		ob_end_clean();
-		$app = JFactory::getApplication();
-		$app ->enqueueMessage($notice.' <pre>'.$body.'</pre>');
+		if(!VmConfig::$echoDebug){
+			$app = JFactory::getApplication();
+			$app ->enqueueMessage($notice.' '.$body.' ');
+		} else {
+			echo $notice.' <pre>'.$body.'</pre>';
+		}
+
 	}
 
 }
@@ -320,6 +330,7 @@ class VmConfig {
 
 	public static $maxMessageCount = 0;
 	public static $maxMessage = 100;
+	public static $echoDebug = FALSE;
 
 	var $lang = FALSE;
 
@@ -389,6 +400,33 @@ class VmConfig {
 		return self::$_debug;
 	}
 
+
+	/**
+	 * loads a language file, the trick for us is that always the config option enableEnglish is tested
+	 * and the path are already set and the correct order is used
+	 * We use first the english language, then the default
+	 *
+	 * @author Max Milbers
+	 * @static
+	 * @param $name
+	 * @return bool
+	 */
+	static public function loadJLang($name,$site=false,$loadCore=false){
+
+		$path = JPATH_ADMINISTRATOR;
+		if($site){
+			$path = JPATH_SITE;
+		}
+		$jlang =JFactory::getLanguage();
+		$tag = $jlang->getTag();
+		if(VmConfig::get('enableEnglish', 1) and $tag!='en-GB'){
+			$jlang->load($name, $path, 'en-GB');
+		}
+
+		$jlang->load($name, $path,$tag,true);
+
+ 	}
+
 	/**
 	 * Loads the configuration and works as singleton therefore called static. The call using the program cache
 	 * is 10 times faster then taking from the session. The session is still approx. 30 times faster then using the file.
@@ -420,45 +458,12 @@ class VmConfig {
 		vmSetStartTime('loadConfig');
 		if(!$force){
 			if(!empty(self::$_jpConfig) && !empty(self::$_jpConfig->_params)){
-// 				vmTime('loadConfig Program Cache','loadConfig');
 
 				return self::$_jpConfig;
 			}
-/*			else {
-				$session = JFactory::getSession();
-				$vmConfig = $session->get('vmconfig','','vm');
-				if(!empty($vmConfig)){
-					$params = unserialize($vmConfig);
-					if(!empty($params)) {
-						//This is our cache valid time, atm I use 5 minutes, that means that for exampel changes at the config
-						//have at least 5 minutes later an effect of a currently logged in user (shopper)
-						// 5 minutes until the config settings takes effect for OTHER users.
-						$app = JFactory::getApplication();
-						$cacheenabled = $app->getCfg('caching');
-						$cachetime = $app->getCfg('cachetime');
-
-						if(!empty($cacheenabled) and !empty($params['sctime']) and (microtime(true) - $params['sctime'])<$cachetime) {
-							$params['offline_message'] = base64_decode($params['offline_message']);
-							// $params['dateformat'] = base64_decode($params['dateformat']);
-
-							self::$_jpConfig = new VmConfig();
-							self::$_jpConfig->_params = $params;
-							self::$_jpConfig->set('vmlang',self::setdbLanguageTag());
-							vmTime('loadConfig Session','loadConfig');
-
-							return self::$_jpConfig;
-						} else {
-// 							VmInfo('empty $params->sctime');
-						}
-
-					}
-				}
-
-			} */
 		}
 
 		self::$_jpConfig = new VmConfig();
-
 
 		$db = JFactory::getDBO();
 		$query = 'SHOW TABLES LIKE "%virtuemart_configs%"';
@@ -470,6 +475,7 @@ class VmConfig {
 			self::$_jpConfig->installVMconfig();
 		}
 
+		$app = JFactory::getApplication();
 		$install = 'no';
 		if(empty(self::$_jpConfig->_raw)){
 			$query = ' SELECT `config` FROM `#__virtuemart_configs` WHERE `virtuemart_config_id` = "1";';
@@ -482,12 +488,13 @@ class VmConfig {
 					self::$_jpConfig->_raw = $db->loadResult();
 					self::$_jpConfig->_params = NULL;
 				} else {
-					VmError('Error loading configuration file','Error loading configuration file, please contact the storeowner');
+					$app ->enqueueMessage('Error loading configuration file','Error loading configuration file, please contact the storeowner');
 				}
 			}
 		}
 
 		$i = 0;
+
 		$pair = array();
 		if (!empty(self::$_jpConfig->_raw)) {
 			$config = explode('|', self::$_jpConfig->_raw);
@@ -496,7 +503,20 @@ class VmConfig {
 				if(!empty($item[1])){
 					// if($item[0]!=='offline_message' && $item[0]!=='dateformat' ){
 					if($item[0]!=='offline_message' ){
-						$pair[$item[0]] = unserialize($item[1] );
+						try {
+							$value = @unserialize($item[1] );
+
+							if($value===FALSE){
+								$app ->enqueueMessage('Exception in loadConfig for unserialize '.$item[0]. ' '.$item[1]);
+								$uri = JFactory::getURI();
+								$configlink = $uri->root() . 'administrator/index.php?option=com_virtuemart&view=config';
+								$app ->enqueueMessage('To avoid this message, enter your virtuemart <a href="'.$configlink.'">config</a> and just save it one time');
+							} else {
+								$pair[$item[0]] = $value;
+							}
+						}catch (Exception $e) {
+							vmdebug('Exception in loadConfig for unserialize '. $e->getMessage(),$item);
+						}
 					} else {
 						$pair[$item[0]] = unserialize(base64_decode($item[1]) );
 					}
@@ -517,9 +537,9 @@ class VmConfig {
 			return self::$_jpConfig;
 		}
 
-		$app = JFactory::getApplication();
+
 		$app ->enqueueMessage('Attention config is empty');
-		return 'Was not able to create config';
+		return self::$_jpConfig;
 	}
 
 
@@ -539,7 +559,7 @@ class VmConfig {
 		$isBE = !JFactory::getApplication()->isSite();
 		if($isBE){
 			$siteLang = JRequest::getVar('vmlang',FALSE );// we must have this for edit form save
-			//Why not using the usterstae?
+			//Why not using the userstate?
 		} else {
 			if (!$siteLang = JRequest::getVar('vmlang',FALSE )) {
 				if ( JVM_VERSION===1 ) {
@@ -583,7 +603,6 @@ class VmConfig {
 
  	}
 
-
 	function setSession(){
 /*		$session = JFactory::getSession();
 		$session->clear('vmconfig');
@@ -609,7 +628,7 @@ class VmConfig {
 	 * @param string $key Key name to lookup
 	 * @return Value for the given key name
 	 */
-	static function get($key, $default='',$allow_load=TRUE)
+	static function get($key, $default='',$allow_load=FALSE)
 	{
 
 		$value = '';
@@ -879,12 +898,14 @@ class VmConfig {
 class vmRequest{
 
 	static function uword($field, $default, $custom=''){
+
  		$source = JRequest::getVar($field,$default);
+
  		if(function_exists('mb_ereg_replace')){
  			//$source is string that will be filtered, $custom is string that contains custom characters
- 			return mb_ereg_replace('[^-\w'.preg_quote($custom).']', '', $source);
+ 			return mb_ereg_replace('[^\w'.preg_quote($custom).']', '', $source);
  		} else {
- 			return preg_replace('/[^-\w'.preg_quote($custom).']/', '', $source);
+ 			return preg_replace('/[^\w'.preg_quote($custom).']/', '', $source);
  		}
  	}
 
@@ -976,11 +997,14 @@ class vmJsApi{
 			$uri = JPATH_THEMES .'/'. $template.'/'.$ext ;
 			$path= 'templates/'. $template .'/'.$ext ;
 		}
+
 		if (strpos($path, 'templates/'. $template ) !== FALSE)
 		{
 			// Search in template or fallback
 			if (!file_exists($uri.'/'. $file)) {
-				$path = str_replace('templates/'. $template,'components/com_virtuemart/assets', $path);
+				$assets_path = VmConfig::get('assets_general_path','components/com_virtuemart/assets/') ;
+				$path = str_replace('templates/'. $template.'/',$assets_path, $path);
+				// vmdebug('setPath',$assets_path,$path);
 				// vmWarn('file not found in tmpl :'.$file );
 			}
 			$path = JURI::root(TRUE) .'/'.$path;
@@ -1050,7 +1074,7 @@ class vmJsApi{
 		$closeimage = JURI::root(TRUE) .'/components/com_virtuemart/assets/images/facebox/closelabel.png';
 		$jsVars  = "vmSiteurl = '". JURI::root( ) ."' ;\n" ;
 		if (VmConfig::get ('vmlang_js', 1))  {
-			$jsVars .= "vmLang = '&lang=" . substr (VMLANG, 0, 2) . "' ;\n";
+			$jsVars .= "vmLang = '&amp;lang=" . substr (VMLANG, 0, 2) . "' ;\n";
 		}
 		else {
 			$jsVars .= 'vmLang = ""' . "\n";
@@ -1215,7 +1239,7 @@ class vmJsApi{
 			$formatedDate = JText::_('COM_VIRTUEMART_NEVER');
 		}
 		$display  = '<input class="datepicker-db" id="'.$id.'" type="hidden" name="'.$name.'" value="'.$date.'" />';
-		$display .= '<input id="'.$id.'_text" class="datepicker" type="date" value="'.$formatedDate.'" />';
+		$display .= '<input id="'.$id.'_text" class="datepicker" type="text" value="'.$formatedDate.'" />';
 		if ($resetBt) {
 			$display .= '<span class="vmicon vmicon-16-logout icon-nofloat js-date-reset"></span>';
 		}

@@ -31,13 +31,6 @@ if(!class_exists('VmTableXarray'))require(JPATH_VM_ADMINISTRATOR.DS.'helpers'.DS
 
  class TableVmuser_shoppergroups extends VmTableXarray {
 
-//	/** @var int User ID */
-//	var $id			= 0;
-//	/** @var int Vendor ID */
-//	var $virtuemart_user_id			= 0;
-//	/** @var int shoppergroup ID */
-//	var $virtuemart_shoppergroup_id	= 0;
-
 
 	/**
 	 * @param $db Class constructor; connect to the database
@@ -48,41 +41,5 @@ if(!class_exists('VmTableXarray'))require(JPATH_VM_ADMINISTRATOR.DS.'helpers'.DS
 		$this->setPrimaryKey('virtuemart_user_id');
 		$this->setSecondaryKey('virtuemart_shoppergroup_id');
 	}
-
-
-	function check(){
-
-
-		return parent::check();
-	}
-
- 	/**
-	 * Records in this table do not need to exist, so we might need to create a record even
-	 * if the primary key is set. Therefore we need to overload the store() function.
-	 *
-	 * @author Oscar van Eijk
-	 * @see libraries/joomla/database/JTable#store($updateNulls)
-	 */
-//	public function store()
-//	{
-//		$_qry = 'SELECT virtuemart_user_id '
-//				. 'FROM #__virtuemart_vmuser_shoppergroups '
-//				. 'WHERE virtuemart_user_id = ' . $this->virtuemart_user_id
-//		;
-//		$this->_db->setQuery($_qry);
-//		$_count = $this->_db->loadResultArray();
-//
-//		if (count($_count) > 0) {
-//			$returnCode = $this->_db->updateObject( $this->_tbl, $this, $this->_tbl_key, false );
-//		} else {
-//			$returnCode = $this->_db->insertObject( $this->_tbl, $this, $this->_tbl_key);
-//		}
-//
-//		if (!$returnCode){
-//			vmError(get_class( $this ).'::store failed - '.$this->_db->getErrorMsg());
-//			return false;
-//		}
-//		else return true;
-//	}
 
  }

@@ -38,7 +38,7 @@ foreach ($this->userFields['fields'] as $userField) {
 
 echo $li;
 
-echo JURI::root() . JRoute::_('index.php?option=com_virtuemart&view=user', $this->useXHTML, $this->useSSL) . $li;
+echo JURI::root() . 'index.php?option=com_virtuemart&view=user' . $li;
 
 echo $li;
 //echo JURI::root() . 'index.php?option=com_virtuemart&view=user&virtuemart_user_id=' . $this->_models['user']->_id . ' ' . $li;

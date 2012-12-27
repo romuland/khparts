@@ -30,9 +30,6 @@ jimport( 'joomla.application.component.view');
  */
 class VirtuemartViewUserfields extends JView {
 
-	/* json object */
-	private $json = null;
-
 	function display($tpl = null) {
 		$db = JFactory::getDBO();
 		if ( $field = JRequest::getVar('field') ) {
@@ -52,7 +49,12 @@ class VirtuemartViewUserfields extends JView {
 				$parameters = new vmParameters($this->plugin ,  $this->plugin->element , 'plugin' ,'vmuserfield');
 				$lang = JFactory::getLanguage();
 				$filename = 'plg_vmuserfield_' .  $this->plugin->element;
-				$lang->load($filename, JPATH_ADMINISTRATOR);
+				if(VmConfig::get('enableEnglish', 1)){
+		            $lang->load($filename, JPATH_ADMINISTRATOR, 'en-GB', true);
+				}
+				$lang->load($filename, JPATH_ADMINISTRATOR, $lang->getDefault(), true);
+				$lang->load($filename, JPATH_ADMINISTRATOR, null, true);
+
 				echo $parameters->render();
 				//echo '<input type="hidden" value="'.$this->plugin->element.'" name="custom_value">';
 				jExit();

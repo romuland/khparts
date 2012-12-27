@@ -13,7 +13,7 @@
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
 * other free or open source software licenses.
-* @version $Id: edit.php 6058 2012-06-06 08:19:35Z alatak $
+* @version $Id: edit.php 6361 2012-08-21 16:05:40Z alatak $
 */
 
 // Check to ensure this file is included in Joomla!
@@ -48,7 +48,7 @@ AdminUIHelper::imitateTabs('start','COM_VIRTUEMART_USERFIELD_DETAILS');
 
 				<div id="divColsRows">
 					<fieldset>
-					<legend><?php echo JText::_('COM_VIRTUEMART_TEXTAREA_ATTRIBUTES'); ?></legend>
+					<legend><?php echo JText::_('COM_VIRTUEMART_COL_ROWS_ATTRIBUTES'); ?></legend>
 						<table class="admintable">
 							<?php echo VmHTML::row('input','COM_VIRTUEMART_USERFIELDS_COLUMNS','cols',$this->userField->cols,'class="inputbox"','',5); ?>
 							<?php echo VmHTML::row('input','COM_VIRTUEMART_USERFIELDS_ROWS','rows',$this->userField->rows,'class="inputbox"','',5); ?>
@@ -80,8 +80,8 @@ AdminUIHelper::imitateTabs('start','COM_VIRTUEMART_USERFIELD_DETAILS');
 						<table align=left id="divFieldValues" cellpadding="4" cellspacing="1" border="0" width="100%" class="admintable">
 							<thead>
 								<tr>
-									<th class="title" width="20%"><?php echo JText::_('COM_VIRTUEMART_TITLE') ?></th>
-									<th class="title" width="80%"><?php echo JText::_('COM_VIRTUEMART_VALUE') ?></th>
+									<th class="title" width="20%"><?php echo JText::_('COM_VIRTUEMART_VALUE') ?></th>
+									<th class="title" width="60%"><?php echo JText::_('COM_VIRTUEMART_TITLE') ?></th>
 								</tr>
 							</thead>
 							<tbody id="fieldValuesBody"><?php echo $this->lists['userfield_values'];?></tbody>
@@ -132,7 +132,7 @@ AdminUIHelper::imitateTabs('start','COM_VIRTUEMART_USERFIELD_DETAILS');
 			</td>
 		</tr>
 		<?php echo VmHTML::row('editor','COM_VIRTUEMART_USERFIELDS_DESCRIPTION','description', $this->userField->description,'100%','300', array('image','pagebreak', 'readmore') ); ?>
-
+		<?php echo VmHTML::row('input','COM_VIRTUEMART_DEFAULT','default',$this->userField->default,'class="inputbox"','',5); ?>
 		<?php echo $this->lists['required']; ?>
 		<?php echo $this->lists['registration']; ?>
 		<?php echo $this->lists['account']; ?>
@@ -168,7 +168,7 @@ $existingFields = '"'.implode('","',$db->loadResultArray()).'"';
 
 jQuery(".insertRow").click( function() {
 	nr = jQuery('#fieldValuesBody tr').length ;
-	row = '<tr><td><input type="text" name="vNames['+nr+']" value="Mr"></td><td><input type="text" name="vValues['+nr+']" value="Mr"> <input type="button" class="button deleteRow" value=" - " /></td></tr>';
+	row = '<tr><td><input type="text" name="vValues['+nr+']" value=""> </td><td><input type="text" name="vNames['+nr+']" value=""> <input type="button" class="button deleteRow" value=" - " /></td></tr>';
 	jQuery('#fieldValuesBody').append( row );
 });
 jQuery("#fieldValuesBody").delegate("input.deleteRow", "click", function() {

@@ -14,14 +14,11 @@
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
 * other free or open source software licenses.
-* @version $Id: shoppergroup.php 6057 2012-06-06 00:44:52Z Milbo $
+* @version $Id: shoppergroup.php 6508 2012-10-08 06:57:29Z alatak $
 */
 
 // Check to ensure this file is included in Joomla!
 defined('_JEXEC') or die('Restricted access');
-
-// Load the model framework
-jimport( 'joomla.application.component.model');
 
 if(!class_exists('VmModel'))require(JPATH_VM_ADMINISTRATOR.DS.'helpers'.DS.'vmmodel.php');
 
@@ -114,9 +111,10 @@ class VirtueMartModelShopperGroup extends VmModel {
 
 		//Prevent making anonymous Shoppergroup as default
 		$adId = $this->getDefault(1);
+		 $anonymous_sg_id = $adId->virtuemart_shoppergroup_id;
 		if($adId == $id){
 			$group = $this->getShoppergroupById($id);
-			vmError(JText::sprintf('COM_VIRTUEMART_SHOPPERGROUP_DELETE_CANT_DEFAULT',$group->shopper_group_name,$id));
+			vmError(JText::sprintf('COM_VIRTUEMART_SHOPPERGROUP_CANT_MAKE_DEFAULT',$group->shopper_group_name,$id));
 			return false;
 		}
 		$this->_db->setQuery('UPDATE  `#__virtuemart_shoppergroups`  SET `default` = 0 WHERE `default`<"2"');
@@ -131,16 +129,59 @@ class VirtueMartModelShopperGroup extends VmModel {
 	 * Get default shoppergroup for anonymous and non anonymous
 	 * @param unknown_type $kind
 	 */
-	function getDefault($kind = 1){
+	function getDefault($kind = 1, $onlyPublished = FALSE, $vendorId = 1){
 
 		$kind = $kind + 1;
-		$this->_db->setQuery('SELECT * FROM `#__virtuemart_shoppergroups` WHERE `default` = "'.$kind.'" AND `virtuemart_vendor_id` = "1" ');
+		$q = 'SELECT * FROM `#__virtuemart_shoppergroups` WHERE `default` = "'.$kind.'" AND (`virtuemart_vendor_id` = "'.$vendorId.'" OR `shared` = "1") ';
+		if($onlyPublished){
+			$q .= ' AND `published`="1" ';
+		}
+		$this->_db->setQuery($q);
 
 		if(!$res = $this->_db->loadObject()){
 			$app = JFactory::getApplication();
 			$app->enqueueMessage('Attention no standard shopper group set '.$this->_db->getErrorMsg());
 		} else {
+			//vmdebug('getDefault', $res);
 			return $res;
+		}
+
+	}
+
+	function appendShopperGroups(&$shopperGroups,$user,$onlyPublished = FALSE,$vendorId=1){
+
+		$this->mergeSessionSgrps($shopperGroups);
+
+		if(count($shopperGroups)<1){
+
+			$_defaultShopperGroup = $this->getDefault($user->guest,$onlyPublished,$vendorId);
+			$shopperGroups[] = $_defaultShopperGroup->virtuemart_shoppergroup_id;
+		/*	$this->_db->setQuery('SELECT `virtuemart_shoppergroup_id` FROM #__virtuemart_shoppergroups
+								WHERE `default`="'.($user->guest+1).'" AND `virtuemart_vendor_id`="' . (int) $vendorId . '"');
+			$this->_shopperGroupId = $this->_db->loadResultArray();*/
+		}
+		$this->removeSessionSgrps($shopperGroups);
+
+	}
+
+	function mergeSessionSgrps(&$ids){
+		$session = JFactory::getSession();
+		$shoppergroup_ids = $session->get('vm_shoppergroups_add',array(),'vm');
+		$ids = array_merge($ids,(array)$shoppergroup_ids);
+	}
+
+	function removeSessionSgrps(&$ids){
+		$session = JFactory::getSession();
+		$shoppergroup_ids_remove = $session->get('vm_shoppergroups_remove',0,'vm');
+		if($shoppergroup_ids_remove!==0){
+			if(!is_array($shoppergroup_ids_remove)){
+				unset($ids[$shoppergroup_ids_remove]);
+			} else {
+				foreach($shoppergroup_ids_remove as $id){
+					unset($ids[$id]);
+					vmdebug('Anonymous case, remove session shoppergroup by plugin '.$id);
+				}
+			}
 		}
 
 	}

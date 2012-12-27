@@ -1034,9 +1034,15 @@ class vmFilter{
 		return $config;
 	}
 function mail($v){
- $regx = "@[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*\@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?@";
- return preg_replace($regx ,'', $v);
+
+$v = str_replace('mailto:','', $v);
+$v = str_replace(array('\'','"',',','%','*','/','\\','?','^','`','{','}','|','~'),array(''),$v);
+return $v;
+	//This does not work, I get a blank email
+//$regx = "@[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*\@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?@";
+ //return preg_replace($regx ,'', $v);
 }
+
 function phone($v){
  $regx = "~^[0-9,+,(), ,]{1,}(,[0-9]+){0,}$~";
  return preg_replace($regx ,'', $v);
@@ -1045,9 +1051,9 @@ function urlcheck($v) {
 
  if (!preg_match("#(http|ftp|https)#",$v)) $v = "http://".$v ;
  $regx = "#(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?#";
- $site = preg_replace($regx ,'', $var);
+ $site = preg_replace($regx ,'', $v);
  if ($file = @fopen($site, 'r')) {
-  return $var ;
+  return $v ;
  } else return '';
 }
 

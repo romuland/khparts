@@ -14,7 +14,7 @@
  * to the GNU General Public License, and as distributed it includes or
  * is derivative of works licensed under the GNU General Public License or
  * other free or open source software licenses.
- * @version $Id: view.html.php 6099 2012-06-13 13:37:12Z alatak $
+ * @version $Id: view.html.php 6477 2012-09-24 14:33:54Z Milbo $
  */
 // Check to ensure this file is included in Joomla!
 defined('_JEXEC') or die('Restricted access');
@@ -69,7 +69,7 @@ class VirtueMartViewProductdetails extends VmView {
 	/* Load the product */
 //		$product = $this->get('product');	//Why it is sensefull to use this construction? Imho it makes it just harder
 	$product_model = VmModel::getModel('product');
-
+	$this->assignRef('product_model', $product_model);
 	$virtuemart_product_idArray = JRequest::getInt('virtuemart_product_id', 0);
 	if (is_array($virtuemart_product_idArray)) {
 	    $virtuemart_product_id = $virtuemart_product_idArray[0];
@@ -77,7 +77,14 @@ class VirtueMartViewProductdetails extends VmView {
 	    $virtuemart_product_id = $virtuemart_product_idArray;
 	}
 
-	$product = $product_model->getProduct($virtuemart_product_id);
+    $quantityArray = JRequest::getVar ('quantity', array()); //is sanitized then
+    JArrayHelper::toInteger ($quantityArray);
+
+    $quantity = 1;
+    if (!empty($quantityArray[0])) {
+	    $quantity = $quantityArray[0];
+    }
+    $product = $product_model->getProduct($virtuemart_product_id,TRUE,TRUE,TRUE,$quantity);
 
 // 		vmSetStartTime('customs');
 // 		for($k=0;$k<count($product->customfields);$k++){
@@ -100,7 +107,7 @@ class VirtueMartViewProductdetails extends VmView {
 
 	    //Todo this should be redesigned to fit better for SEO
 	    $mainframe->enqueueMessage(JText::_('COM_VIRTUEMART_PRODUCT_NOT_FOUND'));
-	    
+
 	    $categoryLink = '';
 	    if (!$last_category_id) {
 		$last_category_id = JRequest::getInt('virtuemart_category_id', false);
@@ -146,6 +153,7 @@ class VirtueMartViewProductdetails extends VmView {
 
 	$product_model->addImages($product);
 	$this->assignRef('product', $product);
+
 	if (isset($product->min_order_level) && (int) $product->min_order_level > 0) {
 	    $min_order_level = $product->min_order_level;
 	} else {
@@ -161,10 +169,10 @@ class VirtueMartViewProductdetails extends VmView {
 	$category_model = VmModel::getModel('category');
 
 	// Get the category ID
-	
+
 	if (in_array($last_category_id, $product->categories) ){
 		$virtuemart_category_id = $last_category_id;
-		
+
 	} else $virtuemart_category_id = JRequest::getInt('virtuemart_category_id',0);
 	if ($virtuemart_category_id == 0 ) {
 	    if (array_key_exists('0', $product->categories))
@@ -180,17 +188,21 @@ class VirtueMartViewProductdetails extends VmView {
 	    $category_model->addImages($category, 1);
 	    $this->assignRef('category', $category);
 
-	    if ($category->parents) {
-		foreach ($category->parents as $c) {
-		    $pathway->addItem(strip_tags($c->category_name), JRoute::_('index.php?option=com_virtuemart&view=category&virtuemart_category_id=' . $c->virtuemart_category_id));
+		if ($category->parents) {
+			foreach ($category->parents as $c) {
+				if(is_object($c) and isset($c->category_name)){
+					$pathway->addItem(strip_tags($c->category_name), JRoute::_('index.php?option=com_virtuemart&view=category&virtuemart_category_id=' . $c->virtuemart_category_id));
+				} else {
+					vmdebug('Error, parent category has no name, breadcrumb maybe broken, category',$c);
+				}
+			}
 		}
-	    }
 
 	    $vendorId = 1;
 	    $category->children = $category_model->getChildCategoryList($vendorId, $virtuemart_category_id);
 	    $category_model->addImages($category->children, 1);
 	}
-	$format = JRequest::getCmd('format', 'html');
+
 	if (!empty($tpl)) {
 	    $format = $tpl;
 	} else {
@@ -245,13 +257,28 @@ class VirtueMartViewProductdetails extends VmView {
 	// @todo build edit page
 	if (!class_exists('Permissions'))
 	    require(JPATH_VM_ADMINISTRATOR . DS . 'helpers' . DS . 'permissions.php');
-	if (Permissions::getInstance()->check("admin,storeadmin")) {
+	//if (Permissions::getInstance()->check("admin,storeadmin")) {
+	$perm = Permissions::getInstance();
+	$admin = $perm->check("admin");
+	    if(!$admin) vmdebug('No admin');
+
+	$storeadmin = $perm->check("admin,storeadmin");
+	if(!$storeadmin) vmdebug('No $storeadmin');
+
+	$superVendor = $perm->isSuperVendor();
+	if(!$superVendor) vmdebug('No $superVendor');
+
+	if($admin or ($perm->isSuperVendor()==$product->virtuemart_vendor_id and $storeadmin)){
 	    $edit_link = JURI::root() . 'index.php?option=com_virtuemart&tmpl=component&view=product&task=edit&virtuemart_product_id=' . $product->virtuemart_product_id;
 	    $edit_link = $this->linkIcon($edit_link, 'COM_VIRTUEMART_PRODUCT_FORM_EDIT_PRODUCT', 'edit', false, false);
 	} else {
 	    $edit_link = "";
 	}
 	$this->assignRef('edit_link', $edit_link);
+
+	// todo: atm same form for "call for price" and "ask a question". Title of the form should be different
+	$askquestion_url = JRoute::_('index.php?option=com_virtuemart&view=productdetails&task=askquestion&virtuemart_product_id=' . $product->virtuemart_product_id . '&virtuemart_category_id=' . $product->virtuemart_category_id . '&tmpl=component');
+	$this->assignRef('askquestion_url', $askquestion_url);
 
 	// Load the user details
 	$user = JFactory::getUser();
@@ -309,7 +336,7 @@ class VirtueMartViewProductdetails extends VmView {
 
 	$currency = CurrencyDisplay::getInstance();
 	$this->assignRef('currency', $currency);
-	
+
 	if(JRequest::getCmd( 'layout', 'default' )=='notify') $this->setLayout('notify'); //Added by Seyi Awofadeju to catch notify layout
 
 

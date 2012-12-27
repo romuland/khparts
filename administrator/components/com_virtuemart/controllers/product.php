@@ -13,7 +13,7 @@
  * to the GNU General Public License, and as distributed it includes or
  * is derivative of works licensed under the GNU General Public License or
  * other free or open source software licenses.
- * @version $Id: product.php 6099 2012-06-13 13:37:12Z alatak $
+ * @version $Id: product.php 6521 2012-10-09 14:49:30Z alatak $
  */
 
 // Check to ensure this file is included in Joomla!
@@ -169,6 +169,88 @@ class VirtuemartControllerProduct extends VmController {
 
 	}
 
+	public function massxref_sgrps(){
+
+		$this->massxref('massxref');
+	}
+
+	public function massxref_sgrps_exe(){
+
+		$virtuemart_shoppergroup_ids = JRequest::getVar('virtuemart_shoppergroup_id',array(),'', 'ARRAY');
+		JArrayHelper::toInteger($virtuemart_shoppergroup_ids);
+
+		$session = JFactory::getSession();
+		$cids = unserialize($session->get('vm_product_ids', array(), 'vm'));
+
+		$productModel = VmModel::getModel('product');
+		foreach($cids as $cid){
+			$data = array('virtuemart_product_id' => $cid, 'virtuemart_shoppergroup_id' => $virtuemart_shoppergroup_ids);
+			$data = $productModel->updateXrefAndChildTables ($data, 'product_shoppergroups');
+		}
+
+		$this->massxref('massxref_sgrps');
+	}
+
+	public function massxref_cats(){
+		$this->massxref('massxref');
+	}
+
+	public function massxref_cats_exe(){
+
+		$virtuemart_cat_ids = JRequest::getVar('cid',array(),'', 'ARRAY');
+		JArrayHelper::toInteger($virtuemart_cat_ids);
+
+		$session = JFactory::getSession();
+		$cids = unserialize($session->get('vm_product_ids', array(), 'vm'));
+
+		$productModel = VmModel::getModel('product');
+		foreach($cids as $cid){
+			$data = array('virtuemart_product_id' => $cid, 'virtuemart_category_id' => $virtuemart_cat_ids);
+			$data = $productModel->updateXrefAndChildTables ($data, 'product_categories',TRUE);
+		}
+
+		$this->massxref('massxref_cats');
+	}
+
+	/**
+	 *
+	 */
+	public function massxref($layoutName){
+
+		JRequest::checkToken() or jexit('Invalid Token, in ' . JRequest::getWord('task'));
+
+		$cids = JRequest::getVar('virtuemart_product_id',array(),'', 'ARRAY');
+		JArrayHelper::toInteger($cids);
+		if(empty($cids)){
+			$session = JFactory::getSession();
+			$cids = unserialize($session->get('vm_product_ids', '', 'vm'));
+		} else {
+			$session = JFactory::getSession();
+			$session->set('vm_product_ids', serialize($cids),'vm');
+		}
+
+		if(!empty($cids)){
+			$q = 'SELECT `product_name` FROM `#__virtuemart_products_' . VMLANG . '` ';
+			$q .= ' WHERE `virtuemart_product_id` IN (' . implode(',', $cids) . ')';
+
+			$db = JFactory::getDbo();
+			$db->setQuery($q);
+
+			$productNames = $db->loadResultArray();
+
+			vmInfo('COM_VIRTUEMART_PRODUCT_XREF_NAMES',implode(', ',$productNames));
+		}
+
+		$this->addViewPath(JPATH_ADMINISTRATOR.DS.'components'.DS.'com_virtuemart' . DS . 'views');
+		$document = JFactory::getDocument();
+		$viewType = $document->getType();
+		$view = $this->getView($this->_cname, $viewType);
+
+		$view->setLayout($layoutName);
+
+		$this->display();
+	}
+
 	/**
 	 * Clone a product
 	 *
@@ -188,8 +270,9 @@ class VirtuemartControllerProduct extends VmController {
 		JArrayHelper::toInteger($cids);
 
 		foreach($cids as $cid){
-			if ($model->createClone($cid)) $msg = JText::_('COM_VIRTUEMART_PRODUCT_CLONED_SUCCESSFULLY');
-			else {
+			if ($model->createClone($cid)) {
+				$msg = JText::_('COM_VIRTUEMART_PRODUCT_CLONED_SUCCESSFULLY');
+			} else {
 				$msg = JText::_('COM_VIRTUEMART_PRODUCT_NOT_CLONED_SUCCESSFULLY');
 				$msgtype = 'error';
 			}
@@ -211,7 +294,7 @@ class VirtuemartControllerProduct extends VmController {
 		$view = $this->getView('product', 'json');
 
 		/* Now display the view. */
-		$view->display(null);
+		$view->display(NULL);
 	}
 
 	/**

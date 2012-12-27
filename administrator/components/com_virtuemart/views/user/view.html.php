@@ -13,7 +13,7 @@
  * to the GNU General Public License, and as distributed it includes or
  * is derivative of works licensed under the GNU General Public License or
  * other free or open source software licenses.
- * @version $Id: view.html.php 6071 2012-06-06 15:33:04Z Milbo $
+ * @version $Id: view.html.php 6477 2012-09-24 14:33:54Z Milbo $
  */
 
 // Check to ensure this file is included in Joomla!
@@ -36,7 +36,9 @@ class VirtuemartViewUser extends VmView {
 
 		// Load the helper(s)
 		$this->loadHelper('html');
-
+		if(!class_exists('Permissions')) require(JPATH_VM_ADMINISTRATOR.DS.'helpers'.DS.'permissions.php');
+		$perm = Permissions::getInstance();
+		$this->assignRef('perm',$perm);
 
 		$model = VmModel::getModel();
 
@@ -47,7 +49,8 @@ class VirtuemartViewUser extends VmView {
 		if($task == 'editshop'){
 
 			if(Vmconfig::get('multix','none') !=='none'){
-// 				$model->setCurrent();
+				//Maybe we must check here if the user is vendor and if he has an own id and else map to mainvendor.
+				$userId = 0;
 			} else {
 				if(!class_exists('VirtueMartModelVendor')) require(JPATH_VM_ADMINISTRATOR.DS.'models'.DS.'vendor.php');
 				$userId = VirtueMartModelVendor::getUserIdByVendorId(1);
@@ -62,7 +65,7 @@ class VirtuemartViewUser extends VmView {
 			}
 			$this->SetViewTitle('USER');
 		}
-		$model->setId($userId);
+		$userId = $model->setId($userId);
 
 		$layoutName = JRequest::getWord('layout', 'default');
 		$layoutName = $this->getLayout();
@@ -72,13 +75,10 @@ class VirtuemartViewUser extends VmView {
 			$editor = JFactory::getEditor();
 
 			// Get the required helpers
-			$this->loadHelper('permissions');
 			$this->loadHelper('shoppergroup');
-
-// 			$this->loadHelper('currencydisplay');
 			$this->loadHelper('image');
 
-			$userFieldsModel = VmModel::getModel('userfields');
+			//$userFieldsModel = VmModel::getModel('userfields');
 
 			$userDetails = $model->getUser();
 
@@ -129,12 +129,12 @@ class VirtuemartViewUser extends VmView {
 				$new = true;
 			}
 
-			$virtuemart_userinfo_id_BT = $model->getBTuserinfo_id();
+			$virtuemart_userinfo_id_BT = $model->getBTuserinfo_id($userId);
 			$userFieldsArray = $model->getUserInfoInUserFields($layoutName,'BT',$virtuemart_userinfo_id_BT,false);
 			$userFieldsBT = $userFieldsArray[$virtuemart_userinfo_id_BT];
 
 
-			$this->lists['perms'] = JHTML::_('select.genericlist', Permissions::getUserGroups(), 'perms', '', 'group_name', 'group_name', $userDetails->perms);
+			//$this->lists['perms'] = JHTML::_('select.genericlist', Permissions::getUserGroups(), 'perms', '', 'group_name', 'group_name', $userDetails->perms);
 
 			// Load the required scripts
 			if (count($userFieldsBT['scripts']) > 0) {
@@ -253,38 +253,6 @@ class VirtuemartViewUser extends VmView {
 		$this->assignRef('subject', ($doVendor) ? JText::sprintf('COM_VIRTUEMART_NEW_USER_MESSAGE_VENDOR_SUBJECT', $this->user->get('email')) : JText::sprintf('COM_VIRTUEMART_NEW_USER_MESSAGE_SUBJECT',$vendor->vendor_store_name));
 		parent::display();
 	}
-
-	/**
-	 * Additional grid function for custom toggles
-	 *
-	 * @return string HTML code to write the toggle button
-	 */
-	function toggle( $field, $i, $toggle, $imgY = 'tick.png', $imgX = 'publish_x.png', $prefix='' )
-	{
-
-		$img 	= $field ? $imgY : $imgX;
-		if ($toggle == 'published') {
-			// Stay compatible with grid.published
-			$task 	= $field ? 'unpublish' : 'publish';
-			$alt 	= $field ? JText::_('COM_VIRTUEMART_PUBLISHED') : JText::_('COM_VIRTUEMART_UNPUBLISHED');
-			$action = $field ? JText::_('COM_VIRTUEMART_UNPUBLISH_ITEM') : JText::_('COM_VIRTUEMART_PUBLISH_ITEM');
-		} else {
-			$task 	= $field ? $toggle.'.0' : $toggle.'.1';
-			$alt 	= $field ? JText::_('COM_VIRTUEMART_PUBLISHED') : JText::_('COM_VIRTUEMART_DISABLED');
-			$action = $field ? JText::_('COM_VIRTUEMART_DISABLE_ITEM') : JText::_('COM_VIRTUEMART_ENABLE_ITEM');
-		}
-
-		if (JVM_VERSION>1) {
-			return ('<a href="javascript:void(0);" onclick="return listItemTask(\'cb'. $i .'\',\''. $task .'\')" title="'. $action .'">'
-			.JHTML::_('image', 'admin/' .$img, $alt, null, true) .'</a>');
-		} else {
-			return ('<a href="javascript:void(0);" onclick="return listItemTask(\'cb'. $i .'\',\''. $task .'\')" title="'. $action .'">'
-				.'<img src="images/'. $img .'" border="0" alt="'. $alt .'" /></a>');
-		}
-
-
-	}
-
 
 }
 

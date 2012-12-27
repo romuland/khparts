@@ -18,8 +18,8 @@ defined('_JEXEC') or die('Restricted access');
  echo '<div class="clear"></div>';
  $url = JRoute::_('index.php?option=com_virtuemart&view=productdetails&virtuemart_product_id='.$product->virtuemart_product_id.'&virtuemart_category_id='.
 $product->virtuemart_category_id); ?>		<a href="<?php echo $url ?>"><?php echo $product->product_name ?></a>		<?php	echo '<div class="clear"></div>';
-
- if ($show_price) {
+// $product->prices is not set when show_prices in config is unchecked
+if ($show_price and  isset($product->prices)) {
  // 		echo $currency->priceDisplay($product->prices['salesPrice']);
  if (!empty($product->prices['salesPrice'] ) ) echo $currency->createPriceDiv('salesPrice','',$product->prices,true);
  // 		if ($product->prices['salesPriceWithDiscount']>0) echo $currency->priceDisplay($product->prices['salesPriceWithDiscount']);

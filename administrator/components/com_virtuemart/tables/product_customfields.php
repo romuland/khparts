@@ -39,7 +39,7 @@ class TableProduct_customfields extends VmTable {
 	var $virtuemart_custom_id		= 0;
 
     /** @var string custom value */
-	var $custom_value	= '';
+	var $custom_value	= null;
     /** @var string price  */
 	var $custom_price	= null;
 
@@ -63,4 +63,16 @@ class TableProduct_customfields extends VmTable {
 		$this->setOrderable();
 
 	}
+
+	function check(){
+
+		if(!empty($this->custom_price)){
+			$this->custom_price = str_replace(array(',',' '),array('.',''),$this->custom_price);
+		} else {
+			$this->custom_price = null;
+		}
+
+		return parent::check();
+	}
+
 }

@@ -12,7 +12,7 @@
  * to the GNU General Public License, and as distributed it includes or
  * is derivative of works licensed under the GNU General Public License or
  * other free or open source software licenses.
- * @version $Id: order.php 6106 2012-06-14 15:44:48Z alatak $
+ * @version $Id: order.php 6395 2012-09-05 07:57:05Z Milbo $
  */
 
 // Check to ensure this file is included in Joomla!
@@ -64,6 +64,21 @@ JPluginHelper::importPlugin('vmshipment');
 				<td><?php echo $this->orderstatuslist[$this->orderbt->order_status]; ?></td>
 			</tr>
 			<tr>
+				<td class="key"><strong><?php echo JText::_('COM_VIRTUEMART_ORDER_PRINT_NAME') ?></strong></td>
+				<td><?php
+						$username=$this->orderbt->company ? $this->orderbt->company." ":"";
+			$username.=$this->orderbt->first_name." ".$this->orderbt->first_name." ";
+					if ($this->orderbt->virtuemart_user_id) {
+						$userlink = JROUTE::_ ('index.php?option=com_virtuemart&view=user&task=edit&virtuemart_user_id[]=' . $this->orderbt->virtuemart_user_id);
+						echo JHTML::_ ('link', JRoute::_ ($userlink), $username, array('title' => JText::_ ('COM_VIRTUEMART_ORDER_EDIT_USER') . ' ' . $username));
+					} else {
+						vmdebug('my this',$this);
+						echo $this->orderbt->first_name.' '.$this->orderbt->last_name;
+					}
+					?>
+				</td>
+			</tr>
+			<tr>
 				<td class="key"><strong><?php echo JText::_('COM_VIRTUEMART_ORDER_PRINT_PO_IPADDRESS') ?></strong></td>
 				<td><?php echo $this->orderbt->ip_address; ?></td>
 			</tr>
@@ -106,6 +121,13 @@ JPluginHelper::importPlugin('vmshipment');
 				else {
 					echo '<td align="center">'.JText::_('COM_VIRTUEMART_NO').'</td>';
 				}
+				if(!isset($this->orderstatuslist[$this->orderbt_event->order_status_code])){
+					if(empty($this->orderbt_event->order_status_code)){
+						$this->orderbt_event->order_status_code = 'unknown';
+					}
+					$_orderStatusList[$this->orderbt_event->order_status_code] = JText::_('COM_VIRTUEMART_UNKNOWN_ORDER_STATUS');
+				}
+
 				echo '<td align="center">'.$this->orderstatuslist[$this->orderbt_event->order_status_code].'</td>';
 				echo "<td>".$this->orderbt_event->comments."</td>\n";
 				echo "</tr>\n";
@@ -228,6 +250,7 @@ JPluginHelper::importPlugin('vmshipment');
 					<th class="title" width="50"><?php echo JText::_('COM_VIRTUEMART_PRODUCT_FORM_PRICE_BASEWITHTAX') ?></th>
 					<th class="title" width="50"><?php echo JText::_('COM_VIRTUEMART_PRODUCT_FORM_PRICE_GROSS') ?></th>
 					<th class="title" width="50"><?php echo JText::_('COM_VIRTUEMART_PRODUCT_FORM_PRICE_TAX') ?></th>
+					<th class="title" width="50"> <?php echo JText::_('COM_VIRTUEMART_PRODUCT_FORM_PRICE_DISCOUNT') ?></th>
 					<th class="title" width="5%"><?php echo JText::_('COM_VIRTUEMART_ORDER_PRINT_TOTAL') ?></th>
 				</tr>
 			</thead>
@@ -293,6 +316,9 @@ JPluginHelper::importPlugin('vmshipment');
 					<?php echo $this->currency->priceDisplay( $item->product_tax); ?>
 				</td>
 				<td align="right" style="padding-right: 5px;">
+					<?php echo $this->currency->priceDisplay( $item->product_subtotal_discount); ?>
+				</td>
+				<td align="right" style="padding-right: 5px;">
 					<?php echo $this->currency->priceDisplay($item->product_subtotal_with_tax); ?>
 				</td>
 			</tr>
@@ -338,7 +364,7 @@ JPluginHelper::importPlugin('vmshipment');
 					</td>
 
 
-					<td colspan="5">
+					<td colspan="6">
 						<?php // echo JHTML::_('image',  'administrator/components/com_virtuemart/assets/images/vm_witharrow.png', 'With selected'); $this->orderStatSelect; ?>
 						&nbsp;&nbsp;&nbsp;
 
@@ -364,6 +390,7 @@ JPluginHelper::importPlugin('vmshipment');
 				<td  align="right" style="padding-right: 5px;">&nbsp;</td>
 				<td  align="right" style="padding-right: 5px;">&nbsp;</td>
 				<td   align="right" style="padding-right: 5px;"><?php echo $this->currency->priceDisplay($this->orderbt->order_tax); ?></td>
+				<td align="right"> <?php echo $this->currency->priceDisplay($this->orderbt->order_discountAmount); ?></td>
 				<td width="15%" align="right" style="padding-right: 5px;"><?php echo $this->currency->priceDisplay($this->orderbt->order_salesPrice); ?></td>
 			</tr>
 			<?php
@@ -374,6 +401,7 @@ JPluginHelper::importPlugin('vmshipment');
 					?>
 			<tr>
 				<td align="right" colspan="5"><strong><?php echo JText::_('COM_VIRTUEMART_COUPON_DISCOUNT') ?></strong></td>
+				<td  align="right" style="padding-right: 5px;">&nbsp;</td>
 				<td  align="right" style="padding-right: 5px;">&nbsp;</td>
 				<td  align="right" style="padding-right: 5px;">&nbsp;</td>
 				<td  align="right" style="padding-right: 5px;">&nbsp;</td>
@@ -395,7 +423,7 @@ JPluginHelper::importPlugin('vmshipment');
 				<td align="right" colspan="3" > </td>
 
 				<td align="right"> </td>
-
+				<td align="right"> </td>
 				<td align="right"  style="padding-right: 5px;"><?php echo  $this->currency->priceDisplay($rule->calc_amount);  ?> </td>
 			</tr>
 			<?php
@@ -403,7 +431,7 @@ JPluginHelper::importPlugin('vmshipment');
 			<tr >
 				<td colspan="5"  align="right"  ><?php echo $rule->calc_rule_name ?> </td>
 				<td align="right" colspan="3" > </td>
-
+				<td align="right"> </td>
 				<td align="right"><?php    ?> </td>
 				<td align="right"  style="padding-right: 5px;"><?php echo $this->currency->priceDisplay($rule->calc_amount);   ?> </td>
 			</tr>
@@ -414,7 +442,7 @@ JPluginHelper::importPlugin('vmshipment');
 				<td align="right" colspan="3" > </td>
 
 				<td align="right"> </td>
-
+				<td align="right"> </td>
 				<td align="right"  style="padding-right: 5px;"><?php echo $this->currency->priceDisplay($rule->calc_amount);  ?> </td>
 			</tr>
 
@@ -432,6 +460,7 @@ JPluginHelper::importPlugin('vmshipment');
 				<td  align="right" style="padding-right: 5px;">&nbsp;</td>
 				<td  align="right" style="padding-right: 5px;">&nbsp;</td>
 				<td  align="right" style="padding-right: 5px;"><?php echo $this->currency->priceDisplay($this->orderbt->order_shipment_tax); ?></td>
+				<td  align="right" style="padding-right: 5px;">&nbsp;</td>
 				<td  align="right" style="padding-right: 5px;"><?php echo $this->currency->priceDisplay($this->orderbt->order_shipment+$this->orderbt->order_shipment_tax); ?></td>
 
 			</tr>
@@ -441,6 +470,7 @@ JPluginHelper::importPlugin('vmshipment');
 				<td  align="right" style="padding-right: 5px;">&nbsp;</td>
 				<td  align="right" style="padding-right: 5px;">&nbsp;</td>
 				<td  align="right" style="padding-right: 5px;"><?php echo $this->currency->priceDisplay($this->orderbt->order_payment_tax); ?></td>
+				 <td  align="right" style="padding-right: 5px;">&nbsp;</td>
 				<td  align="right" style="padding-right: 5px;"><?php echo $this->currency->priceDisplay($this->orderbt->order_payment+$this->orderbt->order_payment_tax); ?></td>
 
 			 </tr>
@@ -452,10 +482,22 @@ JPluginHelper::importPlugin('vmshipment');
 				<td  align="right" style="padding-right: 5px;">&nbsp;</td>
 				<td  align="right" style="padding-right: 5px;">&nbsp;</td>
 				<td  align="right" style="padding-right: 5px;"><?php echo $this->currency->priceDisplay($this->orderbt->order_billTaxAmount); ?></td>
+				<td   align="right" style="padding-right: 5px;"><strong><?php echo $this->currency->priceDisplay($this->orderbt->order_discountAmount); ?></strong>
 				<td   align="right" style="padding-right: 5px;"><strong><?php echo $this->currency->priceDisplay($this->orderbt->order_total); ?></strong>
 				</td>
 			</tr>
-
+<?php if ($this->orderbt->user_currency_rate != 1.0) { ?>
+		<tr>
+				<td align="right" colspan="5"><em><?php echo JText::_('COM_VIRTUEMART_ORDER_USER_CURRENCY_RATE') ?>:</em></td>
+				<td  align="right" style="padding-right: 5px;">&nbsp;</td>
+				<td  align="right" style="padding-right: 5px;">&nbsp;</td>
+				<td  align="right" style="padding-right: 5px;">&nbsp;</td>
+				<td  align="right" style="padding-right: 5px;">&nbsp;</td>
+			<td  align="right" style="padding-right: 5px;">&nbsp;</td>
+				<td   align="right" style="padding-right: 5px;"><em><?php echo  $this->orderbt->user_currency_rate ?></em></td>
+			</tr>
+			<?php }
+			?>
 		</table>
 		</td>
 	</tr>
@@ -498,7 +540,7 @@ AdminUIHelper::endAdminArea(); ?>
 <!--
 jQuery('.show_element').click(function() {
   jQuery('.element-hidden').toggle();
-  return false
+  return false;
 });
 // jQuery('select#order_items_status').change(function() {
 	////selectItemStatusCode

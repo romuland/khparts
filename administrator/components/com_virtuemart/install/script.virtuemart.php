@@ -10,13 +10,15 @@
 defined('_JEXEC') or die('Restricted access');
 
 //Maybe it is possible to set this within the xml file note by Max Milbers
-@ini_set( 'memory_limit', '32M' );
-@ini_set( 'max_execution_time', '120' );
+$memory_limit = (int) substr(ini_get('memory_limit'),0,-1);
+if($memory_limit<128)  @ini_set( 'memory_limit', '128M' );
 
-jimport( 'joomla.application.component.model');
+@ini_set( 'max_execution_time', '120' );
 
 defined('DS') or define('DS', DIRECTORY_SEPARATOR);
 defined('JPATH_VM_ADMINISTRATOR') or define('JPATH_VM_ADMINISTRATOR', JPATH_ROOT.DS.'administrator'.DS.'components'.DS.'com_virtuemart');
+
+if(!class_exists('JModel')) require JPATH_VM_LIBRARIES.DS.'joomla'.DS.'application'.DS.'component'.DS.'model.php';
 
 // hack to prevent defining these twice in 1.6 installation
 if (!defined('_VM_SCRIPT_INCLUDED')) {
@@ -48,14 +50,14 @@ if (!defined('_VM_SCRIPT_INCLUDED')) {
 		public function checkIfUpdate(){
 
 			$update = false;
-			$db = JFactory::getDBO();
+			$this->_db = JFactory::getDBO();
 			$q = 'SHOW TABLES LIKE "%virtuemart_adminmenuentries%"'; //=>jos_virtuemart_shipment_plg_weight_countries
-			$db->setQuery($q);
-			if($db->loadResult()){
+			$this->_db->setQuery($q);
+			if($this->_db->loadResult()){
 
 				$q = "SELECT count(id) AS idCount FROM `#__virtuemart_adminmenuentries`";
-				$db->setQuery($q);
-				$result = $db->loadResult();
+				$this->_db->setQuery($q);
+				$result = $this->_db->loadResult();
 
 				if (empty($result)) {
 					$update = false;
@@ -84,10 +86,10 @@ if (!defined('_VM_SCRIPT_INCLUDED')) {
 
 				$q = 'DELETE FROM `#__menu` WHERE `menutype` = "main" AND
 						(`link`="index.php?option=com_virtuemart" OR `alias`="virtuemart" )';
-				$db = JFactory::getDbo();
-				$db -> setQuery($q);
-				$db -> query();
-				$error = $db->getErrorMsg();
+				$this->_db = JFactory::getDbo();
+				$this->_db -> setQuery($q);
+				$this->_db -> query();
+				$error = $this->_db->getErrorMsg();
 				if(!empty($error)){
 					$app = JFactory::getApplication();
 					$app ->enqueueMessage('Error deleting old vm admin menu (BE) '.$error);
@@ -112,10 +114,8 @@ if (!defined('_VM_SCRIPT_INCLUDED')) {
 				return $this->update($loadVm);
 			}
 
-			if(version_compare(JVERSION,'1.6.0','ge')) {
-				$fields = array('data'=>'`data` varchar(30480) NULL AFTER `time`');
-				$this->alterTable('#__session',$fields);
-			}
+
+			$this -> joomlaSessionDBToMediumText();
 
 			// install essential and required data
 			// should this be covered in install.sql (or 1.6's JInstaller::parseSchemaUpdates)?
@@ -222,10 +222,7 @@ if (!defined('_VM_SCRIPT_INCLUDED')) {
 			// 			$this->displayFinished(true);
 			//return false;
 
-			if(version_compare(JVERSION,'1.6.0','ge')) {
-				$fields = array('data'=>'`data` text NULL AFTER `time`');
-				$this->alterTable('#__session',$fields);
-			}
+			$this -> joomlaSessionDBToMediumText();
 
 // 			$this->portOverwritePrices();
 /*			$table = '#__virtuemart_customs';
@@ -238,7 +235,14 @@ if (!defined('_VM_SCRIPT_INCLUDED')) {
 					'COM_VIRTUEMART_STOCKABLE_PRODUCT_DESC', 'G', 0, 0, 0, 1 );");
 */
 
+			$this->alterTable('#__virtuemart_product_prices',array(
+				'product_price_vdate' => ' `product_price_publish_up` DATETIME NULL DEFAULT NULL AFTER `product_currency`',
+				'product_price_edate' => ' `product_price_publish_down` DATETIME NULL DEFAULT NULL AFTER `product_price_publish_up`'
+			));
+
 			$this->deleteReCreatePrimaryKey('#__virtuemart_userinfos','virtuemart_userinfo_id');
+
+			//$this->renameVdateToPublishDown();
 
 			if(!class_exists('GenericTableUpdater')) require(JPATH_VM_ADMINISTRATOR . DS . 'helpers' . DS . 'tableupdater.php');
 			$updater = new GenericTableUpdater();
@@ -250,9 +254,48 @@ if (!defined('_VM_SCRIPT_INCLUDED')) {
 
 			$this->adjustDefaultOrderStates();
 
+			$this->fixOrdersVendorId();
 			if($loadVm) $this->displayFinished(true);
 
 			return true;
+		}
+
+		private function fixOrdersVendorId(){
+
+			$multix = Vmconfig::get('multix','none');
+
+			if( $multix == 'none'){
+
+				if(empty($this->_db)){
+					$this->_db = JFactory::getDBO();
+				}
+
+				$q = 'SELECT `virtuemart_user_id` FROM #__virtuemart_orders WHERE virtuemart_vendor_id = "0" ';
+				$this->_db->setQuery($q);
+				$res = $this->_db->loadResult();
+
+				if($res){
+					//vmdebug('fixOrdersVendorId ',$res);
+					$q = 'UPDATE #__virtuemart_orders SET `virtuemart_vendor_id`=1 WHERE virtuemart_vendor_id = "0" ';
+					$this->_db->setQuery($q);
+					$res = $this->_db->query();
+					$err = $this->_db->getErrorMsg();
+					if(!empty($err)){
+						vmError('fixOrdersVendorId update orders '.$err);
+					}
+					$q = 'UPDATE #__virtuemart_order_items SET `virtuemart_vendor_id`=1 WHERE virtuemart_vendor_id = "0" ';
+					$this->_db->setQuery($q);
+					$res = $this->_db->query();
+					$err = $this->_db->getErrorMsg();
+					if(!empty($err)){
+						vmError('fixOrdersVendorId update order_item '.$err);
+					}
+				}
+
+			}
+
+
+
 		}
 
 		private function adjustDefaultOrderStates(){
@@ -353,8 +396,8 @@ if (!defined('_VM_SCRIPT_INCLUDED')) {
 		}
 
 		private function addToRequired($table,$fieldname,$fieldvalue,$insert){
-			if(empty($this->db)){
-				$this->db = JFactory::getDBO();
+			if(empty($this->_db)){
+				$this->_db = JFactory::getDBO();
 			}
 
 			$query = 'SELECT * FROM `'.$table.'` WHERE '.$fieldname.' = "'.$fieldvalue.'" ';
@@ -442,27 +485,27 @@ if (!defined('_VM_SCRIPT_INCLUDED')) {
 
 			$q = 'SELECT `virtuemart_shoppergroup_id` FROM `#__virtuemart_shoppergroups` WHERE `default` = "1" ';
 
-			$db = JFactory::getDbo();
-			$db->setQuery($q);
-			$res = $db ->loadResult();
+			$this->_db = JFactory::getDbo();
+			$this->_db->setQuery($q);
+			$res = $this->_db ->loadResult();
 
 			if(empty($res)){
 				$q = "INSERT INTO `#__virtuemart_shoppergroups` (`virtuemart_shoppergroup_id`, `virtuemart_vendor_id`, `shopper_group_name`, `shopper_group_desc`, `default`, `shared`) VALUES
 								(NULL, 1, '-default-', 'This is the default shopper group.', 1, 1);";
-				$db->setQuery($q);
-				$db->query();
+				$this->_db->setQuery($q);
+				$this->_db->query();
 			}
 
 			$q = 'SELECT `virtuemart_shoppergroup_id` FROM `#__virtuemart_shoppergroups` WHERE `default` = "2" ';
 
-			$db->setQuery($q);
-			$res = $db ->loadResult();
+			$this->_db->setQuery($q);
+			$res = $this->_db ->loadResult();
 
 			if(empty($res)){
 				$q = "INSERT INTO `#__virtuemart_shoppergroups` (`virtuemart_shoppergroup_id`, `virtuemart_vendor_id`, `shopper_group_name`, `shopper_group_desc`, `default`, `shared`) VALUES
 								(NULL, 1, '-anonymous-', 'Shopper group for anonymous shoppers', 2, 1);";
-				$db->setQuery($q);
-				$db->query();
+				$this->_db->setQuery($q);
+				$this->_db->query();
 			}
 
 		}
@@ -489,12 +532,20 @@ if (!defined('_VM_SCRIPT_INCLUDED')) {
 				$table -> bindChecknStore($stdgroup);
 
 				$sgroup['virtuemart_shoppergroup_id'] = 0;
-				$table = new TableShoppergroups($db);
+				$table = new TableShoppergroups($this->_db);
 				$table -> bindChecknStore($sgroup);
 				vmdebug('changeShoppergroupDataSetAnonShopperToOne $table',$table);
 			}
 		}
 
+
+		private function joomlaSessionDBToMediumText(){
+
+			if(version_compare(JVERSION,'1.6.0','ge')) {
+				$fields = array('data'=>'`data` mediumtext NULL AFTER `time`');
+				$this->alterTable('#__session',$fields);
+			}
+		}
 
 		/**
 		 * Uninstall script
@@ -526,10 +577,10 @@ if (!defined('_VM_SCRIPT_INCLUDED')) {
 				$this->loadVm();
 				// 				VmConfig::loadConfig(true);
 
-				$db = JFactory::getDBO();
+				$this->_db = JFactory::getDBO();
 				$q = 'SHOW TABLES LIKE "%virtuemart_configs%"'; //=>jos_virtuemart_shipment_plg_weight_countries
-				$db->setQuery($q);
-				$res = $db->loadResult();
+				$this->_db->setQuery($q);
+				$res = $this->_db->loadResult();
 				if(!empty($res)){
 					JRequest::setVar(JUtility::getToken(), '1', 'post');
 					$config = JModel::getInstance('config', 'VirtueMartModel');

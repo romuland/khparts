@@ -13,14 +13,11 @@
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
 * other free or open source software licenses.
-* @version $Id: country.php 5834 2012-04-09 12:05:33Z Milbo $
+* @version $Id: country.php 6396 2012-09-05 17:35:36Z Milbo $
 */
 
 // Check to ensure this file is included in Joomla!
 defined('_JEXEC') or die('Restricted access');
-
-// Load the model framework
-jimport( 'joomla.application.component.model');
 
 if(!class_exists('VmModel')) require(JPATH_VM_ADMINISTRATOR.DS.'helpers'.DS.'vmmodel.php');
 
@@ -44,6 +41,7 @@ class VirtueMartModelCountry extends VmModel {
 		array_unshift($this->_validOrderingFieldName,'country_name');
 		$this->_selectedOrdering = 'country_name';
 		$this->_selectedOrderingDir = 'ASC';
+
 	}
 
     /**

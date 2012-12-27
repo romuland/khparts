@@ -13,7 +13,7 @@
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
 * other free or open source software licenses.
-* @version $Id: edit.php 6053 2012-06-05 12:36:21Z Milbo $
+* @version $Id: edit.php 6350 2012-08-14 17:18:08Z Milbo $
 */
 
 // Check to ensure this file is included in Joomla!
@@ -28,7 +28,7 @@ AdminUIHelper::startAdminArea();
 <?php // Loading Templates in Tabs
 $tabarray = array();
 $tabarray['description'] = 'COM_VIRTUEMART_DESCRIPTION';
-$tabarray['images'] = 'COM_VIRTUEMART_IMAGE_S';
+$tabarray['images'] = 'COM_VIRTUEMART_IMAGES';
 
 AdminUIHelper::buildTabs ( $this,  $tabarray ,$this->manufacturer->virtuemart_manufacturer_id);
 // Loading Templates in Tabs END ?>

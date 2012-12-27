@@ -13,14 +13,11 @@
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
 * other free or open source software licenses.
-* @version $Id: category.php 6096 2012-06-12 17:47:32Z Milbo $
+* @version $Id: category.php 6396 2012-09-05 17:35:36Z Milbo $
 */
 
 // Check to ensure this file is included in Joomla!
 defined('_JEXEC') or die('Restricted access');
-
-// Load the model framework
-jimport( 'joomla.application.component.model');
 
 if(!class_exists('VmModel'))require(JPATH_VM_ADMINISTRATOR.DS.'helpers'.DS.'vmmodel.php');
 
@@ -41,6 +38,7 @@ class VirtueMartModelCategory extends VmModel {
 	function __construct() {
 		parent::__construct();
 		$this->setMainTable('categories');
+
 		$this->addvalidOrderingFieldName(array('category_name','category_description','c.ordering','cx.category_shared','c.published'));
 
 		$toCheck = VmConfig::get('browse_cat_orderby_field','category_name');
@@ -152,7 +150,7 @@ class VirtueMartModelCategory extends VmModel {
 // 		$q = 'SELECT * FROM '
 // 	}
 
-	public function getCategoryTree($parentId=0, $level = 0, $onlyPublished = true,$keyword = ""){
+	public function getCategoryTree($parentId=0, $level = 0, $onlyPublished = true,$keyword = ''){
 
 		$sortedCats = array();
 
@@ -161,9 +159,13 @@ class VirtueMartModelCategory extends VmModel {
 		$limit = $limits[1];
 
 // 		vmRam('What take the cats?');
-
 		$this->_noLimit = true;
-		$this->rekurseCats($parentId,$level,$onlyPublished,$keyword,$sortedCats);
+		if($keyword!=''){
+			$sortedCats = self::getCategories($onlyPublished, false, false, $keyword);
+		} else {
+
+			$this->rekurseCats($parentId,$level,$onlyPublished,$keyword,$sortedCats);
+		}
 
 		$this->_noLimit = false;
 		$this->_total = count($sortedCats);

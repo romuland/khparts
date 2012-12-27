@@ -13,7 +13,7 @@
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
 * other free or open source software licenses.
-* @version $Id: default.php 5981 2012-05-01 23:51:25Z electrocity $
+* @version $Id: default.php 6475 2012-09-21 11:54:21Z Milbo $
 */
 
 // Check to ensure this file is included in Joomla!
@@ -48,7 +48,7 @@ AdminUIHelper::startAdminArea();
 			<th><?php echo $this->sort('calc_name', 'COM_VIRTUEMART_NAME') ; ?></th>
 			<?php if((Vmconfig::get('multix','none')!='none') && $this->perms->check( 'admin' )){ ?>
 			<th width="20">
-				<?php echo JText::_('COM_VIRTUEMART_CALC_VENDOR');  ?>
+				<?php echo JText::_('COM_VIRTUEMART_VENDOR');  ?>
 			</th><?php }  ?>
 			<th><?php echo $this->sort('calc_descr' , 'COM_VIRTUEMART_DESCRIPTION'); ?></th>
 			<th><?php echo $this->sort('ordering') ; ?></th>
@@ -67,9 +67,13 @@ AdminUIHelper::startAdminArea();
 			<th><?php echo JText::_('COM_VIRTUEMART_COUNTRY_S'); ?></th>
 			<th><?php echo JText::_('COM_VIRTUEMART_STATE_IDS'); ?></th>
 			<th><?php echo JText::_('COM_VIRTUEMART_PUBLISHED'); ?></th>
-			  <th><?php echo $this->sort('virtuemart_calc_id', 'COM_VIRTUEMART_ID')  ?></th>
+			<?php if((Vmconfig::get('multix','none')!='none') && $this->perms->check( 'admin' )){ ?>
+			<th width="20">
+				<?php echo JText::_( 'COM_VIRTUEMART_SHARED')  ?>
+			</th><?php }  ?>
+			<th><?php echo $this->sort('virtuemart_calc_id', 'COM_VIRTUEMART_ID')  ?></th>
 		<?php /*	<th width="10">
-				<?php echo JText::_('COM_VIRTUEMART_CALC_SHARED'); ?>
+				<?php echo JText::_('COM_VIRTUEMART_SHARED'); ?>
 			</th> */ ?>
 		</tr>
 		</thead>
@@ -81,6 +85,7 @@ AdminUIHelper::startAdminArea();
 			$row = $this->calcs[$i];
 			$checked = JHTML::_('grid.id', $i, $row->virtuemart_calc_id);
 			$published = JHTML::_('grid.published', $row, $i);
+			$shared = $this->toggle($row->shared, $i, 'toggle.shared');
 			$editlink = JROUTE::_('index.php?option=com_virtuemart&view=calc&task=edit&cid[]=' . $row->virtuemart_calc_id);
 			?>
 			<tr class="<?php echo "row".$k; ?>">
@@ -155,13 +160,18 @@ AdminUIHelper::startAdminArea();
 				<td align="center">
 					<?php echo $published; ?>
 				</td>
+
+				<?php
+				if((Vmconfig::get('multix','none')!='none')) {
+				?><td align="center">
+					   <?php echo $shared; ?>
+			        </td>
+				<?php
+				}
+			?>
 				<td align="right">
 					<?php echo $row->virtuemart_calc_id; ?>
 				</td>
-				<?php /*
-				<td align="center">
-					<?php echo $row->shared; ?>
-				</td>	*/?>
 			</tr>
 			<?php
 			$k = 1 - $k;

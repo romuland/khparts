@@ -30,7 +30,7 @@ defined('_JEXEC') or die('Restricted access');
 		</span>
 	    </td>
 	    <td>
-		<?php echo VmHTML::checkbox('seo_disabled', $this->config->get('seo_disabled')); ?>
+		<?php echo VmHTML::checkbox('seo_disabled', VmConfig::get('seo_disabled')); ?>
 	    </td>
 	</tr>	<tr>
 	    <td class="key">		 
@@ -39,7 +39,7 @@ defined('_JEXEC') or die('Restricted access');
 		</span>
 	    </td>
 	    <td>
-			<input type="text" name="seo_sufix" class="inputbox" value="<?php echo $this->config->get('seo_sufix','-detail') ?>" />
+			<input type="text" name="seo_sufix" class="inputbox" value="<?php echo VmConfig::get('seo_sufix','-detail') ?>" />
 	    </td>
 	</tr>
 	<tr>
@@ -49,7 +49,7 @@ defined('_JEXEC') or die('Restricted access');
 		</span>
 	    </td>
 		<td>
-			<?php echo VmHTML::checkbox('seo_translate', $this->config->get('seo_translate')); ?>
+			<?php echo VmHTML::checkbox('seo_translate', VmConfig::get('seo_translate')); ?>
 		</td>
 	</tr>
 	<tr>
@@ -59,7 +59,7 @@ defined('_JEXEC') or die('Restricted access');
 		</span>
 	    </td>
 		<td>
-			<?php echo VmHTML::checkbox('seo_use_id', $this->config->get('seo_use_id')); ?>
+			<?php echo VmHTML::checkbox('seo_use_id', VmConfig::get('seo_use_id')); ?>
 		</td>
 	</tr>
  </table>

@@ -31,7 +31,7 @@ defined('_JEXEC') or die('Restricted access');
 		</span>
 	    </td>
 	    <td>
-		<?php echo VmHTML::checkbox('feed_published', $this->config->get('feed_published')); ?>
+		<?php echo VmHTML::checkbox('feed_published', VmConfig::get('feed_published')); ?>
 	    </td>
 	</tr>
 	<tr>
@@ -41,9 +41,9 @@ defined('_JEXEC') or die('Restricted access');
 		</span>
 	    </td>
 	    <td>
-		<?php echo VmHTML::checkbox('feed_cache', $this->config->get('feed_cache')); ?>
+		<?php echo VmHTML::checkbox('feed_cache', VmConfig::get('feed_cache')); ?>
 		<br />
-		<input type="text" size="10" value="<?php echo $this->config->get('feed_cachetime', '1800'); ?>" name="feed_cachetime" id="feed_cachetime" />
+		<input type="text" size="10" value="<?php echo VmConfig::get('feed_cachetime', '1800'); ?>" name="feed_cachetime" id="feed_cachetime" />
 		<?php echo JText::_('COM_VIRTUEMART_ADMIN_CFG_FEED_CACHETIME') ?>
 	    </td>
 	</tr>
@@ -55,7 +55,7 @@ defined('_JEXEC') or die('Restricted access');
 		</span>
 		</td>
 	    <td>
-		<input type="text" size="40" value="<?php echo $this->config->get('feed_title'); ?>" name="feed_title" id="feed_title" /><br />
+		<input type="text" size="40" value="<?php echo VmConfig::get('feed_title'); ?>" name="feed_title" id="feed_title" /><br />
 	    </td>
 	</tr>
 	<tr>
@@ -65,7 +65,7 @@ defined('_JEXEC') or die('Restricted access');
 		</span>
 	    </td>
 	    <td>
-		<input type="text" size="40" value="<?php echo $this->config->get('feed_title_categories'); ?>" name="feed_title_categories" id="feed_title_categories" /><br />
+		<input type="text" size="40" value="<?php echo VmConfig::get('feed_title_categories'); ?>" name="feed_title_categories" id="feed_title_categories" /><br />
 	    </td>
 	</tr>
 	<tr>
@@ -75,7 +75,7 @@ defined('_JEXEC') or die('Restricted access');
 		</span>
 	    </td>
 	    <td>
-		<?php echo VmHTML::checkbox('feed_show_images', $this->config->get('feed_show_images')); ?>
+		<?php echo VmHTML::checkbox('feed_show_images', VmConfig::get('feed_show_images')); ?>
 	    </td>
 	</tr>
 	<tr>
@@ -85,7 +85,7 @@ defined('_JEXEC') or die('Restricted access');
 		</span>
 	    </td>
 	    <td>
-		<?php echo VmHTML::checkbox('feed_show_prices', $this->config->get('feed_show_prices')); ?>
+		<?php echo VmHTML::checkbox('feed_show_prices', VmConfig::get('feed_show_prices')); ?>
 	    </td>
 	</tr>
 	<tr>
@@ -95,7 +95,7 @@ defined('_JEXEC') or die('Restricted access');
 		</span>
 	    </td>
 	    <td>
-		<?php echo VmHTML::checkbox('feed_show_description', $this->config->get('feed_show_description')); ?>
+		<?php echo VmHTML::checkbox('feed_show_description', VmConfig::get('feed_show_description')); ?>
 	    </td>
 	</tr>
 	<tr>
@@ -109,7 +109,7 @@ defined('_JEXEC') or die('Restricted access');
 		$options = array();
 		$options[] = JHTML::_('select.option', 'product_s_desc', JText::_('COM_VIRTUEMART_PRODUCT_FORM_S_DESC'));
 		$options[] = JHTML::_('select.option', 'product_desc', JText::_('COM_VIRTUEMART_PRODUCT_FORM_DESCRIPTION'));
-		echo JHTML::_('Select.genericlist', $options, 'feed_description_type', 'size=1', 'value', 'text', $this->config->get('feed_description_type'));
+		echo JHTML::_('Select.genericlist', $options, 'feed_description_type', 'size=1', 'value', 'text', VmConfig::get('feed_description_type'));
 		?>
 	    </td>
 	</tr>
@@ -120,7 +120,7 @@ defined('_JEXEC') or die('Restricted access');
 		</span>
 	    </td>
 	    <td>
-		<?php echo VmHTML::checkbox('feed_limittext', $this->config->get('feed_limittext')); ?>
+		<?php echo VmHTML::checkbox('feed_limittext', VmConfig::get('feed_limittext')); ?>
 	    </td>
 	</tr>
 	<tr>
@@ -130,7 +130,7 @@ defined('_JEXEC') or die('Restricted access');
 		</span>
 	    </td>
 	    <td>
-		<input type="text" size="10" value="<?php echo $this->config->get('feed_max_text_length', '500'); ?>" name="feed_max_text_length" id="feed_max_text_length" />
+		<input type="text" size="10" value="<?php echo VmConfig::get('feed_max_text_length', '500'); ?>" name="feed_max_text_length" id="feed_max_text_length" />
 	    </td>
 	</tr>
     </table>

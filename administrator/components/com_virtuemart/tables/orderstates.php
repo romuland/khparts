@@ -13,7 +13,7 @@
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
 * other free or open source software licenses.
-* @version $Id: orderstates.php 5804 2012-04-04 18:28:45Z Milbo $
+* @version $Id: orderstates.php 6475 2012-09-21 11:54:21Z Milbo $
 */
 
 // Check to ensure this file is included in Joomla!
@@ -71,16 +71,7 @@ class TableOrderstates extends VmTable {
 	 *
 	 * @return boolean True if the table buffer is contains valid data, false otherwise.
 	 */
-	function check()
-	{
-//        if (empty($this->order_status_code)) {
-//			vmError(JText::_('COM_VIRTUEMART_ORDER_TABLE_ERROR_CODE'));
-//			return false;
-//		}
-//		if (empty($this->order_status_name)) {
-//			vmError(JText::_('COM_VIRTUEMART_ORDER_TABLE_ERROR_NAME'));
-//			return false;
-//		}
+	function check(){
 
 		$db = JFactory::getDBO();
 		$q = 'SELECT count(*),virtuemart_orderstate_id FROM `#__virtuemart_orderstates` ';

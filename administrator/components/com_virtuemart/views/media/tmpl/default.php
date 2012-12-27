@@ -13,7 +13,7 @@
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
 * other free or open source software licenses.
-* @version $Id: default.php 6137 2012-06-20 06:42:54Z alatak $
+* @version $Id: default.php 6559 2012-10-18 13:22:30Z Milbo $
 */
 
 AdminUIHelper::startAdminArea();
@@ -101,7 +101,7 @@ $productfileslist = $this->files;
 				<td><span class="vmicon vmicon-16-ext_<?php echo $productfile->file_extension; ?>"></span><?php echo $productfile->file_extension; ?></td>
 				<!-- published -->
 				<td><?php echo $published; ?></td>
-				<td><?php   echo $productfile->virtuemart_media_id; ?></td>
+				<td><?php echo $productfile->virtuemart_media_id; ?></td>
 			</tr>
 		<?php
 			$k = 1 - $k;

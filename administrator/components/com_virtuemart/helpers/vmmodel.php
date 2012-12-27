@@ -56,7 +56,7 @@ class VmModel extends JModel {
 			$this->setId((int)$idArray[0]);
 		}
 
-
+		$this->setToggleName('published');
 	}
 
 	static private $_vmmodels = array();
@@ -257,7 +257,7 @@ class VmModel extends JModel {
 	public function setPaginationLimits(){
 
 		$app = JFactory::getApplication();
-		$view = JRequest::getWord('view');
+		$view = JRequest::getWord('view',$this->_maintablename);
 
 		$limit = (int)$app->getUserStateFromRequest('com_virtuemart.'.$view.'.limit', 'limit');
 		if(empty($limit)){
@@ -420,7 +420,7 @@ class VmModel extends JModel {
 
 	/**
 	 *
-	 * @author Max Milberes
+	 * @author Max Milbers
 	 *
 	 */
 
@@ -493,7 +493,7 @@ class VmModel extends JModel {
 
 	function toggle($field,$val = NULL, $cidname = 0,$tablename = 0  ) {
 		$ok = true;
-		$this->setToggleName('published');
+
 		if (!in_array($field, $this->_togglesName)) {
 			return false ;
 		}
@@ -504,9 +504,10 @@ class VmModel extends JModel {
 		//if(empty($cidName)) $cidName = $this->_cidName;
 
 		$ids = JRequest::getVar( $cidname, JRequest::getVar('cid',array(0)), 'post', 'array' );
-
+		vmdebug('toggle $cidname: '.$cidname,$ids);
 		foreach($ids as $id){
 			$table->load( (int)$id );
+
 			if (!$table->toggle($field, $val)) {
 				//			if (!$table->store()) {
 				vmError(get_class( $this ).'::toggle '.$table->getError() .' '.$id);
@@ -699,25 +700,18 @@ class VmPagination extends JPagination {
 				}
 
 			} else {
-				//Changed romuland				
 				if($this->_perRow===1) $this->_perRow = 5;
-				/*
 				$iterationAmount = 4;
 				for ($i = 1; $i <= $iterationAmount; $i ++) {
 					$limits[] = JHtml::_('select.option',JRoute::_( $link.'&limit='. $i*$this->_perRow) ,$i*$this->_perRow );
 				}
-				*/
-				$limits[] = JHTML::_('select.option',JRoute::_( $link.'&limit='. $this->_perRow * 1) , $this->_perRow * 1 );
-				$limits[] = JHTML::_('select.option',JRoute::_( $link.'&limit='. $this->_perRow * 5) , $this->_perRow * 5 );
+
 				$limits[] = JHTML::_('select.option',JRoute::_( $link.'&limit='. $this->_perRow * 10) , $this->_perRow * 10 );
 				$limits[] = JHTML::_('select.option',JRoute::_( $link.'&limit='. $this->_perRow * 20) , $this->_perRow * 20 );
-			
-				$limits[] = JHTML::_('select.option',JRoute::_( $link.'&limit='. $this->_perRow * 50) , $this->_perRow * 50 );
-				$limits[] = JHTML::_('select.option',JRoute::_( $link.'&limit='. $this->_perRow * 100) , $this->_perRow * 100 );				
 	// 			vmdebug('getLimitBox',$this->_perRow);
 			}
 			$selected= JRoute::_( $link.'&limit='. $selected) ;
-			$js = 'onchange="window.top.location.href=this.options[this.selectedIndex].value">';
+			$js = 'onchange="window.top.location.href=this.options[this.selectedIndex].value"';
 
 			$html = JHTML::_('select.genericlist',  $limits, '', 'class="inputbox" size="1" '.$js , 'value', 'text', $selected);
 		}

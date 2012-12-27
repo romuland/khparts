@@ -14,7 +14,7 @@
  * to the GNU General Public License, and as distributed it includes or
  * is derivative of works licensed under the GNU General Public License or
  * other free or open source software licenses.
- * @version $Id: edit_address_userfields.php 6142 2012-06-20 15:58:22Z alatak $
+ * @version $Id: edit_address_userfields.php 6349 2012-08-14 16:56:24Z Milbo $
  */
 // Check to ensure this file is included in Joomla!
 defined('_JEXEC') or die('Restricted access');
@@ -76,7 +76,7 @@ foreach ($typefields as $typefield) {
 		$_table = true;
 	    }
 	    echo '		<tr>' . "\n";
-	    echo '			<td class="key">' . "\n";
+	    echo '			<td class="key" title="'.$_field['description'].'" >' . "\n";
 	    echo '				<label class="' . $_field['name'] . '" for="' . $_field['name'] . '_field">' . "\n";
 	    echo '					' . $_field['title'] . ($_field['required'] ? ' *' : '') . "\n";
 	    echo '				</label>' . "\n";

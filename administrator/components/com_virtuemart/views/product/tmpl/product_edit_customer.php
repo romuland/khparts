@@ -13,7 +13,7 @@
  * to the GNU General Public License, and as distributed it includes or
  * is derivative of works licensed under the GNU General Public License or
  * other free or open source software licenses.
- * @version $Id: product_edit_customer.php 6109 2012-06-14 17:31:38Z alatak $
+ * @version $Id: product_edit_customer.php 6272 2012-07-12 18:01:11Z Milbo $
  */
 // Check to ensure this file is included in Joomla!
 defined ('_JEXEC') or die('Restricted access');
@@ -151,7 +151,15 @@ $i = 0;
 			</div>
 		</td>
 	</tr>
+	<tr>
+		<td>
+			<?php
 
+			$aflink = '<a target="_blank" href="http://www.acyba.com/acymailing.html?partner_id=19513"><img title="AcyMailing 2" height=60 src="http://www.acyba.com/images/banners/acymailing_450-109.png"/></a>';
+			echo JText::sprintf('COM_VIRTUEMART_AD_ACY',$aflink);
+			?>
+		</td>
+	</tr>
 	</tbody>
 </table>
 <script type="text/javascript">

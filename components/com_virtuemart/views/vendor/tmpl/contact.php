@@ -94,7 +94,7 @@ defined('_JEXEC') or die('Restricted access');
 
 					<div class="width50 floatright right paddingtop">
 						<?php echo JText::_('COM_VIRTUEMART_ASK_COUNT')  ?>
-						<input type="text" value="0" size="4" class="counter" ID="counter" name="counter" maxlength="4" readonly="readonly" />
+						<input type="text" value="0" size="4" class="counter" id="counter" name="counter" maxlength="4" readonly="readonly" />
 					</div>
 				</div>
 

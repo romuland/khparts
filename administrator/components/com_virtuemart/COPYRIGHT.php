@@ -1,7 +1,7 @@
 <?php
 if( !defined( '_JEXEC' ) ) die( 'Direct Access to '.basename(__FILE__).' is not allowed.' );
 /**
-* @version $Id: COPYRIGHT.php 5702 2012-03-22 14:00:31Z Milbo $
+* @version $Id: COPYRIGHT.php 6295 2012-07-22 14:23:28Z enytheme $
 * @package VirtueMart
 * @subpackage core
 * @author Sören
@@ -28,7 +28,7 @@ it includes or is derivative of works licensed under the GNU General
 Public License or other free or open source software licenses, including
 works copyrighted by any or all of the following, from 2009 - 2012,
 Max Milbers, Patrick Kohl, Valérie Isaksen, Rick Glunt, Roland Dalmulder, Oscar van Eijk, Urs Brülhart, Devendra Kumar Shukla,
-Jörg Kiekebusch, Eugen Stranz, Christopher Roussel, John Acosta, George Kostopoulos, Zbigniew Mazur, John Wicks, Markus Öhler, Stephanie Schmidt,
+Jörg Kiekebusch, Christopher Roussel, John Acosta, George Kostopoulos, Zbigniew Mazur, John Wicks, Markus Öhler, Stephanie Schmidt,
 Vu Hoang Viet, Simon Hodgkiss, Fred Bidon, Mickaël Cabanas, Alexander Kludt, Konstantin Dzvonik
 
 

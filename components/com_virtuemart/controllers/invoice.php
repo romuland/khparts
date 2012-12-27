@@ -30,7 +30,7 @@ jimport('joomla.application.component.controller');
 class VirtueMartControllerInvoice extends JController
 {
 
-	public function display() {
+	public function display($cachable = false, $urlparams = false)  {
 
 		$format = JRequest::getWord('format','html');
 		if ($format=='pdf') {
@@ -85,8 +85,8 @@ class VirtueMartControllerInvoice extends JController
 		if (shopFunctions::InvoiceNumberReserved($invoiceNumber)) {
 			return 0;
 		}
-		$path .= 'vminvoice_'.$invoiceNumber.'.pdf';
 
+		$path .= preg_replace('/[^A-Za-z0-9_\-\.]/', '_', 'vminvoice_'.$invoiceNumber.'.pdf');
 
 		if(file_exists($path) and !$force){
 			return $path;
@@ -105,7 +105,25 @@ class VirtueMartControllerInvoice extends JController
 		$viewName= 'invoice';
 		$view = $this->getView($viewName, $format);
 
-		$view->addTemplatePath( JPATH_VM_SITE.DS.'views'.DS.'invoice'.DS.'tmpl' );
+		$view->addTemplatePath( JPATH_VM_SITE.DS.'views'.DS.$viewName.DS.'tmpl' );
+		$vmtemplate = VmConfig::get('vmtemplate',0);
+		if($vmtemplate===0){
+			if(JVM_VERSION == 2){
+				$q = 'SELECT `template` FROM `#__template_styles` WHERE `client_id`="0" AND `home`="1"';
+			} else {
+				$q = 'SELECT `template` FROM `#__templates_menu` WHERE `client_id`="0" AND `menuid`="0"';
+			}
+			$db = JFactory::getDbo();
+			$db->setQuery($q);
+			$templateName = $db->loadResult();
+		} else {
+			$templateName = $vmtemplate;
+		}
+
+		$TemplateOverrideFolder = JPATH_SITE.DS."templates".DS.$templateName.DS."html".DS."com_virtuemart".DS."invoice";
+		if(file_exists($TemplateOverrideFolder)){
+			$view->addTemplatePath( $TemplateOverrideFolder);
+		}
 
 		$view->invoiceNumber = $invoiceNumberDate[0];
 		$view->invoiceDate = $invoiceNumberDate[1];

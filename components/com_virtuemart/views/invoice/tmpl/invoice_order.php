@@ -19,15 +19,17 @@
 defined('_JEXEC') or die('Restricted access');
 
 ?>
-
+<?php if ($this->invoiceNumber) { ?>
 <h1><?php echo JText::_('COM_VIRTUEMART_INVOICE').' '.$this->invoiceNumber; ?> </h1>
-
+<?php } ?>
 
 <table width="100%" cellspacing="0" cellpadding="0" border="0">
+	<?php if ($this->invoiceNumber) { ?>
     <tr>
 	<td class=""><?php echo JText::_('COM_VIRTUEMART_INVOICE_DATE') ?></td>
 	<td align="left"><?php echo vmJsApi::date($this->invoiceDate, 'LC4', true); ?></td>
     </tr>
+	    <?php } ?>
     <tr>
 	<td ><?php echo JText::_('COM_VIRTUEMART_ORDER_PRINT_PO_NUMBER') ?></td>
 	<td align="left"><strong>
@@ -64,7 +66,7 @@ defined('_JEXEC') or die('Restricted access');
 
      <tr>
 	<td class="orders-key"><strong><?php echo JText::_('COM_VIRTUEMART_ORDER_PRINT_TOTAL') ?></strong></td>
-	<td class="orders-key" align="left"><strong><?php echo $this->currency->priceDisplay($this->orderDetails['details']['BT']->order_total); ?></strong></td>
+	<td class="orders-key" align="left"><strong><?php echo $this->currency->priceDisplay($this->orderDetails['details']['BT']->order_total,$this->currency); ?></strong></td>
     </tr>
 
     <tr>

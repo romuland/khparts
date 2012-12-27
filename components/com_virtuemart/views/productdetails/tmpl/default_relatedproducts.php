@@ -14,7 +14,7 @@
  * to the GNU General Public License, and as distributed it includes or
  * is derivative of works licensed under the GNU General Public License or
  * other free or open source software licenses.
- * @version $Id: default_relatedproducts.php 5406 2012-02-09 12:22:33Z alatak $
+ * @version $Id: default_relatedproducts.php 6431 2012-09-12 12:31:31Z alatak $
  */
 
 // Check to ensure this file is included in Joomla!
@@ -27,7 +27,6 @@ defined ( '_JEXEC' ) or die ( 'Restricted access' );
     foreach ($this->product->customfieldsRelatedProducts as $field) {
 	?><div class="product-field product-field-type-<?php echo $field->field_type ?>">
 		    <span class="product-field-display"><?php echo $field->display ?></span>
-		    <span class="product-field-desc"><?php echo jText::_($field->custom_field_desc) ?></span>
 		</div>
 	<?php } ?>
         </div>

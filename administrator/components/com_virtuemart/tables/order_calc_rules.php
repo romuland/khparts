@@ -13,7 +13,7 @@
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
 * other free or open source software licenses.
-* @version $Id: order_calc_rules.php 5341 2012-01-31 07:43:24Z alatak $
+* @version $Id: order_calc_rules.php 6436 2012-09-12 17:23:07Z alatak $
 */
 
 // Check to ensure this file is included in Joomla!
@@ -37,7 +37,8 @@ class TableOrder_calc_rules extends VmTable {
 
 	/** @var int Vendor ID */
 	var $virtuemart_vendor_id = NULL;
-
+	/** @var int Product ID */
+	var $virtuemart_order_item_id = NULL;
 	/** @var string Calculation Rule name name */
 	var $calc_rule_name = NULL;
 	/** @var int Product Quantity */
@@ -45,7 +46,10 @@ class TableOrder_calc_rules extends VmTable {
 	/** @var decimal Product item price */
 	var $calc_amount = 0.00000;
 
-
+	var $calc_mathop = NULL;
+	var $calc_value = NULL;
+	var $calc_currency = NULL;
+	var $calc_params = NULL;
 
 	/**
 	 * @param $db Class constructor; connect to the database

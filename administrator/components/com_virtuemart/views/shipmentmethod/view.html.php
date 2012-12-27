@@ -13,7 +13,7 @@
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
 * other free or open source software licenses.
-* @version $Id: view.html.php 5601 2012-03-04 18:22:24Z Milbo $
+* @version $Id: view.html.php 6326 2012-08-08 14:14:28Z alatak $
 */
 
 // Check to ensure this file is included in Joomla!
@@ -72,6 +72,7 @@ class VirtuemartViewShipmentmethod extends VmView {
 			$this->addStandardEditViewCommands($shipment->virtuemart_shipmentmethod_id);
 
 		} else {
+			JToolBarHelper::custom('cloneshipment', 'copy', 'copy', JText::_('COM_VIRTUEMART_SHIPMENT_CLONE'), true);
 
 			$this->addStandardDefaultViewCommands();
 			$this->addStandardDefaultViewLists($model);

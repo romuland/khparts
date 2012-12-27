@@ -13,7 +13,7 @@
  * to the GNU General Public License, and as distributed it includes or
  * is derivative of works licensed under the GNU General Public License or
  * other free or open source software licenses.
- * @version $Id: default_shopfront.php 6156 2012-06-25 19:05:02Z openglobal $
+ * @version $Id: default_shopfront.php 6459 2012-09-16 16:08:50Z Milbo $
  */
 
 // Check to ensure this file is included in Joomla!
@@ -37,7 +37,7 @@ defined('_JEXEC') or die('Restricted access');
 							</label> </span>
 						</td>
 						<td>
-						<?php echo VmHTML::checkbox('show_emailfriend', $this->config->get('show_emailfriend')); ?>
+						<?php echo VmHTML::checkbox('show_emailfriend', VmConfig::get('show_emailfriend')); ?>
 						</td>
 					</tr>
 					<tr>
@@ -48,7 +48,7 @@ defined('_JEXEC') or die('Restricted access');
 							</label> </span>
 						</td>
 						<td>
-						<?php echo VmHTML::checkbox('show_printicon', $this->config->get('show_printicon')); ?>
+						<?php echo VmHTML::checkbox('show_printicon', VmConfig::get('show_printicon')); ?>
 						</td>
 					</tr>
 
@@ -60,7 +60,7 @@ defined('_JEXEC') or die('Restricted access');
 							</label> </span>
 						</td>
 						<td>
-						<?php echo VmHTML::checkbox('pdf_icon', $this->config->get('pdf_icon')); ?>
+						<?php echo VmHTML::checkbox('pdf_icon', VmConfig::get('pdf_icon')); ?>
 						</td>
 					</tr>
 					<tr>
@@ -71,7 +71,7 @@ defined('_JEXEC') or die('Restricted access');
 							</label> </span>
 						</td>
 						<td>
-						<?php echo VmHTML::checkbox('ask_question', $this->config->get('ask_question')); ?>
+						<?php echo VmHTML::checkbox('ask_question', VmConfig::get('ask_question')); ?>
 						</td>
 					</tr>
 					<tr>
@@ -82,7 +82,7 @@ defined('_JEXEC') or die('Restricted access');
 							</label> </span>
 						</td>
 						<td>
-							<input type="text" value="<?php echo $this->config->get('asks_minimum_comment_length',50); ?>" class="inputbox" size="4" name="asks_minimum_comment_length">
+							<input type="text" value="<?php echo VmConfig::get('asks_minimum_comment_length',50); ?>" class="inputbox" size="4" name="asks_minimum_comment_length">
 						</td>
 					</tr>
 					<tr>
@@ -93,7 +93,7 @@ defined('_JEXEC') or die('Restricted access');
 							</label> </span>
 						</td>
 						<td>
-							<input type="text" value="<?php echo $this->config->get('asks_maximum_comment_length',2000); ?>" class="inputbox" size="4" name="asks_maximum_comment_length">
+							<input type="text" value="<?php echo VmConfig::get('asks_maximum_comment_length',2000); ?>" class="inputbox" size="4" name="asks_maximum_comment_length">
 						</td>
 					</tr>
 					<tr>
@@ -104,7 +104,7 @@ defined('_JEXEC') or die('Restricted access');
 							</label> </span>
 						</td>
 						<td>
-						<?php echo VmHTML::checkbox('product_navigation', $this->config->get('product_navigation')); ?>
+						<?php echo VmHTML::checkbox('product_navigation', VmConfig::get('product_navigation')); ?>
 						</td>
 					</tr>
 					<tr>
@@ -115,7 +115,7 @@ defined('_JEXEC') or die('Restricted access');
 							</label> </span>
 						</td>
 						<td>
-						<?php echo VmHTML::checkbox('recommend_unauth', $this->config->get('recommend_unauth')); ?>
+						<?php echo VmHTML::checkbox('recommend_unauth', VmConfig::get('recommend_unauth')); ?>
 						</td>
 					</tr>
 					<tr>
@@ -125,7 +125,7 @@ defined('_JEXEC') or die('Restricted access');
 				</span>
 			</td>
 			<td>
-				<input type="text" value="<?php echo $this->config->get('list_limit',10); ?>" class="inputbox" size="4" name="list_limit">
+				<input type="text" value="<?php echo VmConfig::get('list_limit',10); ?>" class="inputbox" size="4" name="list_limit">
 			</td>
 			</tr>
 <?php	/*		<tr>
@@ -135,7 +135,7 @@ defined('_JEXEC') or die('Restricted access');
 				</span>
 	    	</td>
 	    	<td valign="top">
-				<?php echo VmHTML::checkbox('show_products_out_of_stock', $this->config->get('show_products_out_of_stock')); ?>
+				<?php echo VmHTML::checkbox('show_products_out_of_stock', VmConfig::get('show_products_out_of_stock')); ?>
 	    	</td>
 			</tr>
 			<tr> */?>
@@ -146,7 +146,7 @@ defined('_JEXEC') or die('Restricted access');
 				</span>
 	   	 	</td>
 	    	<td>
-				<?php echo VmHTML::checkbox('display_stock', $this->config->get('display_stock')); ?>
+				<?php echo VmHTML::checkbox('display_stock', VmConfig::get('display_stock')); ?>
 	    	</td>
 			</tr>
 			<tr>
@@ -156,7 +156,17 @@ defined('_JEXEC') or die('Restricted access');
 				</span>
 	   	 	</td>
 	    	<td>
-				<?php echo VmHTML::checkbox('coupons_enable', $this->config->get('coupons_enable')); ?>
+				<?php echo VmHTML::checkbox('coupons_enable', VmConfig::get('coupons_enable')); ?>
+	    	</td>
+			</tr>
+			<tr>
+	    	<td class="key">
+				<span class="hasTip" title="<?php echo JText::_('COM_VIRTUEMART_UNCAT_CHILD_PRODUCTS_SHOW_EXPLAIN'); ?>">
+				<label for="show_uncat_child_products"><?php echo JText::_('COM_VIRTUEMART_UNCAT_CHILD_PRODUCTS_SHOW') ?></label>
+				</span>
+	   	 	</td>
+	    	<td>
+				<?php echo VmHTML::checkbox('show_uncat_child_products', VmConfig::get('show_uncat_child_products')); ?>
 	    	</td>
 			</tr>
 			<tr>
@@ -177,7 +187,7 @@ defined('_JEXEC') or die('Restricted access');
 						,'6,M' => '6 '.JText::_('COM_VIRTUEMART_MONTH_S')
 						,'1,Y' => '1 '.JText::_('COM_VIRTUEMART_YEAR')
 					);
-echo VmHTML::selectList('coupons_default_expire',$this->config->get('coupons_default_expire'),$_defaultExpTime)
+echo VmHTML::selectList('coupons_default_expire',VmConfig::get('coupons_default_expire'),$_defaultExpTime)
 				?>
 			</td>
 </tr>
@@ -189,7 +199,7 @@ echo VmHTML::selectList('coupons_default_expire',$this->config->get('coupons_def
 	    	</td>
 			<td>
 				<?php
-echo ShopFunctions::renderWeightUnitList('weight_unit_default', $this->config->get('weight_unit_default') );
+echo ShopFunctions::renderWeightUnitList('weight_unit_default', VmConfig::get('weight_unit_default') );
 				?>
 			</td>
 			</tr>
@@ -202,7 +212,36 @@ echo ShopFunctions::renderWeightUnitList('weight_unit_default', $this->config->g
 	    	</td>
 			<td>
 				<?php
-echo ShopFunctions::renderLWHUnitList('lwh_unit_default', $this->config->get('lwh_unit_default') );
+echo ShopFunctions::renderLWHUnitList('lwh_unit_default', VmConfig::get('lwh_unit_default') );
+				?>
+			</td>
+			</tr>
+			
+			<tr>
+	    	<td class="key">
+				<span class="hasTip" title="<?php echo JText::_('COM_VIRTUEMART_LATEST_PRODUCTS_DAYS_EXPLAIN'); ?>">
+				<label for="latest_products_weeks"><?php echo JText::_('COM_VIRTUEMART_LATEST_PRODUCTS_DAYS') ?></label>
+				</span>
+	    	</td>
+			<td>
+				<input type="text" value="<?php echo VmConfig::get('latest_products_days',7); ?>" class="inputbox" size="4" name="latest_products_days">
+			</td>
+			</tr>
+			
+			<tr>
+	    	<td class="key">
+				<span class="hasTip" title="<?php echo JText::_('COM_VIRTUEMART_LATEST_PRODUCTS_ORDERBY_EXPLAIN'); ?>">
+				<label for="latest_products_orderBy"><?php echo JText::_('COM_VIRTUEMART_LATEST_PRODUCTS_ORDERBY') ?></label>
+				</span>
+	    	</td>
+			<td>
+				<?php
+					
+					$latest_products_orderBy = array(
+						'modified_on'	=>	JText::_('COM_VIRTUEMART_LATEST_PRODUCTS_ORDERBY_MODIFIED'),
+						'created_on'	=>	JText::_('COM_VIRTUEMART_LATEST_PRODUCTS_ORDERBY_CREATED')
+					);
+echo VmHTML::selectList('latest_products_orderBy',VmConfig::get('latest_products_orderBy','created_on'),$latest_products_orderBy);
 				?>
 			</td>
 			</tr>
@@ -214,7 +253,17 @@ echo ShopFunctions::renderLWHUnitList('lwh_unit_default', $this->config->get('lw
 			<fieldset class="checkboxes">
 				<legend><span class="hasTip" title="<?php echo JText::_('COM_VIRTUEMART_CFG_POOS_ENABLE_EXPLAIN'); ?>">
 					<?php echo JText::_('COM_VIRTUEMART_CFG_POOS_ENABLE') ?></legend></span>
-				<?php		$options = array(
+				<div>
+					<?php echo VmHTML::checkbox('lstockmail', VmConfig::get('lstockmail')); ?>
+					     <span class="hasTip"
+						title="<?php echo JText::_('COM_VIRTUEMART_CFG_LOWSTOCK_NOTIFY_TIP'); ?>">
+								<label for="reviews_autopublish"><?php echo JText::_('COM_VIRTUEMART_CFG_LOWSTOCK_NOTIFY') ?>
+								</label> </span>
+
+				</div>
+				<?php
+
+				$options = array(
 				'none'	=>	JText::_('COM_VIRTUEMART_ADMIN_CFG_POOS_NONE'),
 				'disableit'	=>	JText::_('COM_VIRTUEMART_ADMIN_CFG_POOS_DISABLE_IT'),
 				'disableit_children'	=>	JText::_('COM_VIRTUEMART_ADMIN_CFG_POOS_DISABLE_IT_CHILDREN'),
@@ -222,7 +271,7 @@ echo ShopFunctions::renderLWHUnitList('lwh_unit_default', $this->config->get('lw
 				'risetime'	=> JText::_('COM_VIRTUEMART_ADMIN_CFG_POOS_RISE_AVATIME')
 			);
 
-				echo VmHTML::radioList('stockhandle', $this->config->get('stockhandle','none'),$options);
+				echo VmHTML::radioList('stockhandle', VmConfig::get('stockhandle','none'),$options);
 				?>
 				<div style="font-weight:bold;">
 					     <span class="hasTip" title="<?php echo JText::_('COM_VIRTUEMART_AVAILABILITY_EXPLAIN'); ?>">
@@ -230,13 +279,13 @@ echo ShopFunctions::renderLWHUnitList('lwh_unit_default', $this->config->get('lw
 						    </span>
 				</div>
 
-				<input type="text" class="inputbox" id="product_availability" name="rised_availability" value="<?php echo $this->config->get('rised_availability'); ?>" />
+				<input type="text" class="inputbox" id="product_availability" name="rised_availability" value="<?php echo VmConfig::get('rised_availability'); ?>" />
 				<span class="icon-nofloat vmicon vmicon-16-info tooltip" title="<?php echo '<b>'.JText::_('COM_VIRTUEMART_AVAILABILITY').'</b><br/ >'.JText::_('COM_VIRTUEMART_PRODUCT_FORM_AVAILABILITY_TOOLTIP1') ?>"></span>
 
-				<?php echo JHTML::_('list.images', 'image', $this->config->get('rised_availability'), " ", $this->imagePath); ?>
+				<?php echo JHTML::_('list.images', 'image', VmConfig::get('rised_availability'), " ", $this->imagePath); ?>
 				<span class="icon-nofloat vmicon vmicon-16-info tooltip" title="<?php echo '<b>'.JText::_('COM_VIRTUEMART_AVAILABILITY').'</b><br/ >'.JText::sprintf('COM_VIRTUEMART_PRODUCT_FORM_AVAILABILITY_TOOLTIP2',  $this->imagePath ) ?>"></span>
 
-				<img border="0" id="imagelib" alt="<?php echo JText::_('COM_VIRTUEMART_PREVIEW'); ?>" name="imagelib" src="<?php if ($this->config->get('rised_availability')) echo JURI::root(true).$this->imagePath.$this->config->get('rised_availability');?>"/>
+				<img border="0" id="imagelib" alt="<?php echo JText::_('COM_VIRTUEMART_PREVIEW'); ?>" name="imagelib" src="<?php if (VmConfig::get('rised_availability')) echo JURI::root(true).$this->imagePath.VmConfig::get('rised_availability');?>"/>
 			</fieldset>
 			<fieldset>
 				<legend>
@@ -253,7 +302,7 @@ echo ShopFunctions::renderLWHUnitList('lwh_unit_default', $this->config->get('lw
 								</label> </span>
 						</td>
 						<td>
-							<?php echo VmHTML::checkbox('reviews_autopublish', $this->config->get('reviews_autopublish')); ?>
+							<?php echo VmHTML::checkbox('reviews_autopublish', VmConfig::get('reviews_autopublish')); ?>
 						</td>
 					</tr>
 					<tr>
@@ -269,7 +318,7 @@ echo ShopFunctions::renderLWHUnitList('lwh_unit_default', $this->config->get('lw
 							id="reviews_minimum_comment_length"
 							name="reviews_minimum_comment_length"
 							class="inputbox"
-							value="<?php echo $this->config->get('reviews_minimum_comment_length'); ?>" />
+							value="<?php echo VmConfig::get('reviews_minimum_comment_length'); ?>" />
 						</td>
 					</tr>
 					<tr>
@@ -285,7 +334,7 @@ echo ShopFunctions::renderLWHUnitList('lwh_unit_default', $this->config->get('lw
 							id="reviews_maximum_comment_length"
 							name="reviews_maximum_comment_length"
 							class="inputbox"
-							value="<?php echo $this->config->get('reviews_maximum_comment_length'); ?>" />
+							value="<?php echo VmConfig::get('reviews_maximum_comment_length'); ?>" />
 						</td>
 					</tr>
 					<tr>
@@ -302,7 +351,7 @@ echo ShopFunctions::renderLWHUnitList('lwh_unit_default', $this->config->get('lw
 											'registered' => JText::_('COM_VIRTUEMART_ADMIN_CFG_REVIEW_SHOW_REGISTERED'),
 											'all' => JText::_('COM_VIRTUEMART_ADMIN_CFG_REVIEW_SHOW_ALL')
 						); //showReviewFor
-						echo VmHTML::radioList('showReviewFor', $this->config->get('showReviewFor',2),$showReviewFor); ?>
+						echo VmHTML::radioList('showReviewFor', VmConfig::get('showReviewFor',2),$showReviewFor); ?>
 
 							</fieldset></td>
 					</tr>
@@ -322,7 +371,7 @@ echo ShopFunctions::renderLWHUnitList('lwh_unit_default', $this->config->get('lw
 				 						'registered' => JText::_('COM_VIRTUEMART_ADMIN_CFG_REVIEW_MODE_REGISTERED'),
 						//	3 => JText::_('COM_VIRTUEMART_ADMIN_CFG_REVIEW_MODE_ALL')
 						);
-						echo VmHTML::radioList('reviewMode', $this->config->get('reviewMode',2),$showReviewFor); ?>
+						echo VmHTML::radioList('reviewMode', VmConfig::get('reviewMode',2),$showReviewFor); ?>
 							</fieldset></td>
 					</tr>
 
@@ -343,7 +392,7 @@ echo ShopFunctions::renderLWHUnitList('lwh_unit_default', $this->config->get('lw
 		    								'registered' => JText::_('COM_VIRTUEMART_ADMIN_CFG_RATING_SHOW_REGISTERED'),
 											'all' => JText::_('COM_VIRTUEMART_ADMIN_CFG_RATING_SHOW_ALL')
 						);
-						echo VmHTML::radioList('showRatingFor', $this->config->get('showRatingFor',2),$showReviewFor); ?>
+						echo VmHTML::radioList('showRatingFor', VmConfig::get('showRatingFor',2),$showReviewFor); ?>
 
 							</fieldset></td>
 					</tr>
@@ -364,7 +413,7 @@ echo ShopFunctions::renderLWHUnitList('lwh_unit_default', $this->config->get('lw
 										'registered' => JText::_('COM_VIRTUEMART_ADMIN_CFG_RATING_MODE_REGISTERED'),
 						//	3 => JText::_('COM_VIRTUEMART_ADMIN_CFG_RATING_MODE_ALL')	//TODO write system for all users (cookies)
 						);
-						echo VmHTML::radioList('ratingMode', $this->config->get('ratingMode',2),$showReviewFor); ?>
+						echo VmHTML::radioList('ratingMode', VmConfig::get('ratingMode',2),$showReviewFor); ?>
 							</fieldset></td>
 					</tr>
 

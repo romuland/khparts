@@ -15,7 +15,7 @@
  * to the GNU General Public License, and as distributed it includes or
  * is derivative of works licensed under the GNU General Public License or
  * other free or open source software licenses.
- * @version $Id: view.html.php 6147 2012-06-22 13:45:47Z alatak $
+ * @version $Id: view.html.php 6472 2012-09-19 08:46:21Z alatak $
  */
 // Check to ensure this file is included in Joomla!
 defined('_JEXEC') or die('Restricted access');
@@ -64,15 +64,50 @@ class VirtuemartViewUser extends VmView {
 	$useXHTML = true;
 	$this->assignRef('useSSL', $useSSL);
 	$this->assignRef('useXHTML', $useXHTML);
+
+	$front = JURI::root(true).'/components/com_virtuemart/assets/';
 	$document = JFactory::getDocument();
+	$document->addStyleSheet($front.'css/chosen.css');
+	$document->addScript($front.'js/chosen.jquery.min.js');//*/
+
+	 /*   $front = JURI::root(true).'/components/com_virtuemart/assets/';
+	    $admin = JURI::root(true).'/administrator/components/com_virtuemart/assets/';
+	    $document = JFactory::getDocument();
+
+	    //loading defaut admin CSS
+	    $document->addStyleSheet($admin.'css/admin_ui.css');
+	    $document->addStyleSheet($admin.'css/admin_menu.css');
+	    $document->addStyleSheet($admin.'css/admin.styles.css');
+	    $document->addStyleSheet($admin.'css/toolbar_images.css');
+	    $document->addStyleSheet($admin.'css/menu_images.css');
+	    $document->addStyleSheet($front.'css/chosen.css');
+	    $document->addStyleSheet($front.'css/vtip.css');
+	    $document->addStyleSheet($front.'css/jquery.fancybox-1.3.4.css');
+	    //$document->addStyleSheet($admin.'css/jqtransform.css');
+
+	    //loading defaut script
+
+	    $document->addScript($front.'js/fancybox/jquery.mousewheel-3.0.4.pack.js');
+	    $document->addScript($front.'js/fancybox/jquery.easing-1.3.pack.js');
+	    $document->addScript($front.'js/fancybox/jquery.fancybox-1.3.4.pack.js');
+	    $document->addScript($admin.'js/jquery.coookie.js');
+	    $document->addScript($front.'js/chosen.jquery.min.js');
+	    $document->addScript($admin.'js/vm2admin.js');
+
+*/
+
+
+
 	$mainframe = JFactory::getApplication();
 	$pathway = $mainframe->getPathway();
 	$layoutName = $this->getLayout();
 	// 	vmdebug('layout by view '.$layoutName);
 	if (empty($layoutName) or $layoutName == 'default') {
 	    $layoutName = JRequest::getWord('layout', 'edit');
-	    $this->setLayout($layoutName);
-	    // 	    vmdebug('layout by post '.$layoutName);
+		if ($layoutName == 'default'){
+			$layoutName = 'edit';
+		}
+		$this->setLayout($layoutName);
 	}
 
 	if (empty($this->fTask)) {
@@ -86,8 +121,7 @@ class VirtuemartViewUser extends VmView {
 
 	// 	vmdebug('my layoutname',$layoutName);
 	if ($layoutName == 'login') {
-	    // 		$true = true;
-	    // 		$this->assignRef('anonymous',$true);
+
 	    parent::display($tpl);
 	    return;
 	}
@@ -96,7 +130,6 @@ class VirtuemartViewUser extends VmView {
 	    require(JPATH_VM_ADMINISTRATOR . DS . 'models' . DS . 'user.php');
 	$this->_model = new VirtuemartModelUser();
 
-	//$this->_model = VmModel::getModel('user', 'VirtuemartModel');
 	//		$this->_model->setCurrent(); //without this, the administrator can edit users in the FE, permission is handled in the usermodel, but maybe unsecure?
 	$editor = JFactory::getEditor();
 
@@ -104,11 +137,6 @@ class VirtuemartViewUser extends VmView {
 	$this->_currentUser = JFactory::getUser();
 	$this->_cuid = $this->_lists['current_id'] = $this->_currentUser->get('id');
 	$this->assignRef('userId', $this->_cuid);
-
-	if (empty($this->_cuid)) {
-	    // 		$layout = 'default';
-	    // 		$this->setLayout('default');
-	}
 
 	$this->_userDetails = $this->_model->getUser();
 
@@ -151,7 +179,7 @@ class VirtuemartViewUser extends VmView {
 // 			vmdebug('Try to get $virtuemart_userinfo_id by type BT', $virtuemart_userinfo_id);
 		}
 	   $userFields = $userFields[$virtuemart_userinfo_id];
-	   $task = 'editAddressSt';
+	   $task = 'editaddressST';
 	}
 
 	$this->assignRef('userFields', $userFields);
@@ -202,6 +230,7 @@ class VirtuemartViewUser extends VmView {
 	    //			$vendorModel->setId($this->_userDetails->virtuemart_vendor_id);
 	    $vendor = $vendorModel->getVendor();
 	    $this->assignRef('vendor', $vendor);
+
 	}
 	if ($layoutName == 'editaddress') {
 	    $layoutName = 'edit_address';
@@ -243,7 +272,13 @@ class VirtuemartViewUser extends VmView {
 		$vmfield_title = JText::_('COM_VIRTUEMART_USER_FORM_ADD_SHIPTO_LBL');
 	    }
 	}
-
+	  $add_product_link="";
+	 if(!class_exists('Permissions')) require(JPATH_ROOT.DS.'administrator'.DS.'components'.DS.'com_virtuemart' . DS . 'helpers' . DS . 'permissions.php');
+	if(!Permissions::getInstance()->isSuperVendor() or Vmconfig::get('multix','none')!=='none' ){
+	    $add_product_link = JRoute::_( 'index.php?option=com_virtuemart&tmpl=component&view=product&view=product&task=edit&virtuemart_product_id=0' );
+	    $add_product_link = $this->linkIcon($add_product_link, 'COM_VIRTUEMART_PRODUCT_ADD_PRODUCT', 'new', false, false, true, true);
+	}
+	$this->assignRef('add_product_link', $add_product_link);
 	$document->setTitle($pathway_text);
 	$pathway->additem($pathway_text);
 	$this->assignRef('page_title', $pathway_text);
@@ -325,11 +360,6 @@ class VirtuemartViewUser extends VmView {
 	    if (!empty($this->_userDetails->perms)) {
 		$this->_lists['perms'] = $this->_userDetails->perms;
 
-		/* This now done in the model, so it is unnecessary here, notice by Max Milbers
-		  if(empty($this->_lists['perms'])){
-		  $this->_lists['perms'] = 'shopper'; // TODO Make this default configurable
-		  }
-		 */
 		$_hiddenInfo = '<input type="hidden" name="perms" value = "' . $this->_lists['perms'] . '" />';
 		$this->_lists['perms'] .= $_hiddenInfo;
 	    }
@@ -423,13 +453,23 @@ class VirtuemartViewUser extends VmView {
 	$userFieldsModel = VmModel::getModel('UserFields');
 	$userFields = $userFieldsModel->getUserFields();
 	$this->userFields = $userFieldsModel->getUserFieldsFilled($userFields, $this->user);
-	$vendorModel = VmModel::getModel('vendor');
-	$this->vendor = $vendorModel->getVendor();
-	if (VmConfig::get('order_mail_html')) {
+
+
+    if (VmConfig::get('order_mail_html')) {
 	    $mailFormat = 'html';
-	} else {
+	    $lineSeparator="<br />";
+    } else {
 	    $mailFormat = 'raw';
-	}
+	    $lineSeparator="\n";
+    }
+
+    $virtuemart_vendor_id=1;
+    $vendorModel = VmModel::getModel('vendor');
+    $vendor = $vendorModel->getVendor($virtuemart_vendor_id);
+    $vendorModel->addImages($vendor);
+	$vendor->vendorFields = $vendorModel->getVendorAddressFields();
+    $this->assignRef('vendor', $vendor);
+
 	if (!$doVendor) {
 	    $this->subject = JText::sprintf('COM_VIRTUEMART_NEW_SHOPPER_SUBJECT', $this->user->username, $this->vendor->vendor_store_name);
 	    $tpl = 'mail_' . $mailFormat . '_reguser';

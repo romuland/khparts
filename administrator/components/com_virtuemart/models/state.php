@@ -13,14 +13,11 @@
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
 * other free or open source software licenses.
-* @version $Id: state.php 6008 2012-05-07 14:23:48Z Milbo $
+* @version $Id: state.php 6383 2012-08-27 16:53:06Z alatak $
 */
 
 // Check to ensure this file is included in Joomla!
 defined('_JEXEC') or die('Restricted access');
-
-// Load the model framework
-jimport( 'joomla.application.component.model');
 
 if(!class_exists('VmModel'))require(JPATH_VM_ADMINISTRATOR.DS.'helpers'.DS.'vmmodel.php');
 
@@ -94,7 +91,7 @@ class VirtueMartModelState extends VmModel {
 	 * @author Max Milbers
 	 * @return String Attention, this function gives a 0=false back in case of success
 	 */
-	public function testStateCountry($countryId,$stateId)
+	public static function testStateCountry($countryId,$stateId)
 	{
 
 		$countryId = (int)$countryId;
@@ -123,7 +120,7 @@ class VirtueMartModelState extends VmModel {
 			}
 
 		} else {
-			//The given country does not exist, this can happen, when no country was choosen, which maybe valid.
+			//The given country does not exist, this can happen, when no country was chosen, which maybe valid.
 			return true;
 		}
 	}

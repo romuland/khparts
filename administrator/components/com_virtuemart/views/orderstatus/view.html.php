@@ -13,7 +13,7 @@
  * to the GNU General Public License, and as distributed it includes or
  * is derivative of works licensed under the GNU General Public License or
  * other free or open source software licenses.
- * @version $Id: view.html.php 5981 2012-05-01 23:51:25Z electrocity $
+ * @version $Id: view.html.php 6307 2012-08-07 07:39:45Z alatak $
  */
 
 // Check to ensure this file is included in Joomla!
@@ -44,6 +44,14 @@ class VirtuemartViewOrderstatus extends VmView {
 
 		$layoutName = JRequest::getWord('layout', 'default');
 
+// 'A' : sotck Available
+		// 'O' : stock Out
+		// 'R' : stock reserved
+			$stockHandelList = array(
+				'A' => 'COM_VIRTUEMART_ORDER_STATUS_STOCK_AVAILABLE',
+				'R' => 'COM_VIRTUEMART_ORDER_STATUS_STOCK_RESERVED',
+				'O' => 'COM_VIRTUEMART_ORDER_STATUS_STOCK_OUT'
+			);
 
 		if ($layoutName == 'edit') {
 			$orderStatus = $model->getData();
@@ -62,14 +70,7 @@ class VirtuemartViewOrderstatus extends VmView {
 
 			}
 			$lists['vmCoreStatusCode'] = $model->getVMCoreStatusCode();
-		// 'A' : sotck Available
-		// 'O' : stock Out
-		// 'R' : stock reserved
-			$stockHandelList = array(
-				'A' => 'COM_VIRTUEMART_ORDER_STATUS_STOCK_AVAILABLE',
-				'R' => 'COM_VIRTUEMART_ORDER_STATUS_STOCK_RESERVED',
-				'O' => 'COM_VIRTUEMART_ORDER_STATUS_STOCK_OUT'
-			);
+
 			$this->assignRef('stockHandelList', $stockHandelList);
 			// Vendor selection
 			$vendor_model = VmModel::getModel('vendor');
@@ -89,6 +90,8 @@ class VirtuemartViewOrderstatus extends VmView {
 
 			$orderStatusList = $model->getOrderStatusList();
 			$this->assignRef('orderStatusList', $orderStatusList);
+
+			$this->assignRef('stockHandelList', $stockHandelList);
 
 			$pagination = $model->getPagination();
 			$this->assignRef('pagination', $pagination);

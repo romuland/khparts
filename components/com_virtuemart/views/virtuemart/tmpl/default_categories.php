@@ -7,7 +7,7 @@ $iCol = 1;
 $iCategory = 1;
 
 // Calculating Categories Per Row
-$categories_per_row = VmConfig::get('categories_per_row', 3);
+$categories_per_row = VmConfig::get('homepage_categories_per_row', 3);
 $category_cellwidth = ' width' . floor(100 / $categories_per_row);
 
 // Separator

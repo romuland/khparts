@@ -28,7 +28,8 @@
 */
 
 // Check to ensure this file is included in Joomla!
-defined('_JEXEC') or die('Restricted access'); ?>
+defined('_JEXEC') or die('Restricted access');
+?>
 
 <table width="100%" border="0" cellpadding="0" cellspacing="0" class="html-email">
 
@@ -44,18 +45,17 @@ defined('_JEXEC') or die('Restricted access'); ?>
 	</td>
     <td width="40%">
     	<p>
-			<a class="default" title="<?php echo $this->vendor->vendor_store_name ?>" href="<?php echo  shopFunctionsF::getBaseUrl().JRoute::_('index
-			.php?option=com_virtuemart&view=orders&layout=details&order_number='.$this->orderDetails['details']['BT']->order_number.'&order_pass='.$this->orderDetails['details']['BT']->order_pass); ?>">
+ 			<a class="default" title="<?php echo $this->vendor->vendor_store_name ?>" href="<?php echo JURI::root().'index.php?option=com_virtuemart&view=orders&layout=details&order_number='.$this->orderDetails['details']['BT']->order_number.'&order_pass='.$this->orderDetails['details']['BT']->order_pass; ?>">
 			<?php echo JText::_('COM_VIRTUEMART_MAIL_SHOPPER_YOUR_ORDER_LINK'); ?></a>
 		</p>
 	</td>
   </tr>
   <tr>
     <td colspan="3"><p>
-				<?php echo JText::sprintf('COM_VIRTUEMART_MAIL_SHOPPER_TOTAL_ORDER',$this->currency->priceDisplay($this->orderDetails['details']['BT']->order_total) ); ?></p></td>
+				<?php echo JText::sprintf('COM_VIRTUEMART_MAIL_SHOPPER_TOTAL_ORDER',$this->currency->priceDisplay($this->orderDetails['details']['BT']->order_total,$this->currency) ); ?></p></td>
   </tr>
   <td colspan="3"><p>
-				<?php echo JText::sprintf('COM_VIRTUEMART_MAIL_ORDER_STATUS',$this->orderDetails['details']['BT']->order_status_name) ; ?></p></td>
+				<?php echo JText::sprintf('COM_VIRTUEMART_MAIL_ORDER_STATUS',JText::_($this->orderDetails['details']['BT']->order_status_name)) ; ?></p></td>
   </tr>
   <?php $nb=count($this->orderDetails['history']);
   if($this->orderDetails['history'][$nb-1]->customer_notified && !(empty($this->orderDetails['history'][$nb-1]->comments))) { ?>

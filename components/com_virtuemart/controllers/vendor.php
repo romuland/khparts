@@ -48,12 +48,12 @@ class VirtueMartControllerVendor extends JController
 		$commentSize = mb_strlen( JRequest::getString('comment') );
 		$validMail = filter_var(JRequest::getVar('email'), FILTER_VALIDATE_EMAIL);
 
-		$virtuemart_vendor_id = JRequest::getInt('virtuemart_vendor_id');
+		$virtuemart_vendor_id = JRequest::getInt('virtuemart_vendor_id',1);
 
 		if(!class_exists('VirtueMartModelVendor')) require(JPATH_VM_ADMINISTRATOR.DS.'models'.DS.'vendor.php');
 		$userId = VirtueMartModelVendor::getUserIdByVendorId($virtuemart_vendor_id);
 
-		$vendorUser = JFactory::getUser($userId);
+		//$vendorUser = JFactory::getUser($userId);
 
 		if ( $commentSize<$min || $commentSize>$max || !$validMail ) {
 			$this->setRedirect(JRoute::_ ( 'index.php?option=com_virtuemart&view=vendor&task=contact&virtuemart_vendor_id=' . $virtuemart_vendor_id ),JText::_('COM_VIRTUEMART_COMMENT_NOT_VALID_JS'));
@@ -61,16 +61,20 @@ class VirtueMartControllerVendor extends JController
 		}
 
 		$user = JFactory::getUser();
-		if (empty($user->id)) {
-			$fromMail = JRequest::getVar('email');	//is sanitized then
-			$fromName = JRequest::getVar('name','');//is sanitized then
-			$fromMail = str_replace(array('\'','"',',','%','*','/','\\','?','^','`','{','}','|','~'),array(''),$fromMail);
-			$fromName = str_replace(array('\'','"',',','%','*','/','\\','?','^','`','{','}','|','~'),array(''),$fromName);
+
+		$fromMail = JRequest::getVar('email');	//is sanitized then
+		$fromName = JRequest::getVar('name','');//is sanitized then
+		$fromMail = str_replace(array('\'','"',',','%','*','/','\\','?','^','`','{','}','|','~'),array(''),$fromMail);
+		$fromName = str_replace(array('\'','"',',','%','*','/','\\','?','^','`','{','}','|','~'),array(''),$fromName);
+		if (!empty($user->id)) {
+			if(empty($fromMail)){
+				$fromMail = $user->email;
+			}
+			if(empty($fromName)){
+				$fromName = $user->name;
+			}
 		}
-		else {
-			$fromMail = $user->email;
-			$fromName = $user->name;
-		}
+
 		$vars['user'] = array('name' => $fromName, 'email' => $fromMail);
 
 		$VendorEmail = $model->getVendorEmail($virtuemart_vendor_id);

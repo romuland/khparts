@@ -31,6 +31,8 @@ class TableCalcs extends VmTable
 	var $virtuemart_calc_id					= 0;
 	/** @var string VendorID of the rule creator */
 	var $virtuemart_vendor_id				= 0;
+	var $calc_jplugin_id            = 0;
+	//var $calc_element            = '';
 	/** @var string Calculation name */
 	var $calc_name           		= '';
 	/** @var string Calculation description */
@@ -41,6 +43,7 @@ class TableCalcs extends VmTable
 	var $calc_value_mathop       	= '';
 	/** @var string Calculation value of the mathop */
 	var $calc_value       		 	= '';
+	var $calc_params       		 	= '';
 	/** @var string Currency used in the calculation */
 	var $calc_currency				= '';
 
@@ -53,14 +56,6 @@ class TableCalcs extends VmTable
 	/** @var string end date */
 	var $publish_down;
 
-// 	var $calc_qualify;
-//          /** @var string   */
-// 	var $calc_affected;
-// 	/** @var string conditional amount to trigger the rule */
-// 	var $calc_amount_cond_min;
-// 	var $calc_amount_cond_max;
-// 	/** @var string The dimension of the amount, maybe unnecessary*/
-// 	var $calc_amount_dimunit;
 	/** @var Affects the rule all products of all Vendors? */
 	var $shared				= 0;//this must be forbidden to set for normal vendors, that means only setable Administrator permissions or vendorId=1
     /** @var int published or unpublished */
@@ -81,7 +76,6 @@ class TableCalcs extends VmTable
 		$this->setLoggable();
 
 	}
-
 
 }
 // pure php no closing tag

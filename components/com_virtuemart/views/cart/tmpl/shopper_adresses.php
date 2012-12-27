@@ -2,7 +2,7 @@
 /**
 *
 * Layout for the shopping cart and the mail
-* shows the choosen adresses of the shopper
+* shows the chosen adresses of the shopper
 * taken from the cart in the session
 *
 * @package	VirtueMart

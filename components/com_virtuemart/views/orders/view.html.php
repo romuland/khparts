@@ -13,7 +13,7 @@
  * to the GNU General Public License, and as distributed it includes or
  * is derivative of works licensed under the GNU General Public License or
  * other free or open source software licenses.
- * @version $Id: view.html.php 5951 2012-04-25 10:34:52Z alatak $
+ * @version $Id: view.html.php 6383 2012-08-27 16:53:06Z alatak $
  */
 
 // Check to ensure this file is included in Joomla!
@@ -71,7 +71,7 @@ class VirtuemartViewOrders extends VmView {
 		$orderModel = VmModel::getModel('orders');
 
 		if ($layoutName == 'details') {
-			$order_list_link = false;
+			$order_list_link = FALSE;
  			$cuid = $_currentUser->get('id');
 // 			if(!empty($cuid)){
 				$order_list_link = JRoute::_('index.php?option=com_virtuemart&view=orders&layout=list');
@@ -96,7 +96,7 @@ class VirtuemartViewOrders extends VmView {
 				// If the user is logged in, we will check if the order belongs to him
 				$virtuemart_order_id = JRequest::getInt('virtuemart_order_id',0) ;
 				if (!$virtuemart_order_id) {
-					$virtuemart_order_id = $orderModel->getOrderIdByOrderNumber(JRequest::getString('order_number'));
+					$virtuemart_order_id = VirtueMartModelOrders::getOrderIdByOrderNumber(JRequest::getString('order_number'));
 				}
 				$orderDetails = $orderModel->getOrder($virtuemart_order_id);
 
@@ -155,6 +155,10 @@ class VirtuemartViewOrders extends VmView {
 			if($format=='pdf'){
 				$invoiceNumberDate = array();
 				$return = $orderModel->createInvoiceNumber($orderDetails['details']['BT'], $invoiceNumberDate );
+				if(empty($invoiceNumberDate)){
+					$invoiceNumberDate[0] = 'no invoice number accessible';
+					$invoiceNumberDate[1] = 'no invoice date accessible';
+				}
 				$this->assignRef('invoiceNumber', $invoiceNumberDate[0]);
 				$this->assignRef('invoiceDate', $invoiceNumberDate[1]);
 			}
@@ -173,6 +177,24 @@ class VirtuemartViewOrders extends VmView {
 			$this->prepareVendor();
 			$this->assignRef('print', $print);
 
+			$vendorId = 1;
+			$emailCurrencyId = 0;
+			$exchangeRate = FALSE;
+			if (!class_exists ('vmPSPlugin')) {
+				require(JPATH_VM_PLUGINS . DS . 'vmpsplugin.php');
+			}
+			JPluginHelper::importPlugin ('vmpayment');
+			$dispatcher = JDispatcher::getInstance ();
+			$dispatcher->trigger ('plgVmgetEmailCurrency', array($orderDetails['details']['BT']->virtuemart_paymentmethod_id, $orderDetails['details']['BT']->virtuemart_order_id, &$emailCurrencyId));
+			if (!class_exists ('CurrencyDisplay')) {
+				require(JPATH_VM_ADMINISTRATOR . DS . 'helpers' . DS . 'currencydisplay.php');
+			}
+			$currency = CurrencyDisplay::getInstance ($emailCurrencyId, $vendorId);
+			if ($emailCurrencyId) {
+				vmdebug ('exchangerate', $orderDetails['details']['BT']->user_currency_rate);
+				$currency->exchangeRateShopper = $orderDetails['details']['BT']->user_currency_rate;
+			}
+			$this->assignRef ('currency', $currency);
 			// Implement the Joomla panels. If we need a ShipTo tab, make it the active one.
 			// In tmpl/edit.php, this is the 4th tab (0-based, so set to 3 above)
 			// jimport('joomla.html.pane');
@@ -188,16 +210,36 @@ class VirtuemartViewOrders extends VmView {
 				// so explicetly define an empty array when not logged in.
 				$orderList = array();
 			} else {
-				$orderList = $orderModel->getOrdersList($_currentUser->get('id'), true);
+				$orderList = $orderModel->getOrdersList($_currentUser->get('id'), TRUE);
+				foreach ($orderList as $order) {
+					$vendorId = 1;
+					$emailCurrencyId = 0;
+					$exchangeRate = FALSE;
+					if (!class_exists ('vmPSPlugin')) {
+						require(JPATH_VM_PLUGINS . DS . 'vmpsplugin.php');
+			}
+					JPluginHelper::importPlugin ('vmpayment');
+					$dispatcher = JDispatcher::getInstance ();
+					$dispatcher->trigger ('plgVmgetEmailCurrency', array($order->virtuemart_paymentmethod_id, $order->virtuemart_order_id, &$emailCurrencyId));
+					if (!class_exists ('CurrencyDisplay')) {
+						require(JPATH_VM_ADMINISTRATOR . DS . 'helpers' . DS . 'currencydisplay.php');
+					}
+					$currency = CurrencyDisplay::getInstance ($emailCurrencyId, $vendorId);
+					if ($emailCurrencyId) {
+						vmdebug ('exchangerate', $order->user_currency_rate);
+						$currency->exchangeRateShopper = $order->user_currency_rate;
+					}
+					$order->currency = $currency;
+				}
 			}
 			$this->assignRef('orderlist', $orderList);
 		}
-
+/*
 		if (!class_exists('CurrencyDisplay')) require(JPATH_VM_ADMINISTRATOR.DS.'helpers'.DS.'currencydisplay.php');
 
 		$currency = CurrencyDisplay::getInstance();
 		$this->assignRef('currency', $currency);
-
+*/
 		$orderStatusModel = VmModel::getModel('orderstatus');
 
 		$_orderstatuses = $orderStatusModel->getOrderStatusList();

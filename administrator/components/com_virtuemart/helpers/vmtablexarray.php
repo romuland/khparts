@@ -68,7 +68,7 @@ class VmTableXarray extends VmTable {
 		$cid	= JRequest::getVar( $this->_pkey , array(), 'post', 'array' );
 		$order	= JRequest::getVar( 'order', array(), 'post', 'array' );
 
-		$query = 'SELECT `id` WHERE $this->_pkey = '.(int)$cid[0].' AND `virtuemart_category_id` = '.(int)$skeyId ;
+		$query = 'SELECT `id` FROM `' . $this->_tbl . '` WHERE $this->_pkey = '.(int)$cid[0].' AND `virtuemart_category_id` = '.(int)$skeyId ;
 		$this->_db->setQuery( $query );
 		$id = $this->_db->loadResult();
 		$keys = array_keys($order);
@@ -136,7 +136,7 @@ class VmTableXarray extends VmTable {
      * This binds the data to this kind of table. You can set the used name of the form with $this->skeyForm;
      *
      * @author Max Milbers
-     * @param unknown_type $data
+     * @param array $data
      */
 	public function bind($data, $ignore = array()){
 

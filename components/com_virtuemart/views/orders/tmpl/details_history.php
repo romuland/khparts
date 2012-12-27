@@ -34,7 +34,7 @@ defined('_JEXEC') or die('Restricted access');
 ?>
 		<tr valign="top">
 			<td align="left">
-				<?php echo $_hist->created_on; ?>
+				<?php echo vmJsApi::date($_hist->created_on,'LC2',true); ?>
 			</td>
 			<td align="left" >
 				<?php echo $this->orderstatuses[$_hist->order_status_code]; ?>

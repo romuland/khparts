@@ -25,11 +25,8 @@ if (!class_exists('vmCustomPlugin')) require(JPATH_VM_PLUGINS . DS . 'vmcustompl
 class plgVmCustomSpecification extends vmCustomPlugin {
 
 
-	// instance of class
-	public static $_this = false;
-
 	function __construct(& $subject, $config) {
-// 		if(self::$_this) return self::$_this;
+
 		parent::__construct($subject, $config);
 
 		$this->_tablepkey = 'id';
@@ -44,7 +41,6 @@ class plgVmCustomSpecification extends vmCustomPlugin {
 
 		$this->setConfigParameterable('custom_params',$this->varsToPush);
 
-// 		self::$_this = $this;
 	}
 	/**
 	 * Create the table for this plugin if it does not yet exist.
@@ -163,8 +159,8 @@ class plgVmCustomSpecification extends vmCustomPlugin {
 	 * We must reimplement this triggers for joomla 1.7
 	 * vmplugin triggers note by Max Milbers
 	 */
-	public function plgVmOnStoreInstallPluginTable($psType) {
-		return $this->onStoreInstallPluginTable($psType);
+	public function plgVmOnStoreInstallPluginTable($psType,$name) {
+		return $this->onStoreInstallPluginTable($psType,$name);
 	}
 
 	function plgVmSetOnTablePluginParamsCustom($name, $id, &$table){

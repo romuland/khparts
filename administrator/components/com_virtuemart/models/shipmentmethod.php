@@ -13,14 +13,11 @@
  * to the GNU General Public License, and as distributed it includes or
  * is derivative of works licensed under the GNU General Public License or
  * other free or open source software licenses.
- * @version $Id: shipmentmethod.php 6057 2012-06-06 00:44:52Z Milbo $
+ * @version $Id: shipmentmethod.php 6350 2012-08-14 17:18:08Z Milbo $
  */
 
 // Check to ensure this file is included in Joomla!
 defined('_JEXEC') or die('Restricted access');
-
-// Load the model framework
-jimport( 'joomla.application.component.model');
 
 if(!class_exists('VmModel'))require(JPATH_VM_ADMINISTRATOR.DS.'helpers'.DS.'vmmodel.php');
 
@@ -74,13 +71,16 @@ class VirtueMartModelShipmentmethod extends VmModel {
 				if(!class_exists('VirtueMartModelVendor')) require(JPATH_VM_ADMINISTRATOR.DS.'models'.DS.'vendor.php');
 				$this->_data->virtuemart_vendor_id = VirtueMartModelVendor::getLoggedVendor();;
 			}
-// 			if(!empty($this->_id)){
+ 		//if(!empty($this->_id)){
 				/* Add the shipmentcarreir shoppergroups */
 				$q = 'SELECT `virtuemart_shoppergroup_id` FROM #__virtuemart_shipmentmethod_shoppergroups WHERE `virtuemart_shipmentmethod_id` = "'.$this->_id.'"';
 				$this->_db->setQuery($q);
 				$this->_data->virtuemart_shoppergroup_ids = $this->_db->loadResultArray();#
 				if(empty($this->_data->virtuemart_shoppergroup_ids)) $this->_data->virtuemart_shoppergroup_ids = 0;
-// 			}
+
+
+		//}
+
 		}
 
 		return $this->_data;
@@ -144,12 +144,15 @@ class VirtueMartModelShipmentmethod extends VmModel {
 		//$data = JRequest::get('post');
 
 
-// 		vmdebug('store',$data);
-		if(!empty($data['params'])){
-			foreach($data['params'] as $k=>$v){
-				$data[$k] = $v;
-			}
+		if ($data) {
+			$data = (array)$data;
 		}
+// 		vmdebug('store',$data);
+			if(!empty($data['params'])){
+				foreach($data['params'] as $k=>$v){
+					$data[$k] = $v;
+				}
+			}
 
 		if(empty($data['virtuemart_vendor_id'])){
 			if(!class_exists('VirtueMartModelVendor')) require(JPATH_VM_ADMINISTRATOR.DS.'models'.DS.'vendor.php');
@@ -176,8 +179,12 @@ class VirtueMartModelShipmentmethod extends VmModel {
 
 			JPluginHelper::importPlugin('vmshipment');
 			$dispatcher = JDispatcher::getInstance();
+			//bad trigger, we should just give it data, so that the plugins itself can check the data to be stored
+			//so this trigger is now deprecated and will be deleted in vm2.2
 			$retValue = $dispatcher->trigger('plgVmSetOnTablePluginParamsShipment',array( $data['shipment_element'],$data['shipment_jplugin_id'],&$table));
 
+			$retValue = $dispatcher->trigger('plgVmSetOnTablePluginShipment',array( &$data,&$table));
+			vmdebug('my data after store ',$data);
 		}
 
 		$table->bindChecknStore($data);
@@ -200,7 +207,25 @@ class VirtueMartModelShipmentmethod extends VmModel {
 
 		return $table->virtuemart_shipmentmethod_id;
 	}
+	/**
+	 * Creates a clone of a given shipmentmethod id
+	 *
+	 * @author Valérie Isaksen
+	 * @param int $virtuemart_shipmentmethod_id
+	 */
 
+	public function createClone ($id) {
+
+		//	if (is_array($cids)) $cids = array($cids);
+		$this->setId ($id);
+		$shipment = $this->getShipment ();
+		$shipment->virtuemart_shipmentmethod_id = 0;
+		$shipment->shipment_name = $shipment->shipment_name.' Copy';
+		if (!$clone = $this->store($shipment)) {
+			JError::raiseError(500, 'createClone '. $shipment->getError() );
+		}
+		return $clone;
+	}
 }
 
 //no closing tag

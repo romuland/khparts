@@ -13,7 +13,7 @@
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
 * other free or open source software licenses.
-* @version $Id: view.json.php 6108 2012-06-14 17:14:30Z Milbo $
+* @version $Id: view.json.php 6543 2012-10-16 06:41:27Z Milbo $
 */
 
 // Check to ensure this file is included in Joomla!
@@ -102,8 +102,7 @@ class VirtuemartViewProduct extends JView {
 							 else  $cartIcone= 'default-off';
 							 $html[] = '<div class="removable">
 								<td>'.$field->custom_title.'</td>
-								 <td>'.$display.$field->custom_tip.'
-								 </td>
+								 <td>'.$display.$field->custom_tip.'</td>
 								 <td>'.JText::_($fieldTypes[$field->field_type]).'
 								'.$this->model->setEditCustomHidden($field, $this->row).'
 								 </td>
@@ -121,20 +120,17 @@ class VirtuemartViewProduct extends JView {
 					 } else {
 					     $cartIcone= 'default-off';
 					 }
-					 if (!empty ($field->custom_tip) ) {
-					     $field->custom_tip = '<span> ('.$field->custom_tip.')</span>';
-					 } else {
-					     $field->custom_tip ='';
-					     }
 					 $html[] = '
-					<fieldset class="removable">
-						<legend>'.$field->custom_title.'</legend>
-						<span>'.$field->custom_tip.'</span>
-						'.$display.'
+					<tr class="removable">
+						<td>'.$field->custom_title.'</td>
+						<td>'.$field->custom_tip.'</td>
+						<td>'.$display.'
 						'.$this->model->setEditCustomHidden($field, $this->row).'
-						<span class="vmicon vmicon-16-'.$cartIcone.'"></span>
-						<span class="vmicon vmicon-16-remove"></span>'.JTEXT::_('COM_VIRTUEMART_CUSTOM_ACTIVATE_JAVASCRIPT').'
-					</fieldset>';
+						<p>'.JTEXT::_('COM_VIRTUEMART_CUSTOM_ACTIVATE_JAVASCRIPT').'</p></td>
+						<td>'.JText::_('COM_VIRTUEMART_CUSTOM_EXTENSION').'</td>
+						<td><span class="vmicon vmicon-16-'.$cartIcone.'"></span></td>
+						<td><span class="vmicon vmicon-16-remove"></span><input class="ordering" type="hidden" value="'.$this->row.'" name="field['.$this->row .'][ordering]" /></td>
+					</tr>';
 					$this->row++;
 
 				} else {
@@ -160,15 +156,16 @@ class VirtuemartViewProduct extends JView {
 			$this->json['ok'] = 1 ;
 		} else if ($this->type=='userlist')
 		{
-
-			if ($status = JRequest::getvar('status')) {
+			$status = JRequest::getvar('status');
+			$productShoppers=0;
+			if ($status) {
 				$productModel = VmModel::getModel('product');
 				$productShoppers = $productModel->getProductShoppersByStatus($product_id ,$status);
-				if(!class_exists('ShopFunctions'))require(JPATH_VM_ADMINISTRATOR.DS.'helpers'.DS.'shopfunctions.php');
-				$html = ShopFunctions::renderProductShopperList($productShoppers);
 			}
-
+			if(!class_exists('ShopFunctions'))require(JPATH_VM_ADMINISTRATOR.DS.'helpers'.DS.'shopfunctions.php');
+			$html = ShopFunctions::renderProductShopperList($productShoppers);
 			$this->json['value'] = $html;
+
 		} else $this->json['ok'] = 0 ;
 
 		if ( empty($this->json)) {

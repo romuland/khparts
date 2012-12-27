@@ -47,12 +47,15 @@ class VmTable extends JTable{
 	var $_translatable = false;
 	protected $_translatableFields = array();
 
+	static $_cache = null;
+
 	function __construct( $table, $key, &$db ){
 
 		$this->_tbl		= $table;
 		$this->_tbl_key	= $key;
 		$this->_db		=& $db;
 		$this->_pkey = $key;
+		$this->_cache = null;
 	}
 
 	function setPrimaryKey($key, $keyForm=0){
@@ -174,6 +177,36 @@ class VmTable extends JTable{
 		}
 	}
 
+	/**
+	 * Get the columns from database table.
+	 *
+	 * adjusted to vm2, We use the same, except that the cache is not a global static,.. we use static belonging to table
+	 * @return  mixed  An array of the field names, or false if an error occurs.
+	 *
+	 * @since   11.1
+	 */
+
+	public function getFields()
+	{
+		if ($this->_cache === null)
+		{
+			// Lookup the fields for this table only once.
+			$name = $this->_tbl;
+			$fields = $this->_db->getTableColumns($name, false);
+
+			if (empty($fields))
+			{
+				$e = new JException(JText::_('JLIB_DATABASE_ERROR_COLUMNS_NOT_FOUND'));
+				$this->setError($e);
+				return false;
+			}
+			$this->_cache = $fields;
+		}
+
+		return $this->_cache;
+	}
+
+
 	function checkDataContainsTableFields($from, $ignore=array()){
 
 		if(empty($from))
@@ -193,9 +226,9 @@ class VmTable extends JTable{
 			// internal attributes of an object are ignored
 			if(!in_array($k, $ignore)){
 
-				if($fromArray && !empty($from[$k])){
+				if($fromArray && isset($from[$k])){
 					return true;
-				}else if($fromObject && !empty($from->$k)){
+				}else if($fromObject && isset($from->$k)){
 					return true;
 				}
 			}
@@ -213,10 +246,30 @@ class VmTable extends JTable{
 			$user = JFactory::getUser();
 
 			$pkey = $this->_pkey;
-			if(empty($this->$pkey)){
-				$this->created_on = $today;
-				$this->created_by = $user->id;
+			//Lets check if the user is admin or the mainvendor
+			if(!class_exists('Permissions')) require(JPATH_VM_ADMINISTRATOR.DS.'helpers'.DS.'permissions.php');
+			$admin = Permissions::getInstance()->check('admin');
+			if($admin){
+				if(empty($this->$pkey) and empty($this->created_on)){
+					$this->created_on = $today;
+				}
+
+				if(empty($this->$pkey) and empty($this->created_by)){
+					$this->created_by = $user->id;
+				}
+			} else {
+				if(empty($this->$pkey)){
+					$this->created_on = $today;
+					$this->created_by = $user->id;
+				}
 			}
+
+			//ADDED BY P2 PETER
+			if($this->created_on=="0000-00-00 00:00:00"){
+				$this->created_on = $this->$today;
+			}
+			//END ADD
+
 			$this->modified_on = $today;
 			$this->modified_by = $user->id;
 		}
@@ -262,7 +315,9 @@ class VmTable extends JTable{
 			return $this;
 		}
 
-		$this->reset();
+		//Why we have this reset? it is calling getFields, which is calling getTableColumns, which is calling SHOW COLUMNS, which is slow
+		//
+		//$this->reset();
 
 		$db = $this->getDBO();
 
@@ -319,8 +374,8 @@ class VmTable extends JTable{
 
 	static function bindParameterable(&$obj,$xParams,$varsToPushParam){
 
-		$paramFields = $obj->$xParams;
-		// 						vmdebug('$obj->_xParams '.$xParams.' $obj->$xParams ',$paramFields);
+		//$paramFields = $obj->$xParams;
+		//vmdebug('$obj->_xParams '.$xParams.' $obj->$xParams ',$paramFields);
 		if(!empty($obj->$xParams)){
 
 		//	if(strpos($obj->$xParams,'|')!==false){
@@ -391,6 +446,37 @@ class VmTable extends JTable{
 		}
 		return true;
 	}
+
+
+	function checkCreateUnique($tbl_name,$name){
+
+		$i = 0;
+
+		while($i<20){
+
+			$tbl_key = $this->_tbl_key;
+			$q = 'SELECT `'.$name.'` FROM `'.$tbl_name.'` WHERE `'.$name.'` =  "'.$this->$name.'"  AND `'.$this->_tbl_key.'`!='.$this->$tbl_key ;
+			$this->_db->setQuery($q);
+			$existingSlugName =$this->_db->loadResult();
+
+			if(!empty($existingSlugName)){
+				if($i==0){
+					if(JVM_VERSION===1) $this->$name = $this->$name . JFactory::getDate()->toFormat("%Y-%m-%d-%H-%M-%S").'_';
+					else $this->$name = $this->$name . JFactory::getDate()->format('Y-m-d-H-i-s').'_';
+				} else{
+					$this->$name = $this->$name.rand(1,9);
+				}
+			} else {
+				return true;
+			}
+			$i++;
+		}
+
+		return false;
+
+	}
+
+
 	/**
 	 * @author Max Milbers
 	 * @param
@@ -402,46 +488,37 @@ class VmTable extends JTable{
 			$slugAutoName = $this->_slugAutoName;
 			$slugName = $this->_slugName;
 
+			if(in_array($slugAutoName,$this->_translatableFields)){
+				$checkTable = $this->_tbl.'_'.VMLANG;
+			} else {
+				$checkTable = $this->_tbl;
+			}
+
 			if(empty($this->$slugName)){
 				// 				vmdebug('table check use _slugAutoName '.$slugAutoName.' '.$slugName);
-				$this->$slugName = $this->$slugAutoName;
+				if(!empty($this->$slugAutoName)){
+					$this->$slugName = $this->$slugAutoName;
+				} else {
+					vmError('VmTable '.$checkTable.' Check not passed. Neither slug nor obligatory value at '.$slugAutoName.' for auto slug creation is given');
+					return false;
+				}
+
 			}
-			$used = true;
-			$i = 0;
+
+			//if (!class_exists('VmMediaHandler')) require(JPATH_VM_ADMINISTRATOR.DS.'helpers'.DS.'mediahandler.php');
+			//vmdebug('check $slug before stringURLSafe',$this->$slugName);
+			//$this->$slugName = vmFile::makeSafe( $this->$slugName );
+
+			//$lang = JFactory::getLanguage();
+			//$this->$slugName = $lang->transliterate($this->$slugName);
 			if(JVM_VERSION===1) $this->$slugName = JFilterOutput::stringURLSafe($this->$slugName);
 			else $this->$slugName = JApplication::stringURLSafe($this->$slugName);
-			if (!$this->$slugName){
-				$this->$slugName = trim(str_replace('-',' ',$this->$slugName) );
+
+			$valid = $this->checkCreateUnique($checkTable,$slugName);
+			if(!$valid){
+				return false;
 			}
 
-			$tbl_key = $this->_tbl_key;
-			while($used && $i<10){
-
-				if(in_array($slugAutoName,$this->_translatableFields)){
-					$checkTable = $this->_tbl.'_'.VMLANG;
-				} else {
-					$checkTable = $this->_tbl;
-				}
-
-				$q = 'SELECT `'.$slugName.'` FROM `'.$checkTable.'` WHERE `'.$slugName.'` =  "'.$this->$slugName.'"  AND `'.$this->_tbl_key.'`!='.$this->$tbl_key ;
-				$this->_db->setQuery($q);
-				$existingSlugName =$this->_db->loadResult();
-
-				if(!empty($existingSlugName)){
-					if($i==0){
-						if(JVM_VERSION===1) $this->$slugName = $this->$slugName . JFactory::getDate()->toFormat("%Y-%m-%d-%H-%M-%S").'_';
-						else $this->$slugName = $this->$slugName . JFactory::getDate()->format('Y-m-d-H-i-s').'_';
-					} else{
-						$this->$slugName = $this->$slugName.rand(1,9);
-					}
-					$used = true;
-
-					// 					vmError(get_class($this).' ');
-				} else {
-					$used = false;
-				}
-				$i++;
-			}
 		}
 
 
@@ -450,7 +527,8 @@ class VmTable extends JTable{
 				if(empty($error)){
 					$error = 'Serious error cant save ' . $this->_tbl . ' without ' . $obkeys;
 				}else {
-					$error = get_class($this).' '.JText::_($error);
+				//	$error = get_class($this).' '.JText::_($error);
+					$error = get_class($this).' '.$error;
 				}
 				$this->setError($error);
 				vmError($error);
@@ -468,137 +546,86 @@ class VmTable extends JTable{
 					vmError('Non unique '.$this->_unique_name.' '.$error);
 					return false;
 				} else {
-					$q = 'SELECT `' . $this->_tbl_key . '`,`' . $this->_db->getEscaped($obkeys) . '` FROM `' . $this->_tbl . '` ';
-					$q .= 'WHERE `' . $this->_db->getEscaped($obkeys) . '`="' . $this->_db->getEscaped($this->$obkeys) . '"';
-					$this->_db->setQuery($q);
-					$unique_id = $this->_db->loadResultArray();
 
-					$tblKey = $this->_tbl_key;
-					if(!empty($unique_id)){
-						foreach($unique_id as $id){
-							if($id != $this->$tblKey){
-								//$datenow = JFactory::getDate();
-								$this->$obkeys = $this->$obkeys.rand();
-								vmWarn('COM_VIRTUEMART_NON_UNIQUE_WARN',$obkeys,$this->_tbl,$this->$obkeys);
+					$valid = $this->checkCreateUnique($this->_tbl,$obkeys);
+					if(!$valid){
+						return false;
+					}
+
+				}
+
+			}
+		}
+
+		if(isset($this->virtuemart_vendor_id )){
+
+			$multix = Vmconfig::get('multix','none');
+			//Lets check if the user is admin or the mainvendor
+			if(!class_exists('Permissions')) require(JPATH_VM_ADMINISTRATOR.DS.'helpers'.DS.'permissions.php');
+
+			$virtuemart_vendor_id = false;
+			if( $multix == 'none' and get_class($this)!=='TableVmusers'){
+
+				$this->virtuemart_vendor_id = 1;
+
+			} else {
+
+				$loggedVendorId = Permissions::getInstance()->isSuperVendor();
+				$admin = Permissions::getInstance()->check('admin');
+
+				$tbl_key = $this->_tbl_key ;
+				if(get_class($this)!=='TableVmusers'){
+					$q = 'SELECT `virtuemart_vendor_id` FROM `' . $this->_tbl . '` WHERE `' . $this->_tbl_key.'`="'.$this->$tbl_key.'" ';
+					$this->_db->setQuery($q);
+					$virtuemart_vendor_id = $this->_db->loadResult();
+				} else {
+					$q = 'SELECT `virtuemart_vendor_id`,`user_is_vendor` FROM `' . $this->_tbl . '` WHERE `' . $this->_tbl_key.'`="'.$this->$tbl_key.'" ';
+					$this->_db->setQuery($q);
+					$vmuser = $this->_db->loadRow();
+
+					if($vmuser and count($vmuser)===2){
+						$virtuemart_vendor_id = $vmuser[0];
+						$user_is_vendor = $vmuser[1];
+
+						if($multix == 'none' ){
+							if(empty($user_is_vendor)){
+								$this->virtuemart_vendor_id = 0;
+							} else {
+								$this->virtuemart_vendor_id = 1;
+							}
+							return true;
+						} else {
+							if (!$admin) {
+								$this->virtuemart_vendor_id = $loggedVendorId;
+								return true;
 							}
 						}
 					}
 				}
 
-				/* if(empty($error)){
-				 vmError(JText::_($error));
-				}else {
-				vmError(JText::sprintf('COM_VIRTUEMART_NON_UNIQUE', $this->_tbl, $obkeys . ': ' . $this->$obkeys));
-				}*/
-				//return false;
-			}
-		}
+				if(!$admin and !empty($virtuemart_vendor_id) and !empty($loggedVendorId) and $loggedVendorId!=$virtuemart_vendor_id ){
 
-
-		if(isset($this->virtuemart_vendor_id )){
-
-			$multix = Vmconfig::get('multix','none');
-			if( $multix == 'none'){
-
-				//Lets check if the user is admin or the mainvendor
-				if(!class_exists('Permissions')) require(JPATH_VM_ADMINISTRATOR.DS.'helpers'.DS.'permissions.php');
-				$loggedVendorId = Permissions::getInstance()->isSuperVendor();
-
-				if($loggedVendorId and $loggedVendorId !== 0){
-					$this->virtuemart_vendor_id = $data['virtuemart_vendor_id'] = 1;
-				} else {
-
-					//We are in the user table
-					if(isset($this->user_is_vendor)){
-
-						if($this->user_is_vendor==0){
-							$this->virtuemart_vendor_id = 0;
-						} else {
-// 							$app = JFactory::getApplication();
-// 							if($app->isSite()){
-
-								$tbl_key = $this->_tbl_key ;
-								$q = 'SELECT `virtuemart_vendor_id` FROM `' . $this->_tbl . '` ';
-								$q .= 'WHERE `' . $this->_tbl_key.'`='.$this->$tbl_key;
-								$this->_db->setQuery($q);
-								$virtuemart_vendor_id = $this->_db->loadResult();
-								if(!empty($virtuemart_vendor_id) and $loggedVendorId!=$virtuemart_vendor_id){
-									//vmWarn('COM_VIRTUEMART_NOT_SAME_VENDOR',$loggedVendorId,$virtuemart_vendor_id
-									vmWarn('Stop try to hack this store, you got logged');
-									vmdebug('Hacking attempt stopped, logged vendor '.$loggedVendorId.' but data belongs to '.$virtuemart_vendor_id);
-									return false;
-								}
-
-// 							}
-						}
+					//vmWarn('COM_VIRTUEMART_NOT_SAME_VENDOR',$loggedVendorId,$virtuemart_vendor_id
+					//vmWarn('Stop try to hack this store, you got logged');
+					vmdebug('Hacking attempt stopped, logged vendor '.$loggedVendorId.' but data belongs to '.$virtuemart_vendor_id);
+					return false;
+				} else if (!$admin) {
+					if($virtuemart_vendor_id){
+						$this->virtuemart_vendor_id = $virtuemart_vendor_id;
+						vmdebug('Non admin is storing using loaded vendor_id');
 					} else {
-						//Allow storing for the orders table
-						if(get_class($this)!== 'TableOrders' and get_class($this)!== 'TableInvoices' and get_class($this)!== 'TableOrder_items'){
-							vmError('Coding error, vmtable isSuperSuper gives back false, but you are admin',JText::sprintf('COM_VIRTUEMART_STRING_FORBIDDEN_FOR_NON_VENDORS',$this->_tbl));
-							return false;
-						} else {
-							$this->virtuemart_vendor_id = 1;
-						}
+						//No id is stored, even users are allowed to use for the storage and vendorId, no change
 					}
 
+				} else if (!empty($virtuemart_vendor_id) and $loggedVendorId!=$virtuemart_vendor_id) {
+					vmInfo('Admin with vendor id '.$loggedVendorId.' is using for storing vendor id '.$this->virtuemart_vendor_id);
+					vmdebug('Admin with vendor id '.$loggedVendorId.' is using for storing vendor id '.$this->virtuemart_vendor_id);
+					$this->virtuemart_vendor_id = $virtuemart_vendor_id;
 				}
-
 			}
 
-
-			else if($multix == 'administrated'){
-
-				//We are in the user table
-				if(isset($this->user_is_vendor)){
-					if($this->user_is_vendor==0){
-						$this->virtuemart_vendor_id = 0;
-						return true;
-					}
-				}
-
-				if($this->check('admin,storeadmin') ){
-					if(empty($this->virtuemart_vendor_id) and !isset($this->user_is_vendor)){
-						vmError('Multivendor id missing for '.$this->_tbl_key.', set it to mainvendor');
-						$this->virtuemart_vendor_id = 1;
-					}
-					return true;
-				}
-
-				if(!empty($this->virtuemart_vendor_id)){
-
-					$tbl_key = $this->_tbl_key ;
-					$q = 'SELECT `virtuemart_vendor_id` FROM `' . $this->_tbl . '` ';
-					$q .= 'WHERE `' . $this->_tbl_key.'`='.$this->$tbl_key;
-					$this->_db->setQuery($q);
-					$virtuemart_vendor_id = $this->_db->loadResult();
-
-					if(!empty($virtuemart_vendor_id)){
-						if(!class_exists('Permissions')) require(JPATH_VM_ADMINISTRATOR.DS.'helpers'.DS.'permissions.php');
-						$authVendorId = Permissions::getInstance()->isSuperVendor();
-
-						if($authVendorId!=$virtuemart_vendor_id){
-							//vmWarn('COM_VIRTUEMART_NOT_SAME_VENDOR',$loggedVendorId,$virtuemart_vendor_id
-							vmWarn('Stop try to hack this store, you got logged');
-							vmdebug('Hacking attempt stopped, logged vendor '.$authVendorId.' but data belongs to '.$virtuemart_vendor_id);
-							return false;
-						} else {
-							return true;
-						}
-					}
-				}
-				else {
-					if(!class_exists('Permissions')) require(JPATH_VM_ADMINISTRATOR.DS.'helpers'.DS.'permissions.php');
-					$loggedVendorId = Permissions::getInstance()->isSuperVendor();
-
-					if($loggedVendorId and $loggedVendorId !== 0){
-						$this->virtuemart_vendor_id = $data['virtuemart_vendor_id'] = $loggedVendorId;
-					} else {
-						vmdebug('Table with vendor id, but cant decide which vendorId is to be used');
-					}
-				}
-
-			}
-
+			//tables to consider for multivendor
+			//if(get_class($this)!== 'TableOrders' and get_class($this)!== 'TableInvoices' and get_class($this)!== 'TableOrder_items'){
 		}
 
 		return true;
@@ -615,7 +642,7 @@ class VmTable extends JTable{
 	public function bindChecknStore(&$data,$preload=false){
 
 		$tblKey = $this->_tbl_key;
-
+		$ok = true;
 		if($this->_translatable){
 			if(!class_exists('VmTableData'))require(JPATH_VM_ADMINISTRATOR.DS.'helpers'.DS.'vmtabledata.php');
 			$db = JFactory::getDBO();
@@ -625,6 +652,7 @@ class VmTable extends JTable{
 			$langData = array();
 			$langObKeys = array();
 			$langUniqueKeys = array();
+
 			if(is_object($data)){
 
 				foreach($this->_translatableFields as $name){
@@ -685,62 +713,73 @@ class VmTable extends JTable{
 
 			$langTable->setProperties($langData);
 			$langTable->_translatable = false;
-			// 			$dataLang = $data;
-			// 			vmdebug('my $dataLang',$langTable,$data);
-			// 			vmdebug('my $table $this',$this);
 
-			$this->bindChecknStoreNoLang($data,$preload);
+			//We must check the langtable BEFORE we store the normal table, cause the langtable is often defining if there are enough data to store it (for exmple the name)
 
-			// 			vmdebug('bindchecknstore',$langData,$this);
-			$langTable->$tblKey = !empty($this->$tblKey) ? $this->$tblKey : 0;
-
-			$ok = true;
-
-			if($preload){
-				if($ok){
-					if(!empty($langTable->$tblKey)){
-						$id = $langTable->$tblKey;
-
-						if(!$langTable->load($id)){
-							$ok = false;
-						} else {
-							if(!$langTable->bind($data)){
-								$ok = false;
-								$msg = 'bind';
-								// 			vmdebug('Problem in bind '.get_class($this).' '.$this->_db->getErrorMsg());
-								vmdebug('Problem in bind '.get_class($this).' ');
-							}
-						}
-
-					}
+			if($ok){
+				//vmdebug('my langtable before bind',$langTable->id);
+				if(!$langTable->bind($data)){
+					$ok = false;
+					$msg = 'bind';
+					// 			vmdebug('Problem in bind '.get_class($this).' '.$this->_db->getErrorMsg());
+					vmdebug('Problem in bind '.get_class($this).' ');
 				}
-
 			}
 
 			if($ok){
-
 				if(!$langTable->check()){
 					$ok = false;
-					// $msg .= ' check';
 					vmdebug('Check returned false '.get_class($langTable).' '.$this->_tbl.' '.$langTable->_db->getErrorMsg());
 				}
 			}
 
 			if($ok){
-				if(!$langTable->store()){
-					$ok = false;
-					// $msg .= ' store';
-					vmdebug('Problem in store '.get_class($langTable).' '.$langTable->_db->getErrorMsg());
-				} else {
-					vmdebug('stored product_name '.$langTable->product_name);
+				$this->bindChecknStoreNoLang($data,$preload);
+
+				$langTable->$tblKey = !empty($this->$tblKey) ? $this->$tblKey : 0;
+				vmdebug('bindChecknStoreNoLang my $tblKey '.$tblKey.' '.$langTable->$tblKey);
+				if($ok and $preload){
+					if(!empty($langTable->$tblKey)){
+						$id = $langTable->$tblKey;
+						if(!$langTable->load($id)){
+							$ok = false;
+							vmdebug('Preloading of language table failed, no id given, cannot store '.$this->_tbl);
+						}
+					}
+				}
+
+				if($ok){
+					if(!$langTable->bind($data)){
+						$ok = false;
+						vmdebug('Problem in bind '.get_class($this).' ');
+					}
+				}
+
+				if($ok){
+					if(!$langTable->check()){
+						$ok = false;
+						vmdebug('Check returned false '.get_class($langTable).' '.$this->_tbl.' '.$langTable->_db->getErrorMsg());
+					}
+				}
+
+				if($ok){
+					if(!$langTable->store()){
+						$ok = false;
+						// $msg .= ' store';
+						vmdebug('Problem in store with langtable '.get_class($langTable).' with '.$tblKey.' = '.$this->$tblKey.' '.$langTable->_db->getErrorMsg());
+					}
 				}
 			}
 
+
 		} else {
-			$this->bindChecknStoreNoLang($data,$preload);
+
+			if(!$this->bindChecknStoreNoLang($data,$preload)){
+				$ok= false;
+			}
 		}
 
-		return true;
+		return $ok;
 	}
 
 
@@ -788,7 +827,7 @@ class VmTable extends JTable{
 			if(!$this->check()){
 				$ok = false;
 				$msg .= ' check';
-				vmdebug('Check returned false '.get_class($this).' '.$this->_db->getErrorMsg());
+				vmdebug('Check no lang returned false '.get_class($this).' '.$this->_db->getErrorMsg());
 				return false;
 			}
 		}
@@ -798,6 +837,7 @@ class VmTable extends JTable{
 				$ok = false;
 				$msg .= ' store';
 				vmdebug('Problem in store '.get_class($this).' '.$this->_db->getErrorMsg());
+				return false;
 			}
 		}
 
@@ -1096,7 +1136,7 @@ class VmTable extends JTable{
 		$k = $this->_tbl_key;
 		$q = 'UPDATE `'.$this->_tbl.'` SET `'.$field.'` = "'.$this->$field.'" WHERE `'.$k.'` = "'.$this->$k.'" ';
 		$this->_db->setQuery($q);
-
+		vmdebug('toggle '.$q);
 		return ($this->_db->query());
 	}
 

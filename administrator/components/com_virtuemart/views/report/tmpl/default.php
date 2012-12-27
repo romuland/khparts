@@ -3,7 +3,7 @@ if( !defined( '_JEXEC' ) ) die( 'Direct Access to '.basename(__FILE__).' is not 
 
 /**
 *
-* @version $Id: default.php 6058 2012-06-06 08:19:35Z alatak $
+* @version $Id: default.php 6489 2012-10-01 23:17:36Z Milbo $
 * @package VirtueMart
 * @subpackage Report
 * @copyright Copyright (C) VirtueMart Team - All rights reserved.
@@ -40,8 +40,8 @@ if ( JVM_VERSION == 2 )
             <table>
                 <tr>
                     <td align="left" width="100%">
-						<?php echo JText::_('COM_VIRTUEMART_ORDERSTATUS').':'. $this->lists['state_list']; ?>
-						<?php echo JText::_('COM_VIRTUEMART_REPORT_INTERVAL').':'. $this->lists['intervals']; ?>
+						<?php echo JText::_('COM_VIRTUEMART_ORDERSTATUS') . $this->lists['state_list']; ?>
+						<?php echo JText::_('COM_VIRTUEMART_REPORT_INTERVAL') . $this->lists['intervals']; ?>
                         <?php echo JText::_('COM_VIRTUEMART_REPORT_SET_PERIOD') . $this->lists['select_date'];
 
                     echo JText::_('COM_VIRTUEMART_REPORT_FROM_PERIOD') .  vmJsApi::jDate($this->from_period, 'from_period');
@@ -75,8 +75,24 @@ if ( JVM_VERSION == 2 )
                         <?php echo $this->sort('product_quantity', 'COM_VIRTUEMART_REPORT_BASIC_TOTAL_ITEMS') ; ?>
                     </th>
                     <th>
-                        <?php echo $this->sort('order_subtotal', 'COM_VIRTUEMART_REPORT_BASIC_REVENUE') ; ?>
+                        <?php echo $this->sort('order_subtotal_netto', 'COM_VIRTUEMART_REPORT_BASIC_REVENUE_NETTO') ; ?>
                     </th>
+                    <th>
+		                <?php echo $this->sort('order_subtotal_brutto', 'COM_VIRTUEMART_REPORT_BASIC_REVENUE_BRUTTO') ; ?>
+                    </th>
+                <?php
+                    $intervals = JRequest::getWord ('intervals', 'day');
+	                if($intervals=='product_s'){
+		        ?>
+		            <th>
+                        <?php echo $this->sort('order_item_name', 'COM_VIRTUEMART_PRODUCT_NAME') ; ?>
+                    </th>
+                    <th>
+	                    <?php echo $this->sort('virtuemart_product_id', 'COM_VIRTUEMART_PRODUCT_ID') ; ?>
+                    </th>
+		        <?php
+	                }
+		        ?>
                 </tr>
             </thead>
             <tbody>
@@ -103,8 +119,23 @@ if ( JVM_VERSION == 2 )
                         <?php echo $r['product_quantity'];?>
                     </td>
                     <td align="right">
-                        <?php echo $r['order_subtotal'];?>
+                        <?php echo $r['order_subtotal_netto'];?>
                     </td>
+                    <td align="right">
+		                <?php echo $r['order_subtotal_brutto'];?>
+                    </td>
+		    <?php   if($intervals=='product_s'){
+	                ?>
+	                <td align="center">
+		                <?php echo $r['order_item_name'];?>
+	                </td>
+	                <td align="center">
+		                <?php echo $r['virtuemart_product_id'];?>
+	                </td>
+
+	         <?php  }
+			    ?>
+
                 </tr>
                 <?php
 	    	$i = 1-$i;
@@ -116,7 +147,8 @@ if ( JVM_VERSION == 2 )
                     <th  class="right"><?php echo JText::_('COM_VIRTUEMART_TOTAL').' : '; ?></th>
                     <th><?php echo $this->totalReport['number_of_ordersTotal']?></th>
                     <th><?php echo $this->totalReport['itemsSoldTotal'];?></th>
-                    <th class="right"><?php echo $this->totalReport['revenueTotal'];?></th>
+                    <th class="right"><?php echo $this->totalReport['revenueTotal_netto'];?></th>
+                    <th class="right"><?php echo $this->totalReport['revenueTotal_brutto'];?></th>
 				</tr>
             </thead>
             <tfoot>

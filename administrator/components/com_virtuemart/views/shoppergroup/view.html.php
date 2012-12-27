@@ -13,7 +13,7 @@
  * to the GNU General Public License, and as distributed it includes or
  * is derivative of works licensed under the GNU General Public License or
  * other free or open source software licenses.
- * @version $Id: view.html.php 6068 2012-06-06 14:59:42Z Milbo $
+ * @version $Id: view.html.php 6373 2012-08-24 10:41:03Z Milbo $
  */
 
 // Check to ensure this file is included in Joomla!
@@ -41,7 +41,11 @@ class VirtuemartViewShopperGroup extends VmView {
 
 		$model = VmModel::getModel();
 
-		$layoutName = JRequest::getWord('layout', 'default');
+		$layoutName = $this->getLayout();
+
+		$task = JRequest::getWord('task',$layoutName);
+		$this->assignRef('task', $task);
+
 		if ($layoutName == 'edit') {
 			$shoppergroup = $model->getShopperGroup();
 			$this->SetViewTitle('SHOPPERGROUP',$shoppergroup->shopper_group_name);
@@ -72,7 +76,7 @@ class VirtuemartViewShopperGroup extends VmView {
 			$this->assignRef('shoppergroups',	$shoppergroups);
 
 			$pagination = $model->getPagination();
-			$this->assignRef('pagination', $pagination);
+			$this->assignRef('sgrppagination', $pagination);
 
 		}
 		parent::display($tpl);

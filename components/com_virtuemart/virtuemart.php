@@ -2,7 +2,7 @@
 if( !defined( '_JEXEC' ) ) die( 'Direct Access to '.basename(__FILE__).' is not allowed.' );
 /**
 *
-* @version $Id: virtuemart.php 6153 2012-06-25 17:59:16Z Milbo $
+* @version $Id: virtuemart.php 6558 2012-10-18 08:50:00Z alatak $
 * @package VirtueMart
 * @subpackage core
 * @author Max Milbers
@@ -28,19 +28,14 @@ vmRam('Start');
 // vmSetStartTime();
 vmSetStartTime('Start');
 
-//Lets load first englisch, then joomla default standard, then user language.
-$jlang =JFactory::getLanguage();
-if(VmConfig::get('enableEnglish', 1)){
-    $jlang->load('com_virtuemart', JPATH_SITE, 'en-GB', true);
-}
-$jlang->load('com_virtuemart', JPATH_SITE, $jlang->getDefault(), true);
-$jlang->load('com_virtuemart', JPATH_SITE, null, true);
+VmConfig::loadJLang('com_virtuemart', true);
 
 if(VmConfig::get('shop_is_offline',0)){
 	$_controller = 'virtuemart';
 	require (JPATH_VM_SITE.DS.'controllers'.DS.'virtuemart.php');
 	JRequest::setVar('view', 'virtuemart');
 	$task='';
+	$basePath = JPATH_VM_SITE;
 } else {
 
 	/* Front-end helpers */
@@ -48,7 +43,8 @@ if(VmConfig::get('shop_is_offline',0)){
 	if(!class_exists('shopFunctionsF'))require(JPATH_VM_SITE.DS.'helpers'.DS.'shopfunctionsf.php'); //dont remove that file it is actually in every view
 
 	/* Loading jQuery and VM scripts. */
-	vmJsApi::jPrice();
+	//vmJsApi::jPrice();    //in create button
+	vmJsApi::jQuery();
 	vmJsApi::jSite();
 	vmJsApi::cssSite();
 
@@ -60,17 +56,15 @@ if(VmConfig::get('shop_is_offline',0)){
 	if (($_controller == 'product' || $_controller == 'category') && ($task == 'save' || $task == 'edit') ) {
 		$app = JFactory::getApplication();
 
-		if ($task == 'save') $app->redirect('index.php?option=com_virtuemart&view=productdetails&virtuemart_product_id='.JRequest::getInt('virtuemart_product_id') );
-		else {
 			if(!class_exists('Permissions')) require(JPATH_VM_ADMINISTRATOR.DS.'helpers'.DS.'permissions.php');
 			if	(Permissions::getInstance()->check("admin,storeadmin")) {
+				$jlang =JFactory::getLanguage();
 				$jlang->load('com_virtuemart', JPATH_ADMINISTRATOR, null, true);
 				$basePath = JPATH_VM_ADMINISTRATOR;
 				$trigger = 'onVmAdminController';
 			} else {
 				$app->redirect('index.php?option=com_virtuemart', jText::_('COM_VIRTUEMART_RESTRICTED_ACCESS') );
 			}
-		}
 
 	} elseif($_controller) {
 			$basePath = JPATH_VM_SITE;
@@ -95,6 +89,11 @@ else {
 
 if (class_exists($_class)) {
     $controller = new $_class();
+
+	// try plugins
+	JPluginHelper::importPlugin('vmuserfield');
+	$dispatcher = JDispatcher::getInstance();
+	$dispatcher->trigger('plgVmOnMainController', array($_controller));
 
     /* Perform the Request task */
     $controller->execute($task);

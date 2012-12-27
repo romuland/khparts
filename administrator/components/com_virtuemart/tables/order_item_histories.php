@@ -55,23 +55,3 @@ class TableOrder_item_histories extends VmTable {
 	}
 }
 // pure php no closing tag
-/* code to generate the table
-
-CREATE TABLE IF NOT EXISTS `#__virtuemart_order_item_histories` (
-  `virtuemart_order_item_history_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `virtuemart_order_item_id` int(11) NOT NULL DEFAULT '0',
-  `order_status_code` char(1) NOT NULL DEFAULT '0',
-  `customer_notified` int(1) DEFAULT '0',
-  `comments` text,
-  `published` tinyint(1) NOT NULL DEFAULT '1',
-  `created_on` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `created_by` int(11) NOT NULL DEFAULT '0',
-  `modified_on` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `modified_by` int(11) NOT NULL DEFAULT '0',
-  `locked_on` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `locked_by` int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`virtuemart_order_history_id`),
-  UNIQUE KEY `virtuemart_order_history_id` (`virtuemart_order_history_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COMMENT='Stores all actions and changes that occur to an order item';
-
-*/

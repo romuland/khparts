@@ -15,7 +15,7 @@
 	$document->addScriptDeclaration('
 jQuery(document).ready( function($) {
 	jQuery(".vmcustom-textinput").keyup(function() {
-			formProduct = $(".productdetails-view").find(".product");
+			formProduct = $(this).parents("form.product");
 			virtuemart_product_id = formProduct.find(\'input[name="virtuemart_product_id[]"]\').val();
 		Virtuemart.setproducttype(formProduct,virtuemart_product_id);
 		});

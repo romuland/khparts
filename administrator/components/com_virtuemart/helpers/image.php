@@ -67,7 +67,7 @@ class VmImage extends VmMediaHandler {
 					$file_alt = $this->file_meta;
 				}
 			}
-			$postText = '';
+			$postText = false;
 			if($description) $postText = $this->file_description;
 			return $this->displayIt($file_url, $file_alt, $imageArgs,$lightbox,$effect,$postText);
 		} else {
@@ -101,6 +101,12 @@ class VmImage extends VmMediaHandler {
 	 * @return name of the thumbnail
 	 */
 	public function createThumb() {
+
+		if(empty($this->file_url_folder)){
+			vmError('Couldnt create thumb, no directory given. Activate vmdebug to understand which database entry is creating thies error');
+			vmdebug('createThumb, no directory given',$this);
+			return FALSE;
+		}
 
 		$synchronise = JRequest::getString('synchronise',false);
 

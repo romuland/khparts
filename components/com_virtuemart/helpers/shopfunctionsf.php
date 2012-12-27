@@ -15,7 +15,7 @@
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
 * other free or open source software licenses.
-* @version $Id: shopfunctionsf.php 6205 2012-07-03 13:10:28Z alatak $
+* @version $Id: shopfunctionsf.php 6502 2012-10-04 13:19:26Z Milbo $
 */
 
 // Check to ensure this file is included in Joomla!
@@ -28,14 +28,14 @@ class shopFunctionsF {
 	 *
 	 */
 
-	static public function getLoginForm($cart=false,$order=false,$url = 0){
+	static public function getLoginForm($cart=FALSE,$order=FALSE,$url = 0){
 
 		if(!class_exists('VirtuemartViewUser')) require(JPATH_VM_SITE . DS . 'views' . DS . 'user' .DS. 'view.html.php');
 		$view = new VirtuemartViewUser();
 		$view -> setLayout('login');
 
 		$body = '';
-		$show=true;
+		$show=TRUE;
 
 		if($cart){
 			$show = VmConfig::get('oncheckout_show_register', 1);
@@ -74,6 +74,37 @@ class shopFunctionsF {
 		$session = JFactory::getSession();
 		return $session->set('vmlastvisitedcategoryid', (int) $categoryId, 'vm');
 
+	}
+
+	/**
+	 * @author Max Milbers
+	 */
+	static public function getLastVisitedManuId(){
+
+		$session = JFactory::getSession();
+		return $session->get('vmlastvisitedmanuid', 0, 'vm');
+
+	}
+
+	/**
+	 * @author Max Milbers
+	 */
+	static public function setLastVisitedManuId($manuId){
+		$session = JFactory::getSession();
+		return $session->set('vmlastvisitedmanuid', (int) $manuId, 'vm');
+
+	}
+
+	static public function getAddToCartButton($orderable){
+
+		if($orderable){
+			vmJsApi::jPrice();
+			$html = '<input type="submit" name="addtocart" class="addtocart-button" value="'.JText::_('COM_VIRTUEMART_CART_ADD_TO') .'" title="'.JText::_('COM_VIRTUEMART_CART_ADD_TO') .'" />';
+		} else {
+			$html = '<input name="addtocart" class="addtocart-button-disabled" value="'.JText::_('COM_VIRTUEMART_ADDTOCART_CHOOSE_VARIANT') .'" title="'.JText::_('COM_VIRTUEMART_ADDTOCART_CHOOSE_VARIANT') .'" />';
+		}
+
+		return $html;
 	}
 
 	/**
@@ -164,7 +195,8 @@ class shopFunctionsF {
 	 * @param string $recipient shopper@whatever.com
 	 * @param array $vars variables to assign to the view
 	 */
-	static public function renderMail ($viewName, $recipient, $vars=array(),$controllerName = null,$noVendorMail = false) {
+	//TODO this is quirk, why it is using here $noVendorMail, but everywhere else it is using $doVendor => this make logic trouble
+	static public function renderMail ($viewName, $recipient, $vars=array(),$controllerName = NULL,$noVendorMail = FALSE) {
 		if(!class_exists('VirtueMartControllerVirtuemart')) require(JPATH_VM_SITE.DS.'controllers'.DS.'virtuemart.php');
 // 		$format = (VmConfig::get('order_html_email',1)) ? 'html' : 'raw';
 
@@ -211,7 +243,7 @@ class shopFunctionsF {
 
 		$user= self::sendVmMail($view, $recipient,$noVendorMail);
 		if (isset($view->doVendor) && !$noVendorMail) {
-			self::sendVmMail($view, $view->vendorEmail, true);
+			self::sendVmMail($view, $view->vendorEmail, TRUE);
 		}
 		return $user ;
 
@@ -226,16 +258,17 @@ class shopFunctionsF {
 	 * @param string $recipient shopper@whatever.com
 	 * @param bool $vendor true for notifying vendor of user action (e.g. registration)
 	 */
-	private function sendVmMail (&$view, $recipient, $vendor=false) {
+
+	private static function sendVmMail (&$view, $recipient, $noVendorMail=FALSE) {
 		$jlang =JFactory::getLanguage();
 		if(VmConfig::get('enableEnglish', 1)){
-		     $jlang->load('com_virtuemart', JPATH_SITE, 'en-GB', true);
+		     $jlang->load('com_virtuemart', JPATH_SITE, 'en-GB', TRUE);
 		}
-		$jlang->load('com_virtuemart', JPATH_SITE, $jlang->getDefault(), true);
-		$jlang->load('com_virtuemart', JPATH_SITE, null, true);
+		$jlang->load('com_virtuemart', JPATH_SITE, $jlang->getDefault(), TRUE);
+		$jlang->load('com_virtuemart', JPATH_SITE, NULL, TRUE);
 
 		ob_start();
-		$view->renderMailLayout($vendor, $recipient);
+		$view->renderMailLayout($noVendorMail, $recipient);
 		$body = ob_get_contents();
 		ob_end_clean();
 
@@ -243,17 +276,17 @@ class shopFunctionsF {
 		$mailer = JFactory::getMailer();
 		$mailer->addRecipient($recipient);
 		$mailer->setSubject($subject);
-		$mailer->isHTML(VmConfig::get('order_mail_html',true));
+		$mailer->isHTML(VmConfig::get('order_mail_html',TRUE));
 		$mailer->setBody($body);
 
-		if(!$vendor){
+		if(!$noVendorMail){
 			$replyto[0]=$view->vendorEmail;
 			$replyto[1]= $view->vendor->vendor_name;
 			$mailer->addReplyTo($replyto);
 		}
-// 		if (isset($view->replyTo)) {
-// 			$mailer->addReplyTo($view->replyTo);
-// 		}
+ 	/*	if (isset($view->replyTo)) {
+ 			$mailer->addReplyTo($view->replyTo);
+ 		}*/
 
 		if (isset($view->mediaToSend)) {
 			foreach ((array)$view->mediaToSend as $media) {
@@ -306,6 +339,11 @@ class shopFunctionsF {
 			$layout = VmConfig::get('vmlayout','default');
 			$view->setLayout(strtolower($layout));
 		} else {
+
+			if(empty($catLayout) and empty($prodLayout)){
+				$catLayout = VmConfig::get ('productlayout','default');
+			}
+
 			//Set specific category layout
 			if(!empty($catLayout) && empty($prodLayout)){
 				if(is_Int($catLayout)){
@@ -329,6 +367,7 @@ class shopFunctionsF {
 					$layout = $prodLayout;
 				}
 			}
+
 		}
 
 		if(!empty($layout)){
@@ -351,7 +390,7 @@ class shopFunctionsF {
 				$mainframe = JFactory::getApplication('site');
 				$mainframe->set('setTemplate', $template);
 			} else{
-				JError::raiseWarning(412,'The choosen template couldnt found on the filesystem: '.$template);
+				JError::raiseWarning(412,'The chosen template couldnt found on the filesystem: '.$template);
 			}
 		} else{
 				//JError::raiseWarning('No template set : '.$template);
@@ -369,7 +408,7 @@ class shopFunctionsF {
 	 */
 	static public function limitStringByWord($string, $maxlength, $suffix=''){
 		if(function_exists('mb_strlen')) {
-			/* use multibyte functions by Iysov*/
+			// use multibyte functions by Iysov
 			if(mb_strlen($string)<=$maxlength) return $string;
 			$string = mb_substr($string,0,$maxlength);
 			$index = mb_strrpos($string, ' ');
@@ -378,7 +417,7 @@ class shopFunctionsF {
 			} else {
 				return mb_substr($string,0,$index).$suffix;
 			}
-		} else { /* original code here */
+		} else { // original code here
 			if(strlen($string)<=$maxlength) return $string;
 			$string = substr($string,0,$maxlength);
 			$index = strrpos($string, ' ');
@@ -412,15 +451,59 @@ class shopFunctionsF {
 		echo $html;
 	}
 
-	static function getBaseUrl() {
-		$uri = JURI::getInstance();
-		$baseUrl = $uri->getScheme() . "://" . $uri->getHost();
-		if($uri->getPort()){
-			$baseUrl = $baseUrl . ":" . $uri->getPort();
+	/**
+	 * Creates also for BE app a correct site link
+	 * @static
+	 * @param $link
+	 */
+	static function getSiteUrl($link){
+
+		//site url if use administrator application
+		$be_site = substr(JURI::root(), 0, -1);
+
+		// Checking if we are in the backend and change to the app site
+		if(JPATH_BASE == JPATH_ADMINISTRATOR) {
+			JFactory::$application = JApplication::getInstance('site');
 		}
-		$baseUrl =  $baseUrl . "/";
-		return $baseUrl;
+
+		//VM homepage sef url (for example) - SEF url for be and fe. If you use clasic url will work also.
+		$link = JURI::root().substr(JRoute::_('index.php?option=com_virtuemart&view=virtuemart'),strlen(JURI::base(TRUE))+1);
+
+		// Check if we are in the backend again
+		if(JPATH_BASE == JPATH_ADMINISTRATOR) {
+			// when link produced in be we need to remove livesite/administrator in case that been added from URL (usually added instead
+			//we have set the application to the site app)
+			$link = str_replace($be_site .'/administrator', $be_site, $link);
+			//echo $link;
+
+			// Setting back the administrator app
+			JFactory::$application = JApplication::getInstance('administrator');
+		}
+		return $link;
 	}
+
+
+	/**
+	 * TODO remove this function, this function is not necessary and give back the wrong uri
+	 * The right thing is to use JURI::root();, which is always giving back something like
+	 * https://mydomain.com/myjoomla  , but JURI::base() is giving back the relative base, that means when the backend is used,
+	 * it gives back https://mydomain.com/myjoomla/administrator;
+	 * @static
+	 * @return string
+	 */
+	/*	static function getBaseUrl() {
+			$uri = JURI::getInstance();
+			$baseUrl = $uri->getScheme() . "://" . $uri->getHost();
+			if($uri->getPort()){
+				$baseUrl = $baseUrl . ":" . $uri->getPort();
+			}
+			$base = $uri::base();
+		$baseUrl = JURI::root();
+		//vmdebug('getBaseUrl',$base,$root);
+		//$baseUrl =  $baseUrl . "/";
+		return $baseUrl;
+	}**/
+
 	/**
 	 * Align in plain text the strings
 	 * $string text to resize
@@ -428,7 +511,7 @@ class shopFunctionsF {
 	 * $toUpper uppercase Y/N ?
 	 * @author kohl patrick
 	 */
-	function tabPrint( $size, $string,$header = false){
+	function tabPrint( $size, $string,$header = FALSE){
 		if ($header) $string = strtoupper (JText::_($string ) );
 		sprintf("%".$size.".".$size."s",$string ) ;
 
@@ -474,7 +557,7 @@ class shopFunctionsF {
 	* @param boolean $use_icon
 	* @deprecated
 	*/
-	function PdfIcon( $link, $use_icon=true,$modal=true ) {
+	function PdfIcon( $link, $use_icon=TRUE,$modal=TRUE ) {
 
 		return VmView::linkIcon($link,'COM_VIRTUEMART_PDF','pdf_button','pdf_button_enable',$modal,$use_icon);
 
@@ -499,7 +582,7 @@ class shopFunctionsF {
 	 *
 	 * @deprecated
 	 */
-	function PrintIcon( $link='', $use_icon=true, $add_text='' ) {
+	function PrintIcon( $link='', $use_icon=TRUE, $add_text='' ) {
 
 		if (VmConfig::get('show_printicon', 1) == '1') {
 
@@ -508,7 +591,7 @@ class shopFunctionsF {
 			// checks template image directory for image, if non found default are loaded
 			if ( $use_icon ) {
 				$filter = JFilterInput::getInstance();
-				$text = JHtml::_('image.site', 'printButton.png', $folder, null, null, JText::_('COM_VIRTUEMART_PRINT'));
+				$text = JHtml::_('image.site', 'printButton.png', $folder, NULL, NULL, JText::_('COM_VIRTUEMART_PRINT'));
 				$text .= $filter->clean($add_text);
 			} else {
 				$text = '|&nbsp;'. JText::_('COM_VIRTUEMART_PRINT'). '&nbsp;|';

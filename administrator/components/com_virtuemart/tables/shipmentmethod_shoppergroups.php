@@ -39,7 +39,6 @@ class TableShipmentmethod_shoppergroups extends VmTableXarray {
 
 		$this->setPrimaryKey('virtuemart_shipmentmethod_id');
 		$this->setSecondaryKey('virtuemart_shoppergroup_id');
-		//$this->setOrderable();
 
 	}
 

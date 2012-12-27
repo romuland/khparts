@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <install version="1.5" type="plugin" group="vmpayment" >
     <name>VMPAYMENT_PAYPAL</name>
-    <creationDate>July 16 2012</creationDate>
+    <creationDate>December 21 2012</creationDate>
     <author>The VirtueMart Development Team</author>
     <authorUrl>http://www.virtuemart.net</authorUrl>
     <copyright>Copyright (C) 2004-2012 Virtuemart Team. All rights reserved.</copyright>
     <license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
-    <version>2.0.8e</version>
+    <version>2.0.16</version>
     <description><![CDATA[<a href="http://paypal.com" target="_blank">PayPal</a> is a popular
 	payment provider and available in many countries. ]]>
     </description>
@@ -31,7 +31,7 @@
              	stripext="0"  exclude="^_" />
 
 	<param type="spacer" default="" level="level1" />
-	<param   type="spacer" default="VMPAYMENT_PAYPAL_PARAMS" level="level1" />
+	<param type="spacer" default="VMPAYMENT_PAYPAL_PARAMS" level="level1" />
 	<param type="text" name="paypal_merchant_email"  size="50" label="VMPAYMENT_PAYPAL_EMAIL"
              default="your-PayPal-Merchant-email@domain.com" description="VMPAYMENT_PAYPAL_EMAIL_DESC" />
 
@@ -60,6 +60,10 @@
 	<param type="spacer" default="VMPAYMENT_PAYPAL_RESTRICTIONS" level="level1" />
 	     <!-- BY DEFAULT paypal currency= vendor currency -->
 	<param name="payment_currency" type="vmacceptedcurrency" default="" label="VMPAYMENT_PAYPAL_CURRENCY" description="VMPAYMENT_PAYPAL_CURRENCY_DESC" />
+	<param name="email_currency" type="list" default="vendor" label="VMPAYMENT_PAYPAL_EMAIL_CURRENCY" description="VMPAYMENT_PAYPAL_EMAIL_CURRENCY_DESC"  >
+	    <option value="vendor">VMPAYMENT_PAYPAL_EMAIL_CURRENCY_VENDOR</option>
+	    <option value="apyment">VMPAYMENT_PAYPAL_EMAIL_CURRENCY_PAYMENT</option>
+	</param>
 
 	<param name="countries" type="vmcountries"  scope="com_virtuemart" default="" label="VMPAYMENT_PAYPAL_COUNTRIES" description="VMPAYMENT_PAYPAL_COUNTRIES_DESC"/>
 	<param name="min_amount" type="text"  label="VMPAYMENT_PAYPAL_MIN_AMOUNT" description="VMPAYMENT_PAYPAL_MIN_AMOUNT_EXPLAIN" />
@@ -69,10 +73,14 @@
 	<param name="tax_id" type="vmtaxes" scope="com_virtuemart"  label="VMPAYMENT_PAYPAL_TAX" description="VMPAYMENT_PAYPAL_TAX_EXPLAIN" />
 	<param type="spacer" default="" level="level1" />
 	<param type="spacer" default="VMPAYMENT_PAYPAL_PAYMENT_PAGE" level="level1" />
-	<param name="status_pending" type="vmorderstate" scope="com_virtuemart" default="P" label="VMPAYMENT_PAYPAL_STATUS_PENDING" description="VMPAYMENT_PAYPAL_STATUS_PENDING_EXPLAIN" />
+	<param name="status_pending" type="vmorderstate" scope="com_virtuemart" default="U" label="VMPAYMENT_PAYPAL_STATUS_PENDING" description="VMPAYMENT_PAYPAL_STATUS_PENDING_EXPLAIN" />
 	<param name="status_success" type="vmorderstate" scope="com_virtuemart" default="C" label="VMPAYMENT_PAYPAL_STATUS_SUCCESS" description="VMPAYMENT_PAYPAL_STATUS_SUCCESS_EXPLAIN" />
 	<param name="status_canceled" type="vmorderstate" scope="com_virtuemart" default="X" label="VMPAYMENT_PAYPAL_STATUS_FAILED" description="VMPAYMENT_PAYPAL_STATUS_FAILED_EXPLAIN" />
 	<param type="spacer" default="" level="level1" />
+        <!--param name="log_ipn" type="list" default="0" label="VMPAYMENT_PAYPAL_LOG_IPN" description="VMPAYMENT_PAYPAL_LOG_IPN_DESC" >
+	    <option value="0">COM_VIRTUEMART_NO</option>
+	    <option value="1">COM_VIRTUEMART_YES</option>
+	</param-->
 	<param name="debug" type="radio" default="0" label="VMPAYMENT_PAYPAL_DEBUG" description="VMPAYMENT_PAYPAL_DEBUG_DESC" >
 	    <option value="0">COM_VIRTUEMART_NO</option>
 	    <option value="1">COM_VIRTUEMART_YES</option>

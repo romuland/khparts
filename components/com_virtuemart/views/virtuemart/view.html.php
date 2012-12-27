@@ -13,7 +13,7 @@
  * to the GNU General Public License, and as distributed it includes or
  * is derivative of works licensed under the GNU General Public License or
  * other free or open source software licenses.
- * @version $Id: view.html.php 5671 2012-03-15 13:06:26Z Milbo $
+ * @version $Id: view.html.php 6564 2012-10-19 11:45:27Z kkmediaproduction $
  */
 
 # Check to ensure this file is included in Joomla!
@@ -43,6 +43,32 @@ class VirtueMartViewVirtueMart extends VmView {
 
 		$vendorModel->setId(1);
 		$vendor = $vendorModel->getVendor();
+		if (VmConfig::get ('enable_content_plugin', 0)) {
+			// add content plugin //
+			$dispatcher = & JDispatcher::getInstance ();
+			JPluginHelper::importPlugin ('content');
+			$vendor->text = $vendor->vendor_store_desc;
+			jimport ('joomla.html.parameter');
+			$params = new JParameter('');
+
+			if (JVM_VERSION === 2) {
+				$results = $dispatcher->trigger ('onContentPrepare', array('com_virtuemart.vendor', &$vendor, &$params, 0));
+				// More events for 3rd party content plugins
+				// This do not disturb actual plugins, because we don't modify $vendor->text
+				$res = $dispatcher->trigger ('onContentAfterTitle', array('com_virtuemart.vendor', &$vendor, &$params, 0));
+				$vendor->event->afterDisplayTitle = trim (implode ("\n", $res));
+
+				$res = $dispatcher->trigger ('onContentBeforeDisplay', array('com_virtuemart.vendor', &$vendor, &$params, 0));
+				$vendor->event->beforeDisplayContent = trim (implode ("\n", $res));
+
+				$res = $dispatcher->trigger ('onContentAfterDisplay', array('com_virtuemart.vendor', &$vendor, &$params, 0));
+				$vendor->event->afterDisplayContent = trim (implode ("\n", $res));
+			} else {
+				$results = $dispatcher->trigger ('onPrepareContent', array(& $vendor, & $params, 0));
+			}
+			$vendor->vendor_store_desc = $vendor->text;
+		}
+
 		$this->assignRef('vendor',$vendor);
 
 		if(!VmConfig::get('shop_is_offline',0)){
@@ -66,21 +92,42 @@ class VirtueMartViewVirtueMart extends VmView {
 			if(!class_exists('CurrencyDisplay'))require(JPATH_VM_ADMINISTRATOR.DS.'helpers'.DS.'currencydisplay.php');
 			$currency = CurrencyDisplay::getInstance( );
 			$this->assignRef('currency', $currency);
+			
+			$products_per_row = VmConfig::get('homepage_products_per_row');
+			
+			$featured_products_rows = VmConfig::get('featured_products_rows');
+			$featured_products_count = $products_per_row * $featured_products_rows;
 
-			if (VmConfig::get('show_featured', 1)) {
-				$products['featured'] = $productModel->getProductListing('featured', 5);
+			if (!empty($featured_products_count) and VmConfig::get('show_featured', 1)) {
+				$products['featured'] = $productModel->getProductListing('featured', $featured_products_count);
 				$productModel->addImages($products['featured'],1);
 			}
+			
+			$latest_products_rows = VmConfig::get('latest_products_rows');
+			$latest_products_count = $products_per_row * $latest_products_rows;
 
-			if (VmConfig::get('show_latest', 1)) {
-				$products['latest']= $productModel->getProductListing('latest', 5);
+			if (!empty($latest_products_count) and VmConfig::get('show_latest', 1)) {
+				$products['latest']= $productModel->getProductListing('latest', $latest_products_count);
 				$productModel->addImages($products['latest'],1);
 			}
 
-			if (VmConfig::get('show_topTen', 1)) {
-				$products['topten']= $productModel->getProductListing('topten', 5);
+			$topTen_products_rows = VmConfig::get('topTen_products_rows');
+			$topTen_products_count = $products_per_row * $topTen_products_rows;
+			
+			if (!empty($topTen_products_count) and VmConfig::get('show_topTen', 1)) {
+				$products['topten']= $productModel->getProductListing('topten', $topTen_products_count);
 				$productModel->addImages($products['topten'],1);
 			}
+			
+			$recent_products_rows = VmConfig::get('recent_products_rows');
+			$recent_products_count = $products_per_row * $recent_products_rows;
+			$recent_products = $productModel->getProductListing('recent');
+			
+			if (!empty($recent_products_count) and VmConfig::get('show_recent', 1) and !empty($recent_products)) {
+				$products['recent']= $productModel->getProductListing('recent', $recent_products_count);
+				$productModel->addImages($products['recent'],1);
+			}
+			
 			$this->assignRef('products', $products);
 
 			if(!class_exists('Permissions')) require(JPATH_VM_ADMINISTRATOR.DS.'helpers'.DS.'permissions.php');

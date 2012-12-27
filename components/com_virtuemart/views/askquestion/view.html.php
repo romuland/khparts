@@ -83,7 +83,11 @@ class VirtueMartViewAskquestion extends VmView {
 		}
 		$product = $product_model->getProduct ($virtuemart_product_id);
 		// Set Canonic link
-		$document->addHeadLink ($product->link, 'canonical', 'rel', '');
+		$format = JRequest::getWord('format', 'html');
+		if ($format == 'html') {
+			$document->addHeadLink ($product->link, 'canonical', 'rel', '');
+		}
+
 
 		// Set the titles
 		$document->setTitle (JText::sprintf ('COM_VIRTUEMART_PRODUCT_DETAILS_TITLE', $product->product_name . ' - ' . JText::_ ('COM_VIRTUEMART_PRODUCT_ASK_QUESTION')));

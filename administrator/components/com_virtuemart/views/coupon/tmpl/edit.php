@@ -14,7 +14,7 @@
  * to the GNU General Public License, and as distributed it includes or
  * is derivative of works licensed under the GNU General Public License or
  * other free or open source software licenses.
- * @version $Id: edit.php 5225 2012-01-06 01:50:19Z electrocity $
+ * @version $Id: edit.php 6347 2012-08-14 15:49:02Z Milbo $
  */
 // Check to ensure this file is included in Joomla!
 defined('_JEXEC') or die('Restricted access');
@@ -23,7 +23,7 @@ AdminUIHelper::startAdminArea();
 AdminUIHelper::imitateTabs('start', 'COM_VIRTUEMART_COUPON_DETAILS');
 ?>
 
-<form action="index.php" method="post" name="adminForm" ID="adminForm">
+<form action="index.php" method="post" name="adminForm" id="adminForm">
 
 	<fieldset>
 	    <legend><?php echo JText::_('COM_VIRTUEMART_COUPON_DETAILS'); ?></legend>

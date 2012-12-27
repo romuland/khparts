@@ -20,6 +20,12 @@
 // Check to ensure this file is included in Joomla!
 defined('_JEXEC') or die('Restricted access');
 
+//set variables, usually set by shopfunctionsf::getLoginForm in case this layout is differently used
+if (!isset( $this->show )) $this->show = TRUE;
+if (!isset( $this->from_cart )) $this->from_cart = FALSE;
+if (!isset( $this->order )) $this->order = FALSE ;
+
+
 if(!class_exists('shopFunctionsF')) require(JPATH_VM_SITE.DS.'helpers'.DS.'shopfunctionsf.php');
 $comUserOption=shopfunctionsF::getComUserOption();
 if (empty($this->url)){
@@ -29,9 +35,8 @@ if (empty($this->url)){
 	$url = $this->url;
 }
 
-vmdebug('loginform $url ',$url);
 $user = JFactory::getUser();
-if(!isset($this->show)) $this->show = true;
+
 if ($this->show and $user->id == 0  ) {
 JHtml::_('behavior.formvalidation');
 JHTML::_ ( 'behavior.modal' );
@@ -105,8 +110,9 @@ JHTML::_ ( 'behavior.modal' );
 <?php   }
 
 
-    ?>
-    <form action="index.php" method="post" name="com-login" >
+    // XXX style CSS id com-form-login ?>
+    <form id="com-form-login" action="<?php echo JRoute::_('index.php'); ?>" method="post" name="com-login" >
+    <fieldset class="userdata">
 	<?php if (!$this->from_cart ) { ?>
 	<div>
 		<h2><?php echo JText::_('COM_VIRTUEMART_ORDER_CONNECT_FORM'); ?></h2>
@@ -125,7 +131,7 @@ JHTML::_ ( 'behavior.modal' );
             <?php } else { ?>
             <input id="modlgn-passwd" type="password" name="password" class="inputbox" size="18" alt="<?php echo JText::_('COM_VIRTUEMART_PASSWORD'); ?>" value="<?php echo JText::_('COM_VIRTUEMART_PASSWORD'); ?>" onblur="if(this.value=='') this.value='<?php echo addslashes(JText::_('COM_VIRTUEMART_PASSWORD')); ?>';" onfocus="if(this.value=='<?php echo addslashes(JText::_('COM_VIRTUEMART_PASSWORD')); ?>') this.value='';" />
             <?php } ?>
-	</p>
+		</p>
 
         <p class="width30 floatleft" id="com-form-login-remember">
             <input type="submit" name="Submit" class="default" value="<?php echo JText::_('COM_VIRTUEMART_LOGIN') ?>" />
@@ -134,14 +140,15 @@ JHTML::_ ( 'behavior.modal' );
             <input type="checkbox" id="remember" name="remember" class="inputbox" value="yes" alt="Remember Me" />
             <?php endif; ?>
         </p>
+        </fieldset>
         <div class="clr"></div>
 
         <div class="width30 floatleft">
-            <a   href="<?php echo JRoute::_('index.php?option='.$comUserOption.'&view=remind'); ?>">
+            <a href="<?php echo JRoute::_('index.php?option='.$comUserOption.'&view=remind'); ?>">
             <?php echo JText::_('COM_VIRTUEMART_ORDER_FORGOT_YOUR_USERNAME'); ?></a>
         </div>
         <div class="width30 floatleft">
-            <a   href="<?php echo JRoute::_('index.php?option='.$comUserOption.'&view=reset'); ?>">
+            <a href="<?php echo JRoute::_('index.php?option='.$comUserOption.'&view=reset'); ?>">
             <?php echo JText::_('COM_VIRTUEMART_ORDER_FORGOT_YOUR_PASSWORD'); ?></a>
         </div>
 
@@ -170,9 +177,9 @@ JHTML::_ ( 'behavior.modal' );
         <?php echo JHTML::_('form.token'); ?>
     </form>
 
-<?php  }else if ($user->id  ){ ?>
+<?php  } else if ( $user->id ) { ?>
 
-   <form action="index.php" method="post" name="login" id="form-login">
+   <form action="<?php echo JRoute::_('index.php'); ?>" method="post" name="login" id="form-login">
         <?php echo JText::sprintf( 'COM_VIRTUEMART_HINAME', $user->name ); ?>
 	<input type="submit" name="Submit" class="button" value="<?php echo JText::_( 'COM_VIRTUEMART_BUTTON_LOGOUT'); ?>" />
         <input type="hidden" name="option" value="<?php echo $comUserOption ?>" />

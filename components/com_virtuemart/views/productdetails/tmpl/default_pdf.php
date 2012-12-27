@@ -165,17 +165,11 @@ if (empty ( $this->product )) {
 
 	<?php // Product Packaging
 	$product_packaging = '';
-	if ($this->product->packaging || $this->product->box) { ?>
-	<div class="product-packaging">
-		<span class="bold"><?php echo JText::_('COM_VIRTUEMART_PRODUCT_PACKAGING2') ?></span>
-		<br />
+	if ($this->product->product_box) { ?>
+	<div class="product-box">
 		<?php
-		if ($this->product->packaging) {
-			$product_packaging .= JText::_('COM_VIRTUEMART_PRODUCT_PACKAGING1').$this->product->packaging;
-			if ($this->product->box) $product_packaging .= '<br />';
-		}
-		if ($this->product->box) $product_packaging .= JText::_('COM_VIRTUEMART_PRODUCT_PACKAGING2').$this->product->box;
-		echo str_replace("{unit}",$this->product->product_unit ? $this->product->product_unit : JText::_('COM_VIRTUEMART_PRODUCT_FORM_UNIT_DEFAULT'), $product_packaging); ?>
+	        echo JText::_('COM_VIRTUEMART_PRODUCT_UNITS_IN_BOX') .$this->product->product_box;
+	    ?>
 	</div>
 	<?php } // Product Packaging END ?>
 

@@ -16,7 +16,7 @@ if ($products_per_row > 1) {
 }
 	if ($display_style == "div") {
 		?>
-		<div class="vmproduct<?php echo $params->get ('moduleclass_sfx'); ?>">
+		<div class="vmproduct<?php echo $params->get ('moduleclass_sfx'); ?> productdetails">
 			<?php foreach ($products as $product) { ?>
 			<div class="<?php echo $pwidth ?> <?php echo $float ?>">
 				<div class="spacer">
@@ -35,11 +35,11 @@ if ($products_per_row > 1) {
 					if ($show_price) {
 						// 		echo $currency->priceDisplay($product->prices['salesPrice']);
 						if (!empty($product->prices['salesPrice'])) {
-							echo $currency->createPriceDiv ('salesPrice', '', $product->prices, TRUE);
+							echo $currency->createPriceDiv ('salesPrice', '', $product->prices, FALSE, FALSE, 1.0, TRUE);
 						}
 						// 		if ($product->prices['salesPriceWithDiscount']>0) echo $currency->priceDisplay($product->prices['salesPriceWithDiscount']);
 						if (!empty($product->prices['salesPriceWithDiscount'])) {
-							echo $currency->createPriceDiv ('salesPriceWithDiscount', '', $product->prices, TRUE);
+							echo $currency->createPriceDiv ('salesPriceWithDiscount', '', $product->prices, FALSE, FALSE, 1.0, TRUE);
 						}
 					}
 					if ($show_addtocart) {
@@ -64,7 +64,7 @@ if ($products_per_row > 1) {
 		$last = count ($products) - 1;
 		?>
 
-		<ul class="vmproduct<?php echo $params->get ('moduleclass_sfx'); ?>">
+		<ul class="vmproduct<?php echo $params->get ('moduleclass_sfx'); ?> productdetails">
 			<?php foreach ($products as $product) : ?>
 			<li class="<?php echo $pwidth ?> <?php echo $float ?>">
 				<?php
@@ -78,12 +78,13 @@ if ($products_per_row > 1) {
 				$url = JRoute::_ ('index.php?option=com_virtuemart&view=productdetails&virtuemart_product_id=' . $product->virtuemart_product_id . '&virtuemart_category_id=' .
 					$product->virtuemart_category_id); ?>
 				<a href="<?php echo $url ?>"><?php echo $product->product_name ?></a>        <?php    echo '<div class="clear"></div>';
-
-				if ($show_price) {
-					echo $currency->createPriceDiv ('salesPrice', '', $product->prices, TRUE);
+				// $product->prices is not set when show_prices in config is unchecked
+				if ($show_price and  isset($product->prices)) {
+					echo '<div class="product-price">'.$currency->createPriceDiv ('salesPrice', '', $product->prices, FALSE, FALSE, 1.0, TRUE);
 					if ($product->prices['salesPriceWithDiscount'] > 0) {
-						echo $currency->createPriceDiv ('salesPriceWithDiscount', '', $product->prices, TRUE);
+						echo $currency->createPriceDiv ('salesPriceWithDiscount', '', $product->prices, FALSE, FALSE, 1.0, TRUE);
 					}
+					echo '</div>';
 				}
 				if ($show_addtocart) {
 					echo mod_virtuemart_product::addtocart ($product);
@@ -94,7 +95,7 @@ if ($products_per_row > 1) {
 			if ($col == $products_per_row && $products_per_row && $last) {
 				echo '
 		</ul><div class="clear"></div>
-		<ul  class="vmproduct' . $params->get ('moduleclass_sfx') . '">';
+		<ul  class="vmproduct' . $params->get ('moduleclass_sfx') . ' productdetails">';
 				$col = 1;
 			} else {
 				$col++;

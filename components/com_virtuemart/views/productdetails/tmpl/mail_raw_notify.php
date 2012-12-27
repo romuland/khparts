@@ -14,7 +14,7 @@ defined('_JEXEC') or die('');
  * to the GNU General Public License, and as distributed it includes or
  * is derivative of works licensed under the GNU General Public License or
  * other free or open source software licenses.
- * @version $Id: mail_raw_notify.php 6205 2012-07-03 13:10:28Z alatak $
+ * @version $Id: mail_raw_notify.php 6300 2012-07-26 00:40:10Z Milbo $
  */
 
 echo $this->vendorAddress;
@@ -33,7 +33,7 @@ echo "\n";
 
 // $uri    = JURI::getInstance();
 // $prefix = $uri->toString(array('scheme', 'host', 'port'));
-$link = shopFunctionsF::getBaseUrl().JRoute::_ ( 'index.php?option=com_virtuemart',false,-1);
+$link = JURI::root().'index.php?option=com_virtuemart';
 
 echo "\n\n";
 $link= JHTML::_('link', $link, $this->vendor->vendor_name) ;

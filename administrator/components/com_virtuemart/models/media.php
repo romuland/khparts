@@ -13,14 +13,11 @@
  * to the GNU General Public License, and as distributed it includes or
  * is derivative of works licensed under the GNU General Public License or
  * other free or open source software licenses.
- * @version $Id: media.php 6137 2012-06-20 06:42:54Z alatak $
+ * @version $Id: media.php 6549 2012-10-16 13:20:50Z Milbo $
  */
 
 // Check to ensure this file is included in Joomla!
 defined('_JEXEC') or die('Restricted access');
-
-// Load the model framework
-jimport( 'joomla.application.component.model');
 
 if(!class_exists('VmModel'))require(JPATH_VM_ADMINISTRATOR.DS.'helpers'.DS.'vmmodel.php');
 
@@ -81,6 +78,9 @@ class VirtueMartModelMedia extends VmModel {
 
 		$app = JFactory::getApplication();
 		$medias = array();
+
+		static $_medias = array();
+
 		if(!empty($virtuemart_media_ids)){
 			if(!is_array($virtuemart_media_ids)) $virtuemart_media_ids = explode(',',$virtuemart_media_ids);
 
@@ -96,17 +96,20 @@ class VirtueMartModelMedia extends VmModel {
 					$id = $virtuemart_media_id;
 				}
 				if(!empty($id)){
-					$data->load((int)$id);
-					if($app->isSite()){
-						if($data->published==0){
-							continue;
+					if (!array_key_exists ($id, $_medias)) {
+						$data->load((int)$id);
+						if($app->isSite()){
+							if($data->published==0){
+								continue;
+							}
 						}
+						$file_type 	= empty($data->file_type)? $type:$data->file_type;
+						$mime		= empty($data->file_mimetype)? $mime:$data->file_mimetype;
+						$_medias[$id] = VmMediaHandler::createMedia($data,$file_type,$mime);
+						if(is_object($virtuemart_media_id) && !empty($virtuemart_media_id->product_name)) $_medias[$id]->product_name = $virtuemart_media_id->product_name;
 					}
-					$file_type 	= empty($data->file_type)? $type:$data->file_type;
-					$mime		= empty($data->file_mimetype)? $mime:$data->file_mimetype;
-					$media = VmMediaHandler::createMedia($data,$file_type,$mime);
-					if(is_object($virtuemart_media_id) && !empty($virtuemart_media_id->product_name)) $media->product_name = $virtuemart_media_id->product_name;
-					$medias[] = $media;
+
+					$medias[] = $_medias[$id];
 				}
 			}
 		}
@@ -347,8 +350,10 @@ class VirtueMartModelMedia extends VmModel {
 		$data = VmMediaHandler::prepareStoreMedia($table,$data,$type); //this does not store the media, it process the actions and prepares data
 
 		// workarround for media published and product published two fields in one form.
+
 		if (isset($data['media_published'])){
 			$data['published'] = $data['media_published'];
+			//vmdebug('$data["published"]',$data['published']);
 		}
 
 		$table->bindChecknStore($data);

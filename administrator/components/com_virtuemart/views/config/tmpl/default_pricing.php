@@ -13,11 +13,29 @@
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
 * other free or open source software licenses.
-* @version $Id: default_pricing.php 5772 2012-04-01 20:29:52Z Milbo $
+* @version $Id: default_pricing.php 6566 2012-10-19 16:33:47Z Milbo $
 */
 
 // Check to ensure this file is included in Joomla!
 defined('_JEXEC') or die('Restricted access');
+		$js = '
+	jQuery(document).ready(function( $ ) {
+			if ( $("#show_prices").is(\':checked\') ) {
+				$("#show_hide_prices").show();
+			} else {
+				$("#show_hide_prices").hide();
+			}
+		 $("#show_prices").click(function() {
+			if ( $("#show_prices").is(\':checked\') ) {
+				$("#show_hide_prices").show();
+			} else {
+				$("#show_hide_prices").hide();
+			}
+		});
+	});
+	';
+$document = JFactory::getDocument();
+$document->addScriptDeclaration($js);
 ?>
 <br />
 <table>
@@ -28,57 +46,44 @@ defined('_JEXEC') or die('Restricted access');
 		<table class="admintable">
 		    <tr>
 			<td class="key">
-			    <span class="hasTip" title="<?php echo JText::_('COM_VIRTUEMART_ADMIN_CFG_PRICE_ACCESS_LEVEL_TIP'); ?>">
-			    <label for="price_access_level_published"><?php echo JText::_('COM_VIRTUEMART_ADMIN_CFG_PRICE_ACCESS_LEVEL') ?></label>
-			    </span>
-			</td>
-			<td>
-			    <?php echo VmHTML::checkbox('price_access_level_published', $this->config->get('price_access_level_published')); ?>
-			    <?php echo JText::_('COM_VIRTUEMART_CFG_ENABLE_FEATURE'); ?>
-			    <br />
-			    <?php /*
-				if ( JVM_VERSION===1) {
-					echo JHTML::_('Select.genericlist', $this->aclGroups, 'price_access_level', 'size=5', 'title', 'text', $this->config->get('price_access_level'));
-				} else {
-					$selectOptions['list.attr'] = 'size=5';
-					$selectOptions['option.key'] = 'title';
-					$selectOptions['option.text'] = 'text';
-					$selectOptions['list.select'] = $this->config->get('price_access_level');
-					$selectOptions['option.text.toHtml'] = false;
-					echo JHTML::_('Select.genericlist', $this->aclGroups, 'price_access_level', $selectOptions);
-				} */ ?>
-			</td>
-		    </tr>
-		    <tr>
-			<td class="key">
-			    <span class="hasTip" title="<?php echo JText::_('COM_VIRTUEMART_ADMIN_CFG_PRICE_SHOW_PACKAGING_PRICELABEL_TIP'); ?>">
-			    <label for="price_show_packaging_pricelabel"><?php echo JText::_('COM_VIRTUEMART_ADMIN_CFG_PRICE_SHOW_PACKAGING_PRICELABEL'); ?>
-			    </span>
-			</td>
-			<td>
-			    <?php echo VmHTML::checkbox('price_show_packaging_pricelabel', $this->config->get('price_show_packaging_pricelabel')); ?>
-			</td>
-		    </tr>
-		    <tr>
-			<td class="key">
 			    <span class="hasTip" title="<?php echo JText::_('COM_VIRTUEMART_ADMIN_CFG_PRICE_SHOW_TAX_TIP'); ?>">
 			    <label for="show_tax"><?php echo JText::_('COM_VIRTUEMART_ADMIN_CFG_PRICE_SHOW_TAX'); ?>
 			    </span>
 			</td>
 			<td>
-			    <?php echo VmHTML::checkbox('show_tax', $this->config->get('show_tax')); ?>
+			    <?php echo VmHTML::checkbox('show_tax', VmConfig::get('show_tax')); ?>
 			</td>
 		    </tr>
 		   <tr>
-			<td class="key">
+            <td class="key">
 			    <span class="hasTip" title="<?php echo JText::_('COM_VIRTUEMART_ADMIN_CFG_PRICE_ASKPRICE_TIP'); ?>">
 			    <label for="show_tax"><?php echo JText::_('COM_VIRTUEMART_ADMIN_CFG_PRICE_ASKPRICE'); ?>
 			    </span>
-			</td>
-			<td>
-			    <?php echo VmHTML::checkbox('askprice', $this->config->get('askprice')); ?>
-			</td>
-		    </tr>
+            </td>
+            <td>
+				<?php echo VmHTML::checkbox('askprice', VmConfig::get('askprice',0)); ?>
+            </td>
+        </tr>
+            <tr>
+                <td class="key">
+			    <span class="hasTip" title="<?php echo JText::_('COM_VIRTUEMART_ADMIN_CFG_PRICE_RAPPENRUNDUNG_TIP'); ?>">
+			    <label for="show_tax"><?php echo JText::_('COM_VIRTUEMART_ADMIN_CFG_PRICE_RAPPENRUNDUNG'); ?>
+			    </span>
+                </td>
+                <td>
+					<?php echo VmHTML::checkbox('rappenrundung', VmConfig::get('rappenrundung',0)); ?>
+                </td>
+            </tr>
+            <tr>
+                <td class="key">
+			    <span class="hasTip" title="<?php echo JText::_('COM_VIRTUEMART_ADMIN_CFG_PRICE_CVARSWT_TIP'); ?>">
+			    <label for="show_tax"><?php echo JText::_('COM_VIRTUEMART_ADMIN_CFG_PRICE_CVARSWT'); ?>
+			    </span>
+                </td>
+                <td>
+					<?php echo VmHTML::checkbox('cVarswT', VmConfig::get('cVarswT',1)); ?>
+                </td>
+            </tr>
 		</table>
 	    </fieldset>
 
@@ -94,9 +99,11 @@ defined('_JEXEC') or die('Restricted access');
 			    </span>
 			</td>
 			<td>
-			    <?php echo VmHTML::checkbox('show_prices', $this->config->get('show_prices')); ?>
+			    <?php echo VmHTML::checkbox('show_prices', VmConfig::get('show_prices',1)); ?>
 			</td>
 			</tr>
+			</table>
+		    <table class="admintable" id="show_hide_prices">
 			<tr>
 				<th></th>
 				<th><?php echo JText::_('COM_VIRTUEMART_ADMIN_CFG_PRICES_LABEL'); ?></th>
@@ -108,13 +115,14 @@ defined('_JEXEC') or die('Restricted access');
 			echo ShopFunctions::writePriceConfigLine($this->config,'basePrice','COM_VIRTUEMART_ADMIN_CFG_PRICE_BASEPRICE');
 			echo ShopFunctions::writePriceConfigLine($this->config,'variantModification','COM_VIRTUEMART_ADMIN_CFG_PRICE_VARMOD');
 			echo ShopFunctions::writePriceConfigLine($this->config,'basePriceVariant','COM_VIRTUEMART_ADMIN_CFG_PRICE_BASEPRICE_VAR');
-			echo ShopFunctions::writePriceConfigLine($this->config,'discountedPriceWithoutTax','COM_VIRTUEMART_ADMIN_CFG_PRICE_DISCPRICE_WOTAX');
-			echo ShopFunctions::writePriceConfigLine($this->config,'priceWithoutTax','COM_VIRTUEMART_ADMIN_CFG_PRICE_SALESPRICE_WOTAX');
-			echo ShopFunctions::writePriceConfigLine($this->config,'taxAmount','COM_VIRTUEMART_ADMIN_CFG_PRICE_TAX_AMOUNT');
+			echo ShopFunctions::writePriceConfigLine($this->config,'discountedPriceWithoutTax','COM_VIRTUEMART_ADMIN_CFG_PRICE_DISCPRICE_WOTAX',0);
+			echo ShopFunctions::writePriceConfigLine($this->config,'priceWithoutTax','COM_VIRTUEMART_ADMIN_CFG_PRICE_SALESPRICE_WOTAX',0);
+			echo ShopFunctions::writePriceConfigLine($this->config,'taxAmount','COM_VIRTUEMART_ADMIN_CFG_PRICE_TAX_AMOUNT',0);
 			echo ShopFunctions::writePriceConfigLine($this->config,'basePriceWithTax','COM_VIRTUEMART_ADMIN_CFG_PRICE_BASEPRICE_WTAX');
 			echo ShopFunctions::writePriceConfigLine($this->config,'salesPrice','COM_VIRTUEMART_ADMIN_CFG_PRICE_SALESPRICE');
 			echo ShopFunctions::writePriceConfigLine($this->config,'salesPriceWithDiscount','COM_VIRTUEMART_ADMIN_CFG_PRICE_SALESPRICE_WD');
 			echo ShopFunctions::writePriceConfigLine($this->config,'discountAmount','COM_VIRTUEMART_ADMIN_CFG_PRICE_DISC_AMOUNT');
+			echo ShopFunctions::writePriceConfigLine($this->config,'unitPrice','COM_VIRTUEMART_ADMIN_CFG_PRICE_UNITPRICE');
 			?>
 		</table>
 	    </fieldset>

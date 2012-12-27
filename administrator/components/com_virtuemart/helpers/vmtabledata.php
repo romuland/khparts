@@ -58,11 +58,11 @@ class VmTableData extends VmTable {
 			}
 		} else {
 			if(!empty($this->$pKey)){
-
 				$_qry = 'SELECT `'.$this->_tbl_key.'` '
 				. 'FROM `'.$this->_tbl.'` '
 				. 'WHERE `'.$this->_pkey.'` = "' . $this->$pKey.'" ';
 				$this->_db->setQuery($_qry);
+				//Yes, overwriting $this->$tblKey is correct !
 				$this->$tblKey = $this->_db->loadResult();
 			}
 			if ( !empty($this->$tblKey) ) {

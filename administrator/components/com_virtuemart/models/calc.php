@@ -15,12 +15,9 @@ defined('_JEXEC') or die('Restricted access');
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
 * other free or open source software licenses.
-* @version $Id: calc.php 6057 2012-06-06 00:44:52Z Milbo $
+* @version $Id: calc.php 6396 2012-09-05 17:35:36Z Milbo $
 */
 
-
-
-jimport( 'joomla.application.component.model');
 
 if(!class_exists('VmModel'))require(JPATH_VM_ADMINISTRATOR.DS.'helpers'.DS.'vmmodel.php');
 
@@ -41,7 +38,7 @@ class VirtueMartModelCalc extends VmModel {
 		$this->setMainTable('calcs');
 		$this->setToggleName('calc_shopper_published');
 		$this->setToggleName('calc_vendor_published');
-
+	    $this->setToggleName('shared');
 		$this->addvalidOrderingFieldName(array('virtuemart_category_id','virtuemart_country_id','virtuemart_state_id','virtuemart_shoppergroup_id'));
     }
 
@@ -148,7 +145,7 @@ class VirtueMartModelCalc extends VmModel {
 
 			JPluginHelper::importPlugin('vmcalculation');
 			$dispatcher = JDispatcher::getInstance();
-			$error = $dispatcher->trigger('GetPluginInternalDataCalc',array(&$data));
+			$error = $dispatcher->trigger('plgVmGetPluginInternalDataCalcList',array(&$data));
 		}
 
 		return $this->_data;

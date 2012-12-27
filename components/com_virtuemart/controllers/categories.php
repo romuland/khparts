@@ -31,7 +31,7 @@ jimport('joomla.application.component.controller');
 class VirtueMartControllerCategories extends JController {
 
 
-	public function display(){
+	public function display($cachable = false, $urlparams = false) {
 		$safeurlparams = array('virtuemart_category_id'=>'INT','return'=>'BASE64','lang'=>'CMD');
 		parent::display(true, $safeurlparams);
 	}

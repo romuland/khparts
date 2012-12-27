@@ -163,6 +163,8 @@ class plgVmCustomStockable extends vmCustomPlugin {
 					Prod.find('input[name*=\"product_in_stock\"]').val('');
 				});
 		});
+
+		jQuery('input[name=field\\\\[$row\\\\]\\\\[custom_price\\\\]]').val('');
 	});
 	";
 		//$document = JFactory::getDocument();
@@ -219,7 +221,7 @@ class plgVmCustomStockable extends vmCustomPlugin {
 		$this->parseCustomParams($field);
 		//if (!$childs = $this->getChilds($product_id) ) return ;
 		$this->stockhandle = VmConfig::get('stockhandle','none');
-		$html='<br>';
+		$html='<br />';
 		$customfield_id = array();
 		$selects = array();
 		$js = array();
@@ -266,8 +268,12 @@ class plgVmCustomStockable extends vmCustomPlugin {
 			} else unset ($attribut);
 		}
 
-		$i = 1;
+		// Javascript can be added multiple times for multiple products on a page,
+		// so need to suffix everything for the right products
+		$js_suffix = $field->virtuemart_customfield_id;//.'_'.uniqid();
 
+		$html .= '<div class="stockable_block_'.$js_suffix.'">';
+		$i = 1;
 		foreach ($selects as $keys =>$options) {
 			$selectname = 'selectname'.$i;
 			$listname = $field->$selectname;
@@ -285,100 +291,127 @@ class plgVmCustomStockable extends vmCustomPlugin {
 				}
 				if ($show_select) {
 					$html .='<div style="width:200px;"><span style="vertical-align: top;width:98px; display: inline-block;color:#000;">'.JTEXT::_($listname).'</span>';
-					$html .= JHTML::_('select.genericlist', $option,$optionName ,'class="attribute_list" style="width:100px !important;"','value','text',reset($options),'selectoptions'.$i,false)."</div>\n";
+					$html .= JHTML::_('select.genericlist', $option,$optionName ,'class="attribute_list customfield_id_'.$js_suffix.'" style="width:100px !important;"','value','text',reset($options),'selectoptions'.$i,false)."</div>\n";
 				} else $html .='<input id="'.$keys.'" class="attribute_list" type="hidden" value="'.$val.'" name="'.$optionName.'">' ;
 			}
 			$i++;
 		}
+		$html .= '</div>';
 		static $stockablejs;
 
 		$group->display = $html.'
 				<input type="hidden" value="'.$child_id.'" name="customPlugin['.$field->virtuemart_customfield_id.']['.$this->_name.'][child_id]">';
 		// preventing 2 x load javascript
 
-		if ($stockablejs) return;
-		$stockablejs = true ;
+		/*if ($stockablejs) return;
+		$stockablejs = true ;*/
+
 		// TODO ONE PARAM IS MISSING
 		$document = JFactory::getDocument();
 		$document->addScriptDeclaration('
 		//<![CDATA[
 		jQuery( function($) {
-			var customfield_id = {'. implode(',' , $js ) .'};
-			var stockable =$.parseJSON(\'' .str_replace('\"', '\\\"', json_encode($field->child)). '\') ;
+			//var customfield_id = {'. implode(',' , $js ) .'};
+			//var selecteds = [];//all selected options
+			//var found_id=0;//found child id
 			var stockhandle = "'.$this->stockhandle.'";
-			var selecteds = [];//all selected options
-			var selections = [];
-			var found_id=0;//found child id
-			var original=[];
-			var totalattribut = $(".attribute_list").length+1;
+			var stockable_'.$js_suffix.' =$.parseJSON(\'' .str_replace('\"', '\\\"', json_encode($field->child)). '\') ;
+			var selections_'.$js_suffix.' = [];
+			//var original=[];
+//			var totalattribut_'.$js_suffix.' = $("select.attribute_list.customfield_id_'.$js_suffix.'").length+1;
+			var totalattribut_'.$js_suffix.' = [];
 			// get all initial select list values
-			$.each($(".attribute_list"), function(idx,selec) {
+			/*$.each($(".attribute_list"), function(idx,selec) {
 				original[selec.name] = $.map($(this).find("option"), function(idx, opt) {
 						return [[ idx.value ,idx.text ]];
 					});
-			});
+			});*/
 
-			if ( $("#selectoptions1").length ) recalculate($("#selectoptions1"));
-			$(".attribute_list").unbind("change");
-			$(".attribute_list").change(function(){
-				recalculate($(this));
+//			if ( $("#selectoptions1.attribute_list.customfield_id_'.$js_suffix.'").length ) {
+			if ( $("select.attribute_list.customfield_id_'.$js_suffix.'").length ) {
+					var stockableBlockIndex = 0;
+					$(".stockable_block_'.$js_suffix.'").each(function() {
+						$(this).attr("id", "stockableBlockIndex_'.$js_suffix.'_" + stockableBlockIndex);
+						totalattribut_'.$js_suffix.'[stockableBlockIndex] = $(this).find("select.attribute_list.customfield_id_'.$js_suffix.'").length+1;
+						recalculate_'.$js_suffix.'(stockableBlockIndex, $(this).find("select.attribute_list.customfield_id_'.$js_suffix.'").eq(0));
+						stockableBlockIndex++;
+					});
+			}
+			$("select.attribute_list.customfield_id_'.$js_suffix.'").unbind("change");
+			$("select.attribute_list.customfield_id_'.$js_suffix.'").change(function(){
+				var stockableBlockIndex = $(this).parents(".stockable_block_'.$js_suffix.'").attr("id").split("_");
+				recalculate_'.$js_suffix.'(stockableBlockIndex[stockableBlockIndex.length-1], $(this));
 
 			});
-			function recalculate(Opt){
-				var currentIndex = $(".attribute_list").index(Opt) +1;
+			function recalculate_'.$js_suffix.'(stockableBlockIndex, Opt){
+				var found_id = 0;
+				var currentIndex = $("#stockableBlockIndex_'.$js_suffix.'_"+stockableBlockIndex+" select.attribute_list.customfield_id_'.$js_suffix.'").index(Opt) +1;
+
+				selections_'.$js_suffix.'[stockableBlockIndex] = [];
+				var i=1;
+				$("#stockableBlockIndex_'.$js_suffix.'_"+stockableBlockIndex+" select.attribute_list.customfield_id_'.$js_suffix.'").each(function() {
+					selections_'.$js_suffix.'[stockableBlockIndex][i] = $(this).val();
+					// Clear the following selects
+					if (i > currentIndex) {
+						$(this).empty();
+					}
+
+					i++;
+				});
 
 				// Find current values
-				for(var i=1; i<totalattribut; i++){
-					selections[i] = $("#selectoptions"+i).val();
-				}
+				/*for(var i=1; i<totalattribut_'.$js_suffix.'[stockableBlockIndex]; i++){
+					selections_'.$js_suffix.'[stockableBlockIndex][i] = $("#selectoptions"+i+".customfield_id_'.$js_suffix.'").val();
+				}*/
 
 				// Clear the following selects
-				for(var i=currentIndex+1; i<totalattribut; i++){
-					$("#selectoptions"+i).empty();
-				}
+				/*for(var i=currentIndex+1; i<totalattribut_'.$js_suffix.'[stockableBlockIndex]; i++){
+					$("#stockableBlockIndex_'.$js_suffix.'_"+stockableBlockIndex+" #selectoptions"+i+".customfield_id_'.$js_suffix.'").empty();
+				}*/
 
 				// Repopulate the following selects
-				jQuery.each(stockable, function(child_id, child_attrib) {
-					if (isChildValid(child_attrib, currentIndex)) {
-						populateNextSelect(child_attrib, currentIndex+1);
+				jQuery.each(stockable_'.$js_suffix.', function(child_id, child_attrib) {
+					if (isChildValid_'.$js_suffix.'(stockableBlockIndex, child_attrib, currentIndex)) {
+						populateNextSelect_'.$js_suffix.'(stockableBlockIndex, child_attrib, currentIndex+1);
 					}
 				});
 
 				// Identify the current child
-				jQuery.each(stockable, function(child_id, child_attrib) {
+				jQuery.each(stockable_'.$js_suffix.', function(child_id, child_attrib) {
 					var i;
-					for(i = 1; i < totalattribut; i++){
-						if (child_attrib["selectoptions"+i][0] != selections[i]) {
+					for(i = 1; i < totalattribut_'.$js_suffix.'[stockableBlockIndex]; i++){
+						if (child_attrib["selectoptions"+i][0] != selections_'.$js_suffix.'[stockableBlockIndex][i]) {
 							break;
 						}
 					}
-					if (totalattribut == i) {
+					if (totalattribut_'.$js_suffix.'[stockableBlockIndex] == i) {
 						found_id = child_id;
 						return false;
 					}
 				});
 
-				if ("disableadd" == stockhandle && stockable[found_id].in_stock <= 0) {
+				if ("disableadd" == stockhandle && stockable_'.$js_suffix.'[found_id].in_stock <= 0) {
 					$(".addtocart-bar>span").remove();
 					$(".addtocart-bar>div").remove();
 					$(".addtocart-bar>a.notify").remove();
 					$(".addtocart-bar").append(\'<a href="ind\'+\'ex.php?option=com_virtuemart&view=productdetails&layout=notify&virtuemart_product_id=\' + found_id + \'" class="notify">' . JText::_('COM_VIRTUEMART_CART_NOTIFY') . '</a>\');
 				} else {
+					var quantity = $(".addtocart-bar .quantity-input").val();
 					$(".addtocart-bar>span").remove();
 					$(".addtocart-bar>div").remove();
 					$(".addtocart-bar>a.notify").remove();
-					$(".addtocart-bar").append(\'<span class="quantity-box"><input type="text" class="quantity-input js-recalculate" name="quantity[]" value="1" /></span><span class="quantity-controls js-recalculate"><input type="button" class="quantity-controls quantity-plus" /><input type="button" class="quantity-controls quantity-minus" /></span><span class="addtocart-button"><input type="submit" name="addtocart" class="addtocart-button" value="'.JText::_('COM_VIRTUEMART_CART_ADD_TO').'" title="'.JText::_('COM_VIRTUEMART_CART_ADD_TO').'" /></span><div class="clear"></div>\');
+					$(".addtocart-bar").append(\'<span class="quantity-box"><input type="text" class="quantity-input js-recalculate" name="quantity[]" value="\' + quantity + \'" /></span><span class="quantity-controls js-recalculate"><input type="button" class="quantity-controls quantity-plus" /><input type="button" class="quantity-controls quantity-minus" /></span><span class="addtocart-button"><input type="submit" name="addtocart" class="addtocart-button" value="'.JText::_('COM_VIRTUEMART_CART_ADD_TO').'" title="'.JText::_('COM_VIRTUEMART_CART_ADD_TO').'" /></span><div class="clear"></div>\');
 					Virtuemart.product($("form.product"));
 				}
 
 				$(".availability").remove();
 
-				if ("risetime" == stockhandle && stockable[found_id].product_availability) {
-					$(".addtocart-area").after(\'<div class="availability">\' + stockable[found_id].product_availability + \'</div>\');
+				if ("risetime" == stockhandle && stockable_'.$js_suffix.'[found_id].product_availability) {
+					$(".addtocart-area").after(\'<div class="availability">\' + stockable_'.$js_suffix.'[found_id].product_availability + \'</div>\');
 				}
 
 				// recalculate the price by found product child id;
-				formProduct = Opt.parents(".productdetails-view").find(".product");
+				formProduct = Opt.parents("form.product");
 				virtuemart_product_id = formProduct.find(\'input[name="virtuemart_product_id[]"]\').val();
 				//formProduct.find("#selectedStockable").remove();
 				//formProduct.append(\'<input id="stockableChild" type="hidden" value="\'+customfield_id[found_id]+\'" name="customPrice['.$row.'][\'+found_id+\']">\');
@@ -387,25 +420,33 @@ class plgVmCustomStockable extends vmCustomPlugin {
 				//(\'<input id="stockableChild" type="hidden" value="\'+customfield_id[found_id]+\'" name="customPrice['.$row.'][\'+found_id+\']">\');
 				Virtuemart.setproducttype(formProduct,virtuemart_product_id);
 			}
-			function isChildValid(child_attrib, currentIndex) {
+			function isChildValid_'.$js_suffix.'(stockableBlockIndex, child_attrib, currentIndex) {
 				return_value = true;
 				for (var i = currentIndex; i > 0; i--) {
-					if (child_attrib["selectoptions"+i][0] != selections[i]) {
+					if (child_attrib["selectoptions"+i][0] != selections_'.$js_suffix.'[stockableBlockIndex][i]) {
 						return_value = false;
 					}
 				}
 				return return_value;
 			}
-			function populateNextSelect(child_attrib, nextIndex) {
-				var nextSelect = $("#selectoptions"+nextIndex);
-				if (nextSelect.length > 0) {
-					if ($("#selectoptions"+nextIndex+" option:contains(" + child_attrib["selectoptions"+nextIndex][0] + ")").length == 0) {
+			function populateNextSelect_'.$js_suffix.'(stockableBlockIndex, child_attrib, nextIndex) {
+				var selectList = $("#stockableBlockIndex_'.$js_suffix.'_"+stockableBlockIndex+" select.attribute_list.customfield_id_'.$js_suffix.'");
+				var nextSelect = selectList.eq(nextIndex-1);
+				// if the select exists
+				if ("undefined" !== typeof(nextSelect) && nextSelect.length > 0) {
+					// if it doesn\'t already contain this option, add it
+					if (nextSelect.find("option[value=\'" + child_attrib["selectoptions"+nextIndex][0] + "\']").length == 0) {
 						nextSelect.append("<option value=\'" + child_attrib["selectoptions"+nextIndex][0] + "\'>" + child_attrib["selectoptions"+nextIndex][1] + "</option>");
 					}
-					if (1 == $("#selectoptions"+nextIndex+" option").length) {
-						$("#selectoptions"+nextIndex+" option").attr("selected","selected");
-						selections[nextIndex] = child_attrib["selectoptions"+nextIndex][0];
-						populateNextSelect(child_attrib, nextIndex+1);
+
+					// if there is only one option, make it selected
+					if (1 == nextSelect.find("option").length) {
+						nextSelect.find("option").attr("selected","selected");
+						selections_'.$js_suffix.'[stockableBlockIndex][nextIndex] = child_attrib["selectoptions"+nextIndex][0];
+					}
+					// if this is the selected value, populate the next select too
+					if (nextSelect.val() == child_attrib["selectoptions"+nextIndex][0]) {
+						populateNextSelect_'.$js_suffix.'(stockableBlockIndex, child_attrib, nextIndex+1);
 					}
 				}
 			}
@@ -433,6 +474,7 @@ class plgVmCustomStockable extends vmCustomPlugin {
 	 * @author Patrick Kohl
 	 */
 	function plgVmOnViewCartModule( $product, $row,&$html) {
+		if (empty($product->productCustom->custom_element) or $product->productCustom->custom_element != $this->_name) return '';
 		if (!$plgParam = $this->GetPluginInCart($product)) return false ;
 		foreach ($plgParam as $k => $attributes) {
 			foreach ($attributes as $k => $attribute) {
@@ -448,6 +490,7 @@ class plgVmCustomStockable extends vmCustomPlugin {
 	 * @author Patrick Kohl
 	 */
 	function plgVmOnViewCart($product, $row,&$html) {
+		if (empty($product->productCustom->custom_element) or $product->productCustom->custom_element != $this->_name) return '';
 		if (!$plgParam = $this->GetPluginInCart($product)) return false ;
 		$html  .= '<div class="stockablecartvariant_attributes">';
 		foreach ($plgParam as $attributes) {

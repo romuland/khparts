@@ -40,7 +40,10 @@ if ($this->headFooter) {
         }
         ?>    </h1>
 	<div class="vendor-details-address">
-	<?php echo $this->vendorAddress; ?>
+	<?php //Attention this is removed, please use directly
+		//echo $this->vendorAddress;
+		echo shopFunctions::renderVendorAddress($this->vendor->virtuemart_vendor_id, '<br />');
+		?>
 		</div>
 </div>
 

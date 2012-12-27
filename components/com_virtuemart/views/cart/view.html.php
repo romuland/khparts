@@ -16,7 +16,7 @@
  * to the GNU General Public License, and as distributed it includes or
  * is derivative of works licensed under the GNU General Public License or
  * other free or open source software licenses.
- * @version $Id: view.html.php 6201 2012-07-03 09:40:57Z enytheme $
+ * @version $Id: view.html.php 6292 2012-07-20 12:27:44Z alatak $
  */
 // Check to ensure this file is included in Joomla!
 defined('_JEXEC') or die('Restricted access');
@@ -46,6 +46,7 @@ class VirtueMartViewCart extends VmView {
 		if (!class_exists('VirtueMartCart'))
 		require(JPATH_VM_SITE . DS . 'helpers' . DS . 'cart.php');
 		$cart = VirtueMartCart::getCart();
+		$cart->getCartPrices();
 		$this->assignRef('cart', $cart);
 
 		//Why is this here, when we have view.raw.php
@@ -279,7 +280,7 @@ class VirtueMartViewCart extends VmView {
 		JPluginHelper::importPlugin('vmpayment');
 		JPluginHelper::importPlugin('vmshipment');
 		$dispatcher = JDispatcher::getInstance();
-		$returnValues = $dispatcher->trigger('plgVmOnCheckoutAdvertise', array( $this->cart->virtuemart_paymentmethod_id, &$checkoutAdvertise));
+		$returnValues = $dispatcher->trigger('plgVmOnCheckoutAdvertise', array( $this->cart, &$checkoutAdvertise));
 		return $checkoutAdvertise;
 }
 

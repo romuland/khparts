@@ -2,7 +2,7 @@
 
 /**
  *
- * Controller for the Payement Response
+ * Controller for the Plugins Response
  *
  * @package	VirtueMart
  * @subpackage paymentResponse
@@ -87,7 +87,7 @@ class VirtueMartControllerPluginresponse extends JController {
 
     function ShipmentResponseReceived() {
 		// TODO: not ready yet
-	    /*
+
 	    if (!class_exists('vmPSPlugin'))
 		    require(JPATH_VM_PLUGINS . DS . 'vmpsplugin.php');
 	    JPluginHelper::importPlugin('vmshipment');
@@ -98,7 +98,7 @@ class VirtueMartControllerPluginresponse extends JController {
 	    $html = "";
 	    $shipmentResponse = Jtext::_('COM_VIRTUEMART_CART_THANKYOU');
 	    $dispatcher->trigger('plgVmOnShipmentResponseReceived', array( 'html' => &$html,&$shipmentResponse));
-
+/*
 // 	JRequest::setVar('paymentResponse', Jtext::_('COM_VIRTUEMART_CART_THANKYOU'));
 // 	JRequest::setVar('paymentResponseHtml', $html);
 	    $view = $this->getView('pluginresponse', 'html');

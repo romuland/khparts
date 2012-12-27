@@ -29,7 +29,7 @@ defined('_JEXEC') or die('Restricted access');
 </div>
 <?php } ?>
 <?php if( $this->userDetails->virtuemart_user_id!=0)  {
-   echo $this->loadTemplate('vmshopper');
+    echo $this->loadTemplate('vmshopper');
     } ?>
 <?php echo $this->loadTemplate('address_userfields'); ?>
 

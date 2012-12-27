@@ -1,8 +1,8 @@
 <?php
-defined('_JEXEC') or die();
+defined ('_JEXEC') or die();
 /**
  *
- * @package	VirtueMart
+ * @package    VirtueMart
  * @subpackage Plugins  - Elements
  * @author Valérie Isaksen
  * @link http://www.virtuemart.net
@@ -12,7 +12,7 @@ defined('_JEXEC') or die();
  * to the GNU General Public License, and as distributed it includes or
  * is derivative of works licensed under the GNU General Public License or
  * other free or open source software licenses.
- * @version $Id: $
+ * @version $Id:$
  */
 /*
  * This class is used by VirtueMart Payment or Shipment Plugins
@@ -22,29 +22,31 @@ defined('_JEXEC') or die();
  */
 class JElementVmOrderState extends JElement {
 
-    /**
-     * Element name
-     * @access	protected
-     * @var		string
-     */
-    var $_name = 'OrderStates';
+	/**
+	 * Element name
+	 *
+	 * @access    protected
+	 * @var        string
+	 */
+	var $_name = 'OrderStates';
 
-    function fetchElement($name, $value, &$node, $control_name) {
+	function fetchElement ($name, $value, &$node, $control_name) {
 
-        $db = JFactory::getDBO();
+		$db = JFactory::getDBO ();
 
-        $query = 'SELECT `order_status_code` AS value, `order_status_name` AS text'
-                . ' FROM `#__virtuemart_orderstates` '
-                . ' WHERE `virtuemart_vendor_id` = 1'
-                . ' ORDER BY `ordering` ASC '
-        ;
+		$query = 'SELECT `order_status_code` AS value, `order_status_name` AS text
+                 FROM `#__virtuemart_orderstates`
+                 WHERE `virtuemart_vendor_id` = 1
+                 ORDER BY `ordering` ASC ';
 
-        $db->setQuery($query);
-        $fields = $db->loadObjectList();
-        $class = '';
+		$db->setQuery ($query);
+		$fields = $db->loadObjectList ();
+		$class = '';
+		foreach ($fields as $field) {
+			$field->text= JText::_ ($field->text);
+		}
 
-
-        return JHTML::_('select.genericlist', $fields, $control_name . '[' . $name . ']', $class, 'value', 'text', $value, $control_name . $name);
-    }
+		return JHTML::_ ('select.genericlist', $fields, $control_name . '[' . $name . ']', $class, 'value', 'text', $value, $control_name . $name);
+	}
 
 }
