@@ -34,7 +34,13 @@ window.addEvent ('scroll', function() {
 
   
 jQuery(document).ready(function(){
-	
+	/*4 видимых элемента - top, zt-header,ajax-content, zt-footer*/
+	var winHeight = parseInt(jQuery(window).height());
+	var currentHeight = parseInt(jQuery('#top').css("height")) + parseInt(jQuery('#zt-header').css("height")) + parseInt(jQuery('#ajax-content').css("height")) + parseInt(		jQuery('#zt-footer').css("height"));
+	if(currentHeight < winHeight){
+		jQuery('#ajax-content').css("height", parseInt(jQuery('#ajax-content').css("height")) + (winHeight - currentHeight) + "px");
+	}
+
 	/*jQuery('#ajax-content').css('display', 'none').fadeIn(100);
 	jQuery('a').click(function(event){
 		

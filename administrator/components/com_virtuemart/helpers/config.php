@@ -940,7 +940,7 @@ class vmJsApi{
 		// Only load once
 		// using of namespace assume same library have same namespace
 		// NEVER WRITE FULL NAME AS $namespace IN CASE OF REVISION NUMBER IF YOU WANT PREVENT MULTI LOAD !!!
-		// eg. $namespace = 'jquery.1.8.6' and 'jquery.1.6.2' does not prevent load it
+		// eg. $namespace = 'jquery.1.8.6' and '.1.6.2' does not prevent load it
 		// use $namespace = 'jquery',$revision ='1.8.6' , $namespace = 'jquery',$revision ='1.6.2' ...
 		// loading 2 time a JS file with this method simply return and do not load it the second time
 
@@ -1031,6 +1031,7 @@ class vmJsApi{
 			return FALSE;
 		}
 		$document = JFactory::getDocument();
+		
 		if(VmConfig::get('google_jquery',TRUE)){
 			vmJsApi::js('jquery','//ajax.googleapis.com/ajax/libs/jquery/1.6.4','',TRUE);
 			//$document->addScript('//ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js');

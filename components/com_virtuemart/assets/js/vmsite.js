@@ -1,14 +1,8 @@
 /**
  * list country.js: General Javascript Library for VirtueMart Administration
  *
- *
- * @package	VirtueMart
- * @subpackage Javascript Library
- * @author Patrick Kohl
- * @copyright Copyright (c) 2011VirtueMart Team. All rights reserved.
- * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL
  */
-
+jQuery.noConflict();
 (function($){
 	var undefined,
 	methods = {

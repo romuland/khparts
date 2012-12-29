@@ -58,6 +58,7 @@ abstract class JHtmlBehavior
 		}
 
 		JHtml::_('script', 'system/mootools-' . $type . '.js', false, true, false, false, $debug);
+		
 		JHtml::_('script', 'system/core.js', false, true);
 		self::$loaded[__METHOD__][$type] = true;
 

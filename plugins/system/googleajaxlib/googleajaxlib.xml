@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension version="2.5" type="plugin" group="system">
+    <name>System - GoogleAjaxLib</name>
+    <author>JoeGuo</author>
+    <creationDate>Feb. 16 2011</creationDate>
+    <copyright>GNU/GPLv2</copyright>
+    <license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
+    <authorEmail>Joeguo@gmail.com</authorEmail>
+    <authorUrl>http://www.roseo.net</authorUrl>
+    <version>1.5</version>
+    <description>PLG_SYSTEM_GOOGLEAJAXLIB_XML_DESCRIPTION</description>
+    <files>
+        <filename plugin="googleajaxlib">googleajaxlib.php</filename>
+        <folder>language</folder>	
+    </files>
+	<languages folder="language">
+	       <language tag="en-GB">en-GB/en-GB.plg_system_googleajaxlib.ini</language>   
+	</languages>
+    <config>
+        <fields name="params">
+            <fieldset name="basic">
+                <field name="NoAdmin" type="radio" default="1" label="Not Admin" description="Never use Google AJAX Library for administrator.">
+                    <option value="0">No</option>
+                    <option value="1">Yes</option>
+                </field>
+                <field name="ReplaceMootools" type="radio" default="1" label="Replace MooTools" description="Use MooTools.js from Google.">
+                    <option value="0">No</option>
+                    <option value="1">Yes</option>
+                </field>
+                <field name="MootoolsName" type="text" default="mootools-core.js" label="MooTools File Name" description="Default is mootools-core.js, MooTools of your site may have a different name, like mootools.js etc, please confirm."></field>
+                <field name="MootoolsVersion" type="text" default="1.4.1" label="MooTools Version" description="Which Mootools version to load from Google? Default is 1.4.1."></field>
+        
+                <field name="ReplaceJQuery" type="radio" default="0" label="Replace JQuery" description="Use jquery.js from Google.">
+                    <option value="0">No</option>
+                    <option value="1">Yes</option>
+                </field>
+                <field name="JQueryVersion" type="text" default="1.7.1" label="JQuery Version" description="Which JQuery version to load from Google? Default is 1.7.1"></field>
+                <field name="JQueryName" type="text" default="jquery.js" label="JQuery File Name" description="Default is jquery.js,  JQuery of your site may have a different name, like jquery.min.js etc, please confirm."></field>
+
+                <field name="ReplaceJQueryUI" type="radio" default="0" label="Replace JQuery UI" description="Use jquery-ui.js from Google.">
+                    <option value="0">No</option>
+                    <option value="1">Yes</option>
+                </field>
+                <field name="JQueryUIVersion" type="text" default="1.8.16" label="JQuery UI Version" description="Which JQuery UI version to load from Google? Default is 1.8.16"></field>
+                <field name="JQueryUIName" type="text" default="jquery-ui.js" label="JQuery UI File Name" description="Default is jquery-ui.js, JQuery UI of your site may have a different name, like jquery-ui.min.js etc, please confirm."></field>
+
+   
+                <field name="ReplacePrototype" type="radio" default="0" label="Replace Prototype" description="Use prototype.js from Google.">
+                    <option value="0">No</option>
+                    <option value="1">Yes</option>
+                </field>
+                <field name="PrototypeVersion" type="text" default="1.7.0.0" label="Prototype Version" description="Which Prototype version to load from Google? Default is 1.7.0.0"></field>
+                <field name="PrototypeName" type="text" default="prototype.js" label="Prototype File Name" description="Default is prototype.js, Prototye of your site  may have different name, like prototype.min.js etc, please confirm."></field>
+   
+                <field name="ReplaceScriptAculoUs" type="radio" default="0" label="Replace script.aculo.us" description="Use script.aculo.us from Google.">
+                    <option value="0">No</option>
+                    <option value="1">Yes</option>
+                </field>
+                <field name="ScriptAculoUsVersion" type="text" default="1.9.0" label="script.aculo.us Version" description="Which script.aculo.us version to load from Google? Default is 1.9.0"></field>
+                <field name="ScriptAculoUsName" type="text" default="scriptaculous.js" label="script.aculo.us File Name" description="Default is scriptaculous.js, script.aculo.us of your site may have different name, like scriptaculous-min.js etc, please confirm."></field>
+    
+   
+                <field name="ReplaceSWFObject" type="radio" default="0" label="Replace SWFObject" description="Use SWFObject from Google.">
+                    <option value="0">No</option>
+                    <option value="1">Yes</option>
+                </field>
+                <field name="SWFObjectVersion" type="text" default="2.2" label="SWFObject Version" description="Which SWFObject version to load from Google? Default is 2.2"></field>
+                <field name="SWFObjectName" type="text" default="swfobject.js" label="SWFObject File Name" description="Default is swfobject.js,  SWFObject of your site may have different name, like swfobject_src.js etc, please confirm."></field>
+
+                <field name="ReplaceChromeFrame" type="radio" default="0" label="Replace Chrome Frame" description="Use Chrome Frame from Google.">
+                    <option value="0">No</option>
+                    <option value="1">Yes</option>
+                </field>
+                <field name="ChromeFrameVersion" type="text" default="1.0.2" label="Chrome Frame Version" description="Which Chrome Frame version to load from Google? Default is 1.0.2"></field>
+                <field name="ChromeFrameName" type="text" default="CFInstall.min.js" label="Chrome Frame File Name" description="Default is CFInstall.min.js,  Chrome Frame of your site may have different name, like CFInstall.js etc, please confirm."></field>
+
+                <field name="ReplaceWebFontLoader" type="radio" default="0" label="Replace WebFont Loader" description="Use WebFont Loader from Google.">
+                    <option value="0">No</option>
+                    <option value="1">Yes</option>
+                </field>
+                <field name="WebFontLoaderVersion" type="text" default="1.0.24" label="WebFont Loader Version" description="Which WebFont Loader version to load from Google? Default is 1.0.24"></field>
+                <field name="WebFontLoaderName" type="text" default="webfont.js" label="WebFont Loader File Name" description="Default is webfont.js,  WebFont Loader of your site may have different name, like webfont_debug.js etc, please confirm."></field>
+
+                <field name="ReplaceExtCore" type="radio" default="0" label="Replace Ext Core" description="Use Ext Core from Google.">
+                    <option value="0">No</option>
+                    <option value="1">Yes</option>
+                </field>
+                <field name="ExtCoreVersion" type="text" default="3.1.0" label="Ext Core Version" description="Which Ext Core version to load from Google? Default is 3.1.0"></field>
+                <field name="ExtCoreName" type="text" default="ext-core.js" label="Ext Core File Name" description="Default is ext-core.js,  Ext Core of your site may have different name, like ext-core-debug.js etc, please confirm."></field>
+
+
+                <field name="ReplaceDojo" type="radio" default="0" label="Replace Dojo" description="Use Dojo from Google.">
+                    <option value="0">No</option>
+                    <option value="1">Yes</option>
+                </field>
+                <field name="DojoVersion" type="text" default="1.5.0" label="Dojo Version" description="Which Dojo version to load from Google? Default is 1.5.0"></field>
+                <field name="DojoName" type="text" default="dojo.xd.js" label="Dojo File Name" description="Default is dojo.xd.js,  Dojo of your site may have different name, like dojo.xd.js.uncompressed.js etc, please confirm."></field>
+            </fieldset>
+        </fields>
+    </config>
+</extension>

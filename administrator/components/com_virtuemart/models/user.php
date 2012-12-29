@@ -646,7 +646,12 @@ class VirtueMartModelUser extends VmModel {
 		$newId = $user->get('id');
 		$data['virtuemart_user_id'] = $newId;	//We need this in that case, because data is bound to table later
 		$this->setUserId($newId);
-
+		
+		if ($data['usertype']=="organization")
+			$this->setUserGroup($newId, "Opt", "Retail");
+		else
+			$this->setUserGroup($newId, "Retail", "Opt");
+			
 		//Save the VM user stuff
 		if(!$this->saveUserData($data) || !self::storeAddress($data)){
 			vmError('COM_VIRTUEMART_NOT_ABLE_TO_SAVE_USER_DATA');
@@ -684,6 +689,63 @@ class VirtueMartModelUser extends VmModel {
 
 	}
 
+/*Bind User with VM and Joomla groups according with radio button - ONLY FOR THIS TASK*/
+	public function setUserGroup($uid, $userGroup, $userGroupForUpdate){
+		
+		if(empty($this->_db)) $this->_db = JFactory::getDBO();
+		
+		$q = "SELECT id from #__usergroups where title='$userGroup'";
+		$this->_db->setQuery($q);
+		$results = $this->_db->loadObjectList();
+		$gid = $results[0]->id;
+		
+		$q = "SELECT virtuemart_shoppergroup_id from #__virtuemart_shoppergroups where shopper_group_name='$userGroup'";
+		$this->_db->setQuery($q);
+		$results = $this->_db->loadObjectList();
+		$vmgid = $results[0]->virtuemart_shoppergroup_id;
+
+		if ($userGroupForUpdate != "") {
+			$q = "SELECT id from #__usergroups where title='$userGroupForUpdate'";
+			$this->_db->setQuery($q);
+			$results = $this->_db->loadObjectList();
+			$gidforupdate = $results[0]->id;
+			
+			$q = "DELETE from #__user_usergroup_map where user_id='$uid' and group_id='$gidforupdate'";
+			$this->_db->setQuery($q);
+			try {
+  				$result = $this->_db->query(); // $db->execute(); for Joomla 3.0.
+			} catch (Exception $e) {
+   			// catch the error.
+			}
+						  	 
+			$q = "SELECT virtuemart_shoppergroup_id from #__virtuemart_shoppergroups where shopper_group_name='$userGroupForUpdate'";
+			$this->_db->setQuery($q);
+			$results = $this->_db->loadObjectList();
+			$vmgidforupdate = $results[0]->virtuemart_shoppergroup_id;
+			$q = "DELETE from #__virtuemart_vmuser_shoppergroups where virtuemart_user_id='$uid' and virtuemart_shoppergroup_id='$vmgidforupdate'";
+			$this->_db->setQuery($q);
+			try {
+  				$result = $this->_db->query(); // $db->execute(); for Joomla 3.0.
+			} catch (Exception $e) {
+   			// catch the error.
+			}			
+
+		}
+		$q = "INSERT into #__user_usergroup_map values ('$uid', '$gid')";
+		$this->_db->setQuery($q);
+		try {
+  			$result = $this->_db->query(); // $db->execute(); for Joomla 3.0.
+		} catch (Exception $e) {
+   		// catch the error.
+		}
+		$q = "INSERT into #__virtuemart_vmuser_shoppergroups values ('','$uid', '$vmgid')";
+		$this->_db->setQuery($q);
+		try {
+  			$result = $this->_db->query(); // $db->execute(); for Joomla 3.0.
+		} catch (Exception $e) {
+   		// catch the error.
+		}
+	}
 	/**
 	 * This function is NOT for anonymous. Anonymous just get the information directly sent by email.
 	 * This function saves the vm Userdata for registered JUsers.

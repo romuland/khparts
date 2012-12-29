@@ -7,11 +7,15 @@ defined( '_JEXEC' ) or die( 'Restricted access' );
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?php echo $this->language; ?>" lang="<?php echo $this->language; ?>">
 <head>
 	<jdoc:include type="head" />
+   
 	<script src=""></script>
-	<?php JHTML::_('behavior.mootools'); ?>
+
 	<?php
 		$document = JFactory::getDocument();
-
+		if (!defined('JQUERY_DEFINED')) $document->addScript('http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js');
+		
+		/*JHTML::_('behavior.mootools'); */
+		$document->addScript($ztTools->templateurl().'js/noconflict.js');
 	//	require_once($ztTools->templateurl().'compress_timestamp.php');         //загрузить timestamp сохранённый в файле, чтобы обмануть кэширование. Устанавливает $compress_stamp=unix_timestamp                       
 		$compress_stamp=1353395767;               
 		//if (stripos($_SERVER['HTTP_ACCEPT_ENCODING'],'GZIP')!==false)   
@@ -20,10 +24,7 @@ defined( '_JEXEC' ) or die( 'Restricted access' );
         //	$gz=null;
 //echo '<link rel="stylesheet" type="text/css" href="min/css_schedule_'.$compress_stamp.'.css'.$gz.'" />',PHP_EOL;
 		
-		$document->addScript('http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js');
 		//$document->addScript($ztTools->templateurl().'min/js_schedule_'.$compress_stamp.'.js'.$gz);
-		
-		$document->addScript($ztTools->templateurl().'js/noconflict.js');
 		
 		$document->addScript($ztTools->templateurl().'js/ajax_search.js');
 		$document->addScript($ztTools->templateurl() . 'js/zt.script.js');
