@@ -8,7 +8,6 @@ window.addEvent ('load', function() {
 			winScroller.toTop();
 		});
 	}	
-	
 	if($('shop1link') || $('shop2link')) {
 		winScroller = winScroller || new Fx.Scroll(window);
 
@@ -21,7 +20,6 @@ window.addEvent ('load', function() {
 			winScroller.toElement('shop2map');
 		});
 	}	
-	
 });
 
 window.addEvent ('scroll', function() {
@@ -31,64 +29,18 @@ window.addEvent ('scroll', function() {
 		jQuery('#backtotop').fadeOut();
 	}
 });
+window.addEvent('click', function(){
+	//alert('2');
+});
 
-  
 jQuery(document).ready(function(){
 	/*4 видимых элемента - top, zt-header,ajax-content, zt-footer*/
 	var winHeight = parseInt(jQuery(window).height());
 	var currentHeight = parseInt(jQuery('#top').css("height")) + parseInt(jQuery('#zt-header').css("height")) + parseInt(jQuery('#ajax-content').css("height")) + parseInt(		jQuery('#zt-footer').css("height"));
 	if(currentHeight < winHeight){
-		jQuery('#ajax-content').css("height", parseInt(jQuery('#ajax-content').css("height")) + (winHeight - currentHeight) + "px");
+	//	jQuery('#ajax-content').css("height", parseInt(jQuery('#ajax-content').css("height")) + (winHeight - currentHeight) + "px");
 	}
 
-	/*jQuery('#ajax-content').css('display', 'none').fadeIn(100);
-	jQuery('a').click(function(event){
-		
-	event.preventDefault();
-	linkLocation = this.href;
-	jQuery(document).load(this.href, function(){
-		window.history.pushState(null, null, linkLocation);//отслеживает и вставляет в адресную строку новую ссылку
-	});*/
-		/*
-		jQuery('#ajax-content').load(this.href+' #ajax-content  > *', function(){
-			window.history.pushState(null, null, linkLocation);//отслеживает и вставляет в адресную строку новую ссылку
-			});
-		
-//		jQuery('#ajax-content').fadeOut(1000, redirectPage);
-	});
-/*
-var content_td=jQuery('.table_load').html();
-
-jQuery(".uMenuRoot a, .uMenuV a").click(function(){
-
-                jQuery('.befor_td').remove();//удаляем блок с картинкой "Загрузка", нужен если бычтро нажимать на разные ссылки
-                jQuery(".uMenuRoot a").removeClass("uMenuItemA");//меняем стиль отображения активной ссылки
-                jQuery(this).addClass("uMenuItemA");//меняем стиль отображения активной ссылки
-
-                var href_a=jQuery(this).attr("href");//заносим в переменную адрес нажимаемой ссылки
-                window.history.pushState(null, null, href_a);//отслеживает и вставляет в адресную строку новую ссылку
-                
-                jQuery('.content_table').before("<td class='befor_td'></td>").fadeOut(400, function(){//добавляем блок с картинкой "Загрузка" и скрываем блок с контентом
-                jQuery('.befor_td').html('<p><p style="margin-top:100px;text-align:center;font-size:24px;">Идет ЗАГРУЗКА</p><p style="text-align:center;"><img src="/jquery/images/loader.gif"></p></p>').css('width','800px');
-                jQuery('.content_table').load(href_a+" .table_load", function(){//загружаем с сервера новый контент
-                                 jQuery('.table_load').css('width','800px');
-                                 jQuery('.befor_td').remove();//удаляем блок с картинкой "Загрузка"
-                                 jQuery('.content_table:hidden').slideDown(300); //открываем блок с новым загруженным контентом
-                                                                        });
-                                                                                                                    });
-            returnfalse;// не даем браузеру перейти по ссылке при клике
-
-
-                                    });
-window.addEventListener("popstate", function(e){//берет ссылку из строки браузера и по ней загружает контент, как бы переход при клике по верхним стрелкам назад вперед
-            var href_next_back=window.location.pathname;
-             jQuery('.table_load').html('<p style="margin-top:300px;text-align:center;font-size:24px;">Идет ЗАГРУЗКА</p><p style="text-align:center;"><img src="/jquery/images/loader.gif"></p>');
-             jQuery('.table_load').load(href_next_back+" .table_load", function(){
-                                         jQuery('.table_load').replaceWith(jQuery('.table_load').html());
-                                        window.history.pushState(null, null, href_a);
-                                                                            });*/
-	/*});*/
-										
 	document.documentElement.scrollTop > 100 ? jQuery('#backtotop').show():jQuery("#backtotop").hide();
 	
 	jQuery(function () {

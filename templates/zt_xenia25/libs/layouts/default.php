@@ -150,6 +150,7 @@ defined( '_JEXEC' ) or die( 'Restricted access' );
 					</div>
 				</div>
 			<?php endif; ?>
+            <div id="zt-footer-space"></div>
 		</div>
         </div>
 		</div>
