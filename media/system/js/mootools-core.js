@@ -1,21 +1,3 @@
-/*
----
-MooTools: the javascript framework
-
-web build:
- - http://mootools.net/core/76bf47062d6c1983d66ce47ad66aa0e0
-
-packager build:
- - packager build Core/Core Core/Array Core/String Core/Number Core/Function Core/Object Core/Event Core/Browser Core/Class Core/Class.Extras Core/Slick.Parser Core/Slick.Finder Core/Element Core/Element.Style Core/Element.Event Core/Element.Delegation Core/Element.Dimensions Core/Fx Core/Fx.CSS Core/Fx.Tween Core/Fx.Morph Core/Fx.Transitions Core/Request Core/Request.HTML Core/Request.JSON Core/Cookie Core/JSON Core/DOMReady Core/Swiff
-
-copyrights:
-  - [MooTools](http://mootools.net)
-
-licenses:
-  - [MIT License](http://mootools.net/license.txt)
-...
-*/
-
 (function(){this.MooTools={version:"1.4.5",build:"ab8ea8824dc3b24b6666867a2c4ed58ebb762cf0"};var e=this.typeOf=function(i){if(i==null){return"null";}if(i.$family!=null){return i.$family();
 }if(i.nodeName){if(i.nodeType==1){return"element";}if(i.nodeType==3){return(/\S/).test(i.nodeValue)?"textnode":"whitespace";}}else{if(typeof i.length=="number"){if(i.callee){return"arguments";
 }if("item" in i){return"collection";}}}return typeof i;};var u=this.instanceOf=function(w,i){if(w==null){return false;}var v=w.$constructor||w.constructor;

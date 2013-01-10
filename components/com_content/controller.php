@@ -45,7 +45,7 @@ class ContentController extends JControllerLegacy
 	{
 		$cachable = true;
 
-		JHtml::_('behavior.caption');
+		/*JHtml::_('behavior.caption');*/
 
 		// Set the default view name and format from the Request.
 		// Note we are using a_id to avoid collisions with the router and the return page.

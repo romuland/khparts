@@ -6,63 +6,33 @@ html,body,form,fieldset {
   padding: 0;
 }
 html, body {height: 100%;}
-
 body {
 	min-height:100%;
     height: auto;
     margin: 0;
     padding: 0;
 }
-
-html, body {
-    height: 100%; /* все предки #container должны иметь высоту */
-}
-/*
-html > body #zt-wrapper {
-    height: auto;
-    min-height: 100%;
-}
-
-* html #zt-wrapper {
-    height: 100%;
-}
-
-#zt-wrapper{
-	position: relative;
-}
-*/
-
-
 #zt-wrapper-inner {
 	padding: 0;
 	overflow: hidden;
 	margin:0 auto;
 	min-height:100%;
-	
 }
-
-#ajax-content {
-/*height: auto !important;
-min-height:100%;
-/*height: 100%;*/
-
-}
+#ajax-content {}
 #zt-footer-space {
-height: 90px;
-clear: both;
+	height: 90px;
+	clear: both;
 }
 #zt-footer{
-  width:100%;
-  background-color:#095a7c;
-  height:90px;
-  color:#fff;
-  clear: both;
-  /*  position: absolute;*/
-    left: 0;
-    bottom: 0;  
+	width:100%;
+	background-color:#095a7c;
+	height:90px;
+	color:#fff;
+	clear: both;
+	left: 0;
+	bottom: 0;  
 	margin-top: -90px;
 }
-
 body#bd {
 	font-family: Verdana, Geneva, sans-serif;
 	background: url(../images/bg.jpg) repeat 0 0;
@@ -100,7 +70,6 @@ body.fs6 {font-size: 15px; line-height: 21px;}
     margin: 0 0 -100px 0; /* отрицательный нижний отступ на высоту футера */
     padding: 0;
 }
-
 #zt-header {
 	width:100%;
 	background:url(../images/header.png) 0 0 repeat-x;
@@ -128,28 +97,28 @@ body.fs6 {font-size: 15px; line-height: 21px;}
 .zt-width-left #zt-content,.zt-width-right #zt-content{width:75%;}
 #zt-content {float: left;}
 #zt-right {
-  width: 25%;
-  float: right;
+	width: 25%;
+	float: right;
 }
 #zt-breadcrumbs {
-  overflow: hidden;
-  background:url(../images/bg-breadcrumbs.png) 0 100% repeat-x;
-  padding:0 0 10px;
-  margin:7px 10px 0 10px;
+	overflow: hidden;
+	background:url(../images/bg-breadcrumbs.png) 0 100% repeat-x;
+	padding:0 0 10px;
+	margin:7px 10px 0 10px;
 }
 #zt-breadcrumbs span.pathway{
-  padding:0 0 0 25px;
-  background:url(../images/bg-icon-home.png) 0 50% no-repeat;
+	padding:0 0 0 25px;
+	background:url(../images/bg-icon-home.png) 0 50% no-repeat;
 }
 #horizontal-search{margin: 10px 0 0 0;}
 #horizontal-search-inner {
-  margin: 0 10px;
-  overflow: hidden;
-  background:url(../images/bg-breadcrumbs.png) 0 100% repeat-x;
-  padding:0 0 10px;
+	margin: 0 10px;
+	overflow: hidden;
+	background:url(../images/bg-breadcrumbs.png) 0 100% repeat-x;
+	padding:0 0 10px;
 }
 .moduletitle span span{
-  color:#1692c5;
+	color:#1692c5;
 }
 /**Header**/
 #zt-logo {
@@ -162,7 +131,7 @@ body.fs6 {font-size: 15px; line-height: 21px;}
   display: block;
   width: 169px;
   height: 66px;
-  background: url(../images/logo.png) no-repeat 0 0;
+  background: url(../images/icons.png) 0 -259px no-repeat;
 }
 .zt-logo a {
   display: block;
@@ -222,7 +191,6 @@ body.fs6 {font-size: 15px; line-height: 21px;}
 /**Left Content Right**/
 
 /**Footer**/
-
 #zt-footer-inner{
 	width: 960px;
 	margin: 0 auto;
@@ -245,7 +213,7 @@ body.fs6 {font-size: 15px; line-height: 21px;}
 #zt-copyright {
   float: left;
   width: 400px;
-  padding:25px 0;
+  padding:25px 0 24px 0;
 }
 #zt-sitemap {
   float: left;
@@ -437,18 +405,15 @@ div.registration, div.login, div.reset, div.remind, #adminForm, div.import, #cb-
 	float: left;
 }
 .RadioLabelClass{
-	/*background: url("../images/UnCheck.png") no-repeat;*/
 	height: 20px;
 	background: url(../images/icons.png) 0 -23px no-repeat;
 	cursor:pointer;
 }	
 .LabelSelected{
-	/*	background: url("../images/Check.png") no-repeat;*/
 	height: 20px;
 	background: url(../images/icons.png) 0 0px no-repeat;
 }
 .RadioSelected{
-	/*background: url("../images/Check.png") no-repeat;*/
 	display: none;
 }
 .RadioClass{display: none;}
@@ -526,7 +491,6 @@ div.registration, div.login, div.reset, div.remind, #adminForm, div.import, #cb-
 	-webkit-border-radius: 15px;
 	-moz-border-radius: 15px;
 	border-radius: 15px;
-
 	/* transition */
 	-webkit-transition: 1s;
 	-moz-transition: 1s;
@@ -546,7 +510,6 @@ div.registration, div.login, div.reset, div.remind, #adminForm, div.import, #cb-
 #callback {
 	width: 75px;
 	height: 90px;
-/*	background:url(../images/callback.png) no-repeat 0 0;*/
 	background: url(../images/icons.png) 0 -83px no-repeat;
 	padding:0px;
 }
@@ -554,7 +517,6 @@ div.registration, div.login, div.reset, div.remind, #adminForm, div.import, #cb-
 	margin-top:20px;
 	width: 75px;
 	height: 90px;	
-/*	background:url(../images/question.png) no-repeat 0 0;*/
 	background: url(../images/icons.png) 0 -173px no-repeat;
 	padding:0px;
 }
@@ -611,28 +573,16 @@ div.registration, div.login, div.reset, div.remind, #adminForm, div.import, #cb-
 	border-bottom-width:thin;
 	margin-bottom:20px;
 }
-#cb-dlg h2{
-	width:190px;
-}
-#q-dlg h2{
-	width:170px;
-}
-.popup-input{
-	margin-bottom:20px;
-}
+#cb-dlg h2{width:190px;}
+#q-dlg h2{width:170px;}
+.popup-input{margin-bottom:20px;}
 #cb-submit, #q-submit{
 	display:none;
 	margin-top:40px;
 }
-#cb-in-time {
-	height:20px;
-}
-#q-in-message{
-	height:80px;
-}
-.mainfont{
-	font-family: 'arhangelsk', sans-serif;
-}
+#cb-in-time{height:20px;}
+#q-in-message{height:80px;}
+.mainfont{font-family: 'arhangelsk', sans-serif;}
 .tabs-title{
 	list-style:none;
 	margin: 0;
@@ -707,3 +657,5 @@ div.registration, div.login, div.reset, div.remind, #adminForm, div.import, #cb-
 	background-image:none;	
 	padding:0 5px 0 15px;
 }
+.phone-small{width:45px;background: url(../images/icons.png) 0 -325px no-repeat;}
+.collaboration{width:60px;height:45px;background: url(../images/icons.png) 0 -369px no-repeat;}

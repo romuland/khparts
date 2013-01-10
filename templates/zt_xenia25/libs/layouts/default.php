@@ -1,5 +1,4 @@
 <?php
-
 // no direct access
 defined( '_JEXEC' ) or die( 'Restricted access' );
 ?>
@@ -8,27 +7,14 @@ defined( '_JEXEC' ) or die( 'Restricted access' );
 <head>
 	<jdoc:include type="head" />
    
-	<script src=""></script>
-
 	<?php
 		$document = JFactory::getDocument();
 		if (!defined('JQUERY_DEFINED')) $document->addScript('http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js');
-		
 		/*JHTML::_('behavior.mootools'); */
+		
 		$document->addScript($ztTools->templateurl().'js/noconflict.js');
-	//	require_once($ztTools->templateurl().'compress_timestamp.php');         //загрузить timestamp сохранённый в файле, чтобы обмануть кэширование. Устанавливает $compress_stamp=unix_timestamp                       
-		$compress_stamp=1353395767;               
-		//if (stripos($_SERVER['HTTP_ACCEPT_ENCODING'],'GZIP')!==false)   
-        //	$gz='gz';
-		//else
-        //	$gz=null;
-//echo '<link rel="stylesheet" type="text/css" href="min/css_schedule_'.$compress_stamp.'.css'.$gz.'" />',PHP_EOL;
-		
-		//$document->addScript($ztTools->templateurl().'min/js_schedule_'.$compress_stamp.'.js'.$gz);
-		
-		$document->addScript($ztTools->templateurl().'js/ajax_search.js');
-		$document->addScript($ztTools->templateurl() . 'js/zt.script.js');
-		
+		$document->addScript($ztTools->templateurl().'js/zt.onload.min.js');
+
 		$document->addStyleSheet($ztTools->baseurl() . 'templates/system/css/system.css');
 		$document->addStyleSheet($ztTools->baseurl() . 'templates/system/css/general.css');
 		$document->addStyleSheet($ztTools->templateurl() . 'css/default.css');
@@ -36,16 +22,18 @@ defined( '_JEXEC' ) or die( 'Restricted access' );
 		$document->addStyleSheet($ztTools->templateurl() . 'css/patterns.css');
 		$document->addStyleSheet($ztTools->templateurl() . 'css/fonts.css');
 	?>
-	
-    <script type="text/javascript">
-		(function(d,w,c){(w[c]=w[c]||[]).push(function(){try{w.yaCounter17029624=new Ya.Metrika({id:17029624,clickmap:true,accurateTrackBounce:true,webvisor:true});}catch(e){}});var n=d.getElementsByTagName("script")[0],s=d.createElement("script"),f=function(){n.parentNode.insertBefore(s, n);};s.type="text/javascript";s.async=true;s.src=(d.location.protocol=="https:"?"https:":"http:")+"//mc.yandex.ru/metrika/watch.js";if(w.opera=="[object Opera]"){d.addEventListener("DOMContentLoaded",f);}else{f();}})(document,window,"yandex_metrika_callbacks");
-
-	</script>
-
-	<!--<link href='http://fonts.googleapis.com/css?family=Orbitron' rel='stylesheet' type='text/css'>-->
-   	<!--<link href='http://fonts.googleapis.com/css?family=Kelly+Slab' rel='stylesheet' type='text/css'>-->
+	<script type="text/javascript">
+      function onLoad () {
+			 var script = document.createElement('script');
+			 script.src = '<?php echo $ztTools->templateurl().'js/zt.script.min.js';?>';
+             document.body.appendChild(script);
+			 var script = document.createElement('script');
+			 script.innerHTML = '(function(d,w,c){(w[c]=w[c]||[]).push(function(){try{w.yaCounter17029624=new Ya.Metrika({id:17029624,clickmap:true,accurateTrackBounce:true,webvisor:true});}catch(e){}});var n=d.getElementsByTagName("script")[0],s=d.createElement("script"),f=function(){n.parentNode.insertBefore(s, n);};s.type="text/javascript";s.async=true;s.src=(d.location.protocol=="https:"?"https:":"http:")+"//mc.yandex.ru/metrika/watch.js";if(w.opera=="[object Opera]"){d.addEventListener("DOMContentLoaded",f);}else{f();}})(document,window,"yandex_metrika_callbacks");';
+             document.body.appendChild(script);		
+         }
+         window.onload = function () {setTimeout(onLoad, 200)}
+    </script>
     
-	<link rel="stylesheet" href="<?php echo $ztTools->templateurl(); ?>css/modules.css" type="text/css" />
 	<link rel="stylesheet" href="<?php echo $ztTools->templateurl(); ?>css/css3.php?url=<?php echo $ztTools->templateurl(); ?>" type="text/css" />
     
 	<!--[if lte IE 6]>
